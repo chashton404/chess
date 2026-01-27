@@ -79,58 +79,26 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        List<ChessMove> moves = new ArrayList<>();
+
         ChessPiece piece = board.getPiece(myPosition);
         if (piece.getPieceType() == PieceType.PAWN) {
             /* TODO: IMPLEMENT PIECE MOVES FOR PAWNS */
             return List.of();
         } else if (piece.getPieceType() == PieceType.BISHOP) {
-            /* Initalize our lists, these are the lists that we will append the moves to and wwe will iterate over the different directions */
-            List<Integer> direction = List.of(-1, 1);
-            List<ChessMove> moves = new ArrayList<>();
-
-            /* Save the current position as the start position that will be used when contstructing the chess move opbject */
-            ChessPosition startPosition = new ChessPosition(myPosition.getRow(), myPosition.getColumn());
-
-            /* We use a nested for loop to iterate over the four diagonal locations */
-            for (Integer colDirection : direction) {
-                for (Integer rowDirection : direction) {
-
-                    int currRow = startPosition.getRow();
-                    int currCol = startPosition.getColumn();
-
-                    /* The diagonal search label here allows us to break out of the loop when we find a piece of our own team */
-                    diagonalSearch:
-                    while ( 1 < currRow && currRow < 8 && 1 < currCol && currRow < 8 ){
-                        /* Iterate in each of the directions */
-                        currRow += rowDirection;
-                        currCol += colDirection;
-                        
-                        ChessMove move = new ChessMove(startPosition, new ChessPosition(currRow, currCol), null);
-
-                        /* Perform a check to verify that the the new position doesnt have the team of the same piece there */
-                        ChessPiece otherPiece = board.getPiece(new ChessPosition(currRow, currCol));
-
-                        if (otherPiece != null) {
-                            if (otherPiece.getTeamColor() != piece.getTeamColor()) {
-                                /* In the case of the opponent piece being in the path, add the move as a possible move and then break the loop */
-                                moves.add(move);
-                                break diagonalSearch; 
-                            } else {
-                                /* Otherwise, don't add the piece and break the loop */
-                                break diagonalSearch;
-                            }
-                        } else {
-                            moves.add(move);
-                        }
-                    }
-                }
-            }
+            /* TODO: generalize the diagonal movement. Make a diagonal movement function that can then be applied to Bishop and Queen, do the same for the Rook and the queen */
+            List<ChessMove> diagonalMoves = new ArrayList<>(diagonalMovement(board, myPosition, piece));
+            moves.addAll(diagonalMoves);
 
             return moves;
 
         } else if (piece.getPieceType() == PieceType.ROOK) {
             /* TODO: IMPLEMENT PIECE MOVES FOR ROOKS */
-            return List.of();
+            List<ChessMove> straightMoves = new ArrayList<>(straightMovement(board, myPosition, piece));
+            moves.addAll(straightMoves);
+
+            return moves;
+
         } else if (piece.getPieceType() == PieceType.KNIGHT){  
             /* TODO: IMPLEMENT PIECE MOVES FOR KNIGHTS */       
             return List.of();
@@ -143,5 +111,134 @@ public class ChessPiece {
         } else {
             throw new RuntimeException("Invalid Piece Type");
         }
+    }
+
+    private Collection<ChessMove> diagonalMovement(ChessBoard board, ChessPosition piecePosition, ChessPiece piece) {
+        /* Initalize our lists, these are the lists that we will append the moves to and wwe will iterate over the different directions */
+        List<Integer> direction = List.of(-1, 1);
+        List<ChessMove> pieceMoves = new ArrayList<>();
+
+        /* Save the current position as the start position that will be used when contstructing the chess move opbject */
+        ChessPosition startPosition = new ChessPosition(piecePosition.getRow(), piecePosition.getColumn());
+
+        /* We use a nested for loop to iterate over the four diagonal locations */
+        for (Integer colDirection : direction) {
+            for (Integer rowDirection : direction) {
+
+                int currRow = startPosition.getRow();
+                int currCol = startPosition.getColumn();
+
+                /* The diagonal search label here allows us to break out of the loop when we find a piece of our own team */
+                diagonalSearch:
+                while ( 0 < currRow && currRow < 9 && 0 < currCol && currRow < 9 ){
+                    /* Iterate in each of the directions */
+                    currRow += rowDirection;
+                    currCol += colDirection;
+
+                    if (currRow == 0 || currRow == 9) {
+                        break diagonalSearch;
+                    } else if (currCol == 0 || currCol == 9) {
+                        break diagonalSearch;
+                    }
+                    
+                    ChessMove move = new ChessMove(startPosition, new ChessPosition(currRow, currCol), null);
+
+                    /* Perform a check to verify that the the new position doesnt have the team of the same piece there */
+                    ChessPiece otherPiece = board.getPiece(new ChessPosition(currRow, currCol));
+
+                    if (otherPiece != null) {
+                        if (otherPiece.getTeamColor() != piece.getTeamColor()) {
+                            /* In the case of the opponent piece being in the path, add the move as a possible move and then break the loop */
+                            pieceMoves.add(move);
+                            break diagonalSearch; 
+                        } else {
+                            /* Otherwise, don't add the piece and break the loop */
+                            break diagonalSearch;
+                        }
+                    } else {
+                        pieceMoves.add(move);
+                    }
+                }
+            }
+        }
+        return pieceMoves;
+    }
+
+    private Collection<ChessMove> straightMovement(ChessBoard board, ChessPosition position, ChessPiece piece) {
+        /* Create the list of directions that we will use to move and the moves*/
+        List<Integer> direction = List.of(-1,1);
+        List<ChessMove> pieceMoves = new ArrayList<>();
+
+
+        ChessPosition startPosition = new ChessPosition(position.getRow(), position.getColumn());
+
+        int currRow = startPosition.getRow();
+        int currCol = startPosition.getColumn();
+        /* Get the moves on the vertical axis */
+
+        for (Integer rowDirection : direction) {
+            rowSearch:
+            while( 0 < currRow && currRow < 9) {
+                currRow += rowDirection;
+
+                if (currRow == 0 || currRow == 9){
+                    currRow = startPosition.getRow();
+                    break rowSearch;
+                }
+
+                ChessPosition newPosition = new ChessPosition(currRow, currCol);
+                ChessMove newMove = new ChessMove(startPosition, newPosition, null); 
+                ChessPiece otherPiece = board.getPiece(newPosition);
+
+                if (otherPiece != null) {
+                    if (otherPiece.getTeamColor() != piece.getTeamColor()) {
+                        /* In the case of the opponent piece being in the path, add the move as a possible move and then break the loop */
+                        pieceMoves.add(newMove);
+                        currRow = startPosition.getRow();
+                        break rowSearch; 
+                    } else {
+                        /* Otherwise, don't add the piece, reset the row search, and break the loop */
+                        currRow = startPosition.getRow();
+                        break rowSearch;
+                    }
+                } else {
+                    pieceMoves.add(newMove);
+                }
+            }
+            currRow = startPosition.getRow();
+        }
+
+        for (Integer colDirection : direction) {
+            colSearch:
+            while( 0 < currCol && currCol < 9) {
+                currCol += colDirection;
+
+                if (currCol == 0 || currCol == 9){
+                    currCol = startPosition.getRow();
+                    break colSearch;
+                }
+
+                ChessPosition newPosition = new ChessPosition(currRow, currCol);
+                ChessMove newMove = new ChessMove(startPosition, newPosition, null); 
+                ChessPiece otherPiece = board.getPiece(newPosition);
+
+                if (otherPiece != null) {
+                    if (otherPiece.getTeamColor() != piece.getTeamColor()) {
+                        /* In the case of the opponent piece being in the path, add the move as a possible move and then break the loop */
+                        pieceMoves.add(newMove);
+                        currCol = startPosition.getColumn();
+                        break colSearch; 
+                    } else {
+                        /* Otherwise, don't add the piece, reset the column, and break the loop */
+                        currCol = startPosition.getColumn();
+                        break colSearch;
+                    }
+                } else {
+                    pieceMoves.add(newMove);
+                }
+            }
+            currCol = startPosition.getColumn();
+        }
+        return pieceMoves;
     }
 }
