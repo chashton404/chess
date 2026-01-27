@@ -85,15 +85,16 @@ public class ChessPiece {
         if (piece.getPieceType() == PieceType.PAWN) {
             /* TODO: IMPLEMENT PIECE MOVES FOR PAWNS */
             return List.of();
+            
         } else if (piece.getPieceType() == PieceType.BISHOP) {
-            /* TODO: generalize the diagonal movement. Make a diagonal movement function that can then be applied to Bishop and Queen, do the same for the Rook and the queen */
+
             List<ChessMove> diagonalMoves = new ArrayList<>(diagonalMovement(board, myPosition, piece));
             moves.addAll(diagonalMoves);
 
             return moves;
 
         } else if (piece.getPieceType() == PieceType.ROOK) {
-            /* TODO: IMPLEMENT PIECE MOVES FOR ROOKS */
+
             List<ChessMove> straightMoves = new ArrayList<>(straightMovement(board, myPosition, piece));
             moves.addAll(straightMoves);
 
@@ -102,12 +103,21 @@ public class ChessPiece {
         } else if (piece.getPieceType() == PieceType.KNIGHT){  
             /* TODO: IMPLEMENT PIECE MOVES FOR KNIGHTS */       
             return List.of();
+
         } else if (piece.getPieceType() == PieceType.KING){
             /* TODO: IMPLEMENT PIECE MOVES FOR KING */
             return List.of();
+
         } else if (piece.getPieceType() == PieceType.QUEEN) {
-            /* TODO: IMPLEMENT PIECE MOVES FOR QUEEN */
-            return List.of(); 
+
+            List<ChessMove> straightMoves = new ArrayList<>(straightMovement(board, myPosition, piece));
+            moves.addAll(straightMoves);
+
+            List<ChessMove> diagonalMoves = new ArrayList<>(diagonalMovement(board, myPosition, piece));
+            moves.addAll(diagonalMoves);
+
+            return moves;
+
         } else {
             throw new RuntimeException("Invalid Piece Type");
         }
