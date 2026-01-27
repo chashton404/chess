@@ -84,8 +84,6 @@ public class ChessPiece {
             /* TODO: IMPLEMENT PIECE MOVES FOR PAWNS */
             return List.of();
         } else if (piece.getPieceType() == PieceType.BISHOP) {
-            /* TODO: IMPLEMENT PIECE MOVES FOR BISHOPS */
-
             /* Initalize our lists, these are the lists that we will append the moves to and wwe will iterate over the different directions */
             List<Integer> direction = List.of(-1, 1);
             List<ChessMove> moves = new ArrayList<>();
