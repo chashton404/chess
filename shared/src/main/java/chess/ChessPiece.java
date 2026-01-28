@@ -83,8 +83,41 @@ public class ChessPiece {
 
         ChessPiece piece = board.getPiece(myPosition);
         if (piece.getPieceType() == PieceType.PAWN) {
-            /* TODO: IMPLEMENT PIECE MOVES FOR PAWNS */
-            return List.of();
+            
+            ChessPosition startPosition = new ChessPosition(myPosition.getRow(), myPosition.getColumn());
+
+            int direction = 0;
+
+            if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                /* Implement the logic for if the pawn is white */
+                direction = 1;
+            } else {
+                /* Implement the logic for if the pawn is black */
+                direction = -1;
+            }
+
+            /* First we check directly in front of the pawn by doing the current row += direction */
+            int currRow = startPosition.getRow();
+            int startRow = startPosition.getRow();
+            currRow += direction;
+            ChessPosition inFront = new ChessPosition(currRow, myPosition.getColumn());
+
+            /* Now we check that position */
+            int inFrontStatus = checkSpotStatus(board, piece.getTeamColor(), inFront);
+
+            if (inFrontStatus == 0) {
+                /* Spot is empty, we now see if it's the first position or the last position */
+                if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                    chase us a beast
+                }
+
+            } else if (inFrontStatus == 2 ) {
+                /* Spot has an enemy player there */
+                moves.add(new ChessMove(startPosition, inFront, null));
+            }
+            
+            
+            return moves;
             
         } else if (piece.getPieceType() == PieceType.BISHOP) {
 
@@ -250,5 +283,18 @@ public class ChessPiece {
             currCol = startPosition.getColumn();
         }
         return pieceMoves;
+    }
+
+    private int checkSpotStatus(ChessBoard board, ChessGame.TeamColor teamColor, ChessPosition newPosition) {
+        ChessPiece newPiece = board.getPiece(newPosition);
+        if (newPiece != null) {
+            if (newPiece.getTeamColor() == teamColor) {
+                return 1;
+            } else {
+                return 2;
+            }
+        } else {
+            return 0;
+        }
     }
 }
