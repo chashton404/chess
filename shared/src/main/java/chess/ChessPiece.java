@@ -298,9 +298,36 @@ public class ChessPiece {
                 
             return moves;
         } else if (piece.getPieceType() == PieceType.KING){
-            /* TODO: IMPLEMENT PIECE MOVES FOR KING */
-            return List.of();
+            /* Create our starting piece */
+            ChessPosition startPosition = new ChessPosition(myPosition.getRow(), myPosition.getColumn());
 
+            /* Initialize our list of directions */
+            List<Integer> directions = List.of(-1,0,1);
+
+            for (Integer rowDirection : directions) {
+                for (Integer colDirection : directions) {
+                    int currRow = startPosition.getRow();
+                    int currCol = startPosition.getColumn();
+
+                    currRow += rowDirection;
+                    currCol += colDirection;
+
+                    ChessPosition newPosition = new ChessPosition(currRow, currCol);
+
+                    int newPositionStatus;
+                    if (0 < currRow && currRow < 9 && 0 < currCol && currCol < 9 ) {
+                        newPositionStatus = checkSpotStatus(board, piece.getTeamColor(), newPosition);
+                    } else {
+                        newPositionStatus = -1;
+                    }
+
+                    if (newPositionStatus == 0 || newPositionStatus == 2) {
+                        moves.add(new ChessMove(startPosition, newPosition, null));
+                    }
+                }
+            }
+
+            return moves;
         } else if (piece.getPieceType() == PieceType.QUEEN) {
 
             List<ChessMove> straightMoves = new ArrayList<>(straightMovement(board, myPosition, piece));
