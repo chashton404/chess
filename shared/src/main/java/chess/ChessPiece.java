@@ -194,9 +194,9 @@ public class ChessPiece {
 
                 int diagStatus;
                 if (0 < currRow && currRow < 9 && 0 < currCol && currCol < 9){
-                    diagStatus = checkSpotStatus(board, pieceColor, diagonal);
+                    diagStatus = checkSpotStatus(board, piece.getTeamColor(), diagonal);
                 } else {
-                    diagStatus = 1;
+                    diagStatus = -1;
                 }
                 
 
@@ -240,9 +240,63 @@ public class ChessPiece {
             return moves;
 
         } else if (piece.getPieceType() == PieceType.KNIGHT){  
-            /* TODO: IMPLEMENT PIECE MOVES FOR KNIGHTS */       
-            return List.of();
+            /* Create our start position */
+            ChessPosition startPosition = new ChessPosition(myPosition.getRow(), myPosition.getColumn());
 
+
+            /* Create our lists of directions we will move, either a one or a two */
+            List<Integer> twos = List.of(-2,2);
+            List<Integer> ones = List.of(-1,1);
+
+            for (int rowDirection : twos) {
+                for (int colDirection : ones) {
+                    int currRow = startPosition.getRow();
+                    int currCol = startPosition.getColumn();
+
+                    currRow += rowDirection;
+                    currCol += colDirection;
+
+                    ChessPosition newPosition = new ChessPosition(currRow, currCol);
+
+                    int knightStatus;
+                    if (0 < currRow && currRow < 9 && 0 < currCol && currCol < 9){
+                        knightStatus = checkSpotStatus(board, piece.getTeamColor(), newPosition);
+                    } else {
+                        knightStatus = -1;
+                    }
+
+                    if (knightStatus == 0 || knightStatus == 2) {
+                        moves.add(new ChessMove(startPosition, newPosition, null));
+
+                    }    
+                }
+            }
+
+            for (int colDirection : twos) {
+                for (int rowDirection : ones) {
+                    int currRow = startPosition.getRow();
+                    int currCol = startPosition.getColumn();
+
+                    currRow += rowDirection;
+                    currCol += colDirection;
+
+                    ChessPosition newPosition = new ChessPosition(currRow, currCol);
+
+                    int knightStatus;
+                    if (0 < currRow && currRow < 9 && 0 < currCol && currCol < 9){
+                        knightStatus = checkSpotStatus(board, piece.getTeamColor(), newPosition);
+                    } else {
+                        knightStatus = -1;
+                    }
+
+                    if (knightStatus == 0 || knightStatus == 2) {
+                        moves.add(new ChessMove(startPosition, newPosition, null));
+
+                    }    
+                }
+            }
+                
+            return moves;
         } else if (piece.getPieceType() == PieceType.KING){
             /* TODO: IMPLEMENT PIECE MOVES FOR KING */
             return List.of();
