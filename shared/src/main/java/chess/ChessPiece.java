@@ -98,12 +98,21 @@ public class ChessPiece {
 
             /* First we check directly in front of the pawn by doing the current row += direction */
             int currRow = startPosition.getRow();
+            int currCol = startPosition.getColumn();
             int startRow = startPosition.getRow();
+            int startCol = startPosition.getColumn();
             currRow += direction;
             ChessPosition inFront = new ChessPosition(currRow, myPosition.getColumn());
 
-            /* Now we check that position */
-            int inFrontStatus = checkSpotStatus(board, piece.getTeamColor(), inFront);
+            /* Now we check that position conditioned upon whether or not the position is in the board */
+            int inFrontStatus;
+            if (currRow > 0 && currRow < 9) {
+                inFrontStatus = checkSpotStatus(board, piece.getTeamColor(), inFront);
+            } else {
+                inFrontStatus = -1;
+            }
+                
+
 
             if (inFrontStatus == 0) {
                 /* Spot is empty, this is the only situation in which the pawn can move forward
@@ -135,6 +144,7 @@ public class ChessPiece {
 
                     } else {
                         /* it's not the first or the last position, just add the move like normal */
+                        /* but also check to make sure that the move is a valid move */
                         moves.add(new ChessMove(startPosition, inFront, null));
                     }
                 } else {
@@ -167,6 +177,51 @@ public class ChessPiece {
             }      
             
             /* Add the logic for the diagonal moves for the pawns */
+            /* Create the column movement directions that we will loop over */
+            List<Integer> colDirection = List.of(-1,1);
+
+            for (Integer colMove : colDirection){
+                /* Check the diagonal by moving forward 1 row and then incrementing by the column as well*/
+                currRow = startRow;
+                currCol = startCol;
+
+                currRow += direction;
+                currCol += colMove;
+                
+                ChessPosition diagonal = new ChessPosition(currRow, currCol);
+
+
+
+                int diagStatus;
+                if (0 < currRow && currRow < 9 && 0 < currCol && currCol < 9){
+                    diagStatus = checkSpotStatus(board, pieceColor, diagonal);
+                } else {
+                    diagStatus = 1;
+                }
+                
+
+                if (diagStatus == 2) {
+                    if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                        if (startRow == 7) {
+                            moves.add(new ChessMove(startPosition, diagonal, PieceType.QUEEN));
+                            moves.add(new ChessMove(startPosition, diagonal, PieceType.BISHOP));
+                            moves.add(new ChessMove(startPosition, diagonal, PieceType.ROOK));
+                            moves.add(new ChessMove(startPosition, diagonal, PieceType.KNIGHT));
+                        } else {
+                            moves.add(new ChessMove(startPosition, diagonal, null));
+                        }
+                    } else {
+                        if (startRow == 2) {
+                            moves.add(new ChessMove(startPosition, diagonal, PieceType.QUEEN));
+                            moves.add(new ChessMove(startPosition, diagonal, PieceType.BISHOP));
+                            moves.add(new ChessMove(startPosition, diagonal, PieceType.ROOK));
+                            moves.add(new ChessMove(startPosition, diagonal, PieceType.KNIGHT));
+                        } else {
+                            moves.add(new ChessMove(startPosition, diagonal, null));
+                        } 
+                    }
+                }
+            }
 
             return moves;
             
