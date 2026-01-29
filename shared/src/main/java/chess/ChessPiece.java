@@ -86,7 +86,7 @@ public class ChessPiece {
             
             ChessPosition startPosition = new ChessPosition(myPosition.getRow(), myPosition.getColumn());
 
-            int direction = 0;
+            int direction;
 
             if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
                 /* Implement the logic for if the pawn is white */
@@ -106,17 +106,68 @@ public class ChessPiece {
             int inFrontStatus = checkSpotStatus(board, piece.getTeamColor(), inFront);
 
             if (inFrontStatus == 0) {
-                /* Spot is empty, we now see if it's the first position or the last position */
+                /* Spot is empty, this is the only situation in which the pawn can move forward
+                 we now see if it's the first position or the last position */
                 if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-                    chase us a beast
-                }
+                    if (startRow == 2) {
+                        /* This is the start position for the white team.
+                        Add the move like normal
+                        then check the position ahead to see if the pawn is able to move forward again */
+                        moves.add(new ChessMove(startPosition, inFront, null));
 
-            } else if (inFrontStatus == 2 ) {
-                /* Spot has an enemy player there */
-                moves.add(new ChessMove(startPosition, inFront, null));
-            }
+                        currRow += direction;
+                        ChessPosition farFront = new ChessPosition(currRow, myPosition.getColumn());
+
+                        int farFrontStatus = checkSpotStatus(board, piece.getTeamColor(), farFront);
+
+                        if (farFrontStatus == 0) {
+                            /* the spot in front of the pawn is available, add it to the moves */
+                            moves.add(new ChessMove(startPosition, farFront, null));
+                        }
+
+                    } else if (startRow == 7) {
+                        /* It's the second to last position, the player is moving into a spot where they are able to promote their piece
+                        accept a promotion */
+                        moves.add(new ChessMove(startPosition, inFront, PieceType.QUEEN));
+                        moves.add(new ChessMove(startPosition, inFront, PieceType.BISHOP));
+                        moves.add(new ChessMove(startPosition, inFront, PieceType.ROOK));
+                        moves.add(new ChessMove(startPosition, inFront, PieceType.KNIGHT));
+
+                    } else {
+                        /* it's not the first or the last position, just add the move like normal */
+                        moves.add(new ChessMove(startPosition, inFront, null));
+                    }
+                } else {
+                    if (startRow == 7) {
+                        /* This is the start position for the black team.
+                        Add the move like normal
+                        then check the position ahead to see if the pawn is able to move forward again */
+                        moves.add(new ChessMove(startPosition, inFront, null));
+
+                        currRow += direction;
+                        ChessPosition farFront = new ChessPosition(currRow, myPosition.getColumn());
+
+                        int farFrontStatus = checkSpotStatus(board, piece.getTeamColor(), farFront);
+
+                        if (farFrontStatus == 0) {
+                            /* the spot in front of the pawn is available, add it to the moves */
+                            moves.add(new ChessMove(startPosition, farFront, null));
+                        }
+                    } else if (startRow == 2) {
+                        /* This is the last position for the black team, accept a promotion as well */
+                        moves.add(new ChessMove(startPosition, inFront, PieceType.QUEEN));
+                        moves.add(new ChessMove(startPosition, inFront, PieceType.BISHOP));
+                        moves.add(new ChessMove(startPosition, inFront, PieceType.ROOK));
+                        moves.add(new ChessMove(startPosition, inFront, PieceType.KNIGHT));
+                    } else {
+                        /* This isn't the first or last postion, add the move as normal */
+                        moves.add(new ChessMove(startPosition, inFront, null));
+                    }
+                }
+            }      
             
-            
+            /* Add the logic for the diagonal moves for the pawns */
+
             return moves;
             
         } else if (piece.getPieceType() == PieceType.BISHOP) {
