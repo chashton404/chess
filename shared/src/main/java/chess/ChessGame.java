@@ -18,6 +18,7 @@ public class ChessGame {
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
+        /* Return either BLACK or WHITE */
         throw new RuntimeException("Not implemented");
     }
 
@@ -27,6 +28,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
+        /* change the team color, you can change the team color */
         throw new RuntimeException("Not implemented");
     }
 
@@ -46,6 +48,14 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+        /* Get the right team color */
+        /* Get a list of the moves for this team color */
+        /* Make a copy of the current board */
+        /* Iterate over each of the steps */
+            /* make that move */
+            /* check to see if the current team color is in check */
+            /* if they are in check then remove that from the list of moves */
+        /* return that list of moves */
         throw new RuntimeException("Not implemented");
     }
 
@@ -66,6 +76,9 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
+        /*TODO: Get the list of the moves for this team */
+        /*TODO: Get the position of the opposing team's king */
+        /*TODO; Check the list of moves for the king's position, if he is there return true otherwise return false.*/
         throw new RuntimeException("Not implemented");
     }
 
@@ -76,6 +89,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
+        /* TODO: Get the list of moves for the king, if it's empty then return true otherwise return flase */
         throw new RuntimeException("Not implemented");
     }
 
@@ -87,6 +101,7 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
+
         throw new RuntimeException("Not implemented");
     }
 
