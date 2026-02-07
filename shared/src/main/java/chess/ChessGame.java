@@ -41,6 +41,54 @@ public class ChessGame {
         setTeamPieces();
     }
 
+    
+
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((teamTurn == null) ? 0 : teamTurn.hashCode());
+        result = prime * result + ((board == null) ? 0 : board.hashCode());
+        result = prime * result + ((teamPieces == null) ? 0 : teamPieces.hashCode());
+        result = prime * result + ((kingPieces == null) ? 0 : kingPieces.hashCode());
+        return result;
+    }
+
+
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ChessGame other = (ChessGame) obj;
+        if (teamTurn != other.teamTurn)
+            return false;
+        if (board == null) {
+            if (other.board != null)
+                return false;
+        } else if (!board.equals(other.board))
+            return false;
+        if (teamPieces == null) {
+            if (other.teamPieces != null)
+                return false;
+        } else if (!teamPieces.equals(other.teamPieces))
+            return false;
+        if (kingPieces == null) {
+            if (other.kingPieces != null)
+                return false;
+        } else if (!kingPieces.equals(other.kingPieces))
+            return false;
+        return true;
+    }
+
+
+
 
     /**
      * @return Which team's turn it is
