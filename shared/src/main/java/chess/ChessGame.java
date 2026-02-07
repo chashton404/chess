@@ -1,6 +1,11 @@
 package chess;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Map;
+
+import chess.ChessPiece.PieceType;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -10,13 +15,24 @@ import java.util.Collection;
  */
 public class ChessGame {
 
+    /* These are the variables we will use throughout */
     private TeamColor teamTurn;
     private ChessBoard board;
+
+    /* This is the dictionary that we will use to store each teams pieces */
+    private Map<ChessGame.TeamColor, Collection<ChessPosition>> teamPieces;
+    private Map<ChessGame.TeamColor, Collection<ChessPosition>> kingPieces;
 
     public ChessGame() {
         this.teamTurn = TeamColor.WHITE;
         this.board = new ChessBoard();
         this.board.resetBoard();
+        this.teamPieces = new HashMap<>();
+        this.teamPieces.put(ChessGame.TeamColor.WHITE, new ArrayList<>());
+        this.teamPieces.put(ChessGame.TeamColor.BLACK, new ArrayList<>());
+        this.kingPieces.put(ChessGame.TeamColor.WHITE, new ArrayList<>());
+        this.kingPieces.put(ChessGame.TeamColor.BLACK, new ArrayList<>());
+        setTeamPieces();
     }
 
 
@@ -54,7 +70,7 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        /* Initialize the piece, the list of possible moves, and the list of valid moves*/
+        /* Initialize the piece, the list of possible moves, and the list of valid moves */
         ChessPiece piece = this.board.getPiece(startPosition);
         Collection<ChessMove> possibleMoves = piece.pieceMoves(this.board, startPosition);
         Collection<ChessMove> validMoves;
@@ -152,5 +168,29 @@ public class ChessGame {
             }
         }
         return copy;
+    }
+
+    /**
+     * Initialize the teamPieces and kingPieces dictionaries with the positions of each of the pieces
+     * 
+     */
+    public void setTeamPieces(){
+        /* Iterate over each of the team pieces and put them in a dictionary to allow for easy access */
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                /* Get the piece at the position given */
+                ChessPiece piece = this.board.squares[row][col];
+                if (piece != null) {
+                    /* If the piece is not null then add the position to the correct team's dictionary */
+                    ChessPosition position = new ChessPosition(row + 1, col + 1);
+                    this.teamPieces.get(piece.getTeamColor()).add(position);
+                    if (piece.getPieceType() == PieceType.KING) {
+                        /* If the piece is a king then we change it's position in the king dictionary as well */
+                        this.kingPieces.get(piece.getTeamColor()).add(position);
+                    }
+                }
+            }
+        }
+
     }
 }
