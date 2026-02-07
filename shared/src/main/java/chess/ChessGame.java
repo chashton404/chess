@@ -210,12 +210,24 @@ public class ChessGame {
             opTeam = TeamColor.WHITE;
         }
 
-        /* Get their positions, moves, and valid moves */
+        /* Get the opposing teams positions, moves, and valid moves */
         Collection<ChessPosition> opPositions = this.teamPieces.get(opTeam);
         ChessPosition king = this.kingPieces.get(teamColor);
+        /* Check to make sure that it's not null at these points, otherwise it will throw the null pointer error */
+        if (opPositions == null) {
+            return false;
+        }
+        if (king == null) {
+            throw new IllegalArgumentException("King not found");
+        }
+
 
         for (ChessPosition position : opPositions) {
-            for (ChessMove move: this.board.getPiece(position).pieceMoves(this.board, position)) {
+            ChessPiece piece = this.board.getPiece(position);
+            if (piece == null) {
+                continue;
+            }
+            for (ChessMove move: piece.pieceMoves(this.board, position)) {
                 if (move.getEndPosition().equals(king)) {
                     return true;
                 }
