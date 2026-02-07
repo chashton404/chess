@@ -10,16 +10,22 @@ import java.util.Collection;
  */
 public class ChessGame {
 
-    public ChessGame() {
+    private TeamColor teamTurn;
+    private ChessBoard board;
 
+    public ChessGame() {
+        this.teamTurn = TeamColor.WHITE;
+        this.board = new ChessBoard();
+        this.board.resetBoard();
     }
+
 
     /**
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
         /* Return either BLACK or WHITE */
-        throw new RuntimeException("Not implemented");
+        return this.teamTurn;
     }
 
     /**
@@ -28,8 +34,8 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        /* change the team color, you can change the team color */
-        throw new RuntimeException("Not implemented");
+        /* change the team color */
+        this.teamTurn = team;
     }
 
     /**
@@ -48,15 +54,22 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        /* Get the right team color */
-        /* Get a list of the moves for this team color */
-        /* Make a copy of the current board */
-        /* Iterate over each of the steps */
-            /* make that move */
-            /* check to see if the current team color is in check */
-            /* if they are in check then remove that from the list of moves */
-        /* return that list of moves */
-        throw new RuntimeException("Not implemented");
+        /* Initialize the piece, the list of possible moves, and the list of valid moves*/
+        ChessPiece piece = this.board.getPiece(startPosition);
+        Collection<ChessMove> possibleMoves = piece.pieceMoves(this.board, startPosition);
+        Collection<ChessMove> validMoves;
+
+        /* create a copy of the board that we will do moves on */
+        ChessBoard board_copy = this.board;
+
+        for (ChessMove move : possibleMoves) {
+            board_copy.makeMove(move);
+            Boolean possible_check = board_copy.isInCheck(this.teamTurn);
+            if (possible_check == false) {
+                validMoves.add(move);
+            }
+        }  
+        return validMoves;
     }
 
     /**
@@ -89,7 +102,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        /* TODO: Get the list of moves for the king, if it's empty then return true otherwise return flase */
+        /* TODO: Get the list of moves for the king, if it's empty then return true otherwise return false */
         throw new RuntimeException("Not implemented");
     }
 
@@ -101,7 +114,6 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-
         throw new RuntimeException("Not implemented");
     }
 
@@ -111,7 +123,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        throw new RuntimeException("Not implemented");
+        this.board = board;
     }
 
     /**
@@ -120,6 +132,6 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        throw new RuntimeException("Not implemented");
+        return this.board;
     }
 }
