@@ -21,17 +21,23 @@ public class ChessGame {
 
     /* This is the dictionary that we will use to store each teams pieces */
     private Map<ChessGame.TeamColor, Collection<ChessPosition>> teamPieces;
-    private Map<ChessGame.TeamColor, Collection<ChessPosition>> kingPieces;
+    private Map<ChessGame.TeamColor, ChessPosition> kingPieces;
 
     public ChessGame() {
         this.teamTurn = TeamColor.WHITE;
         this.board = new ChessBoard();
         this.board.resetBoard();
+
+        /* Create the new dictionary for the teamPieces */
         this.teamPieces = new HashMap<>();
         this.teamPieces.put(ChessGame.TeamColor.WHITE, new ArrayList<>());
         this.teamPieces.put(ChessGame.TeamColor.BLACK, new ArrayList<>());
-        this.kingPieces.put(ChessGame.TeamColor.WHITE, new ArrayList<>());
-        this.kingPieces.put(ChessGame.TeamColor.BLACK, new ArrayList<>());
+
+        /* Create the new dictionary for the kingPieces */
+        this.kingPieces = new HashMap<>();
+        this.kingPieces.put(ChessGame.TeamColor.WHITE, new ChessPosition(0, 0));
+        this.kingPieces.put(ChessGame.TeamColor.BLACK, new ChessPosition(0, 0));
+
         setTeamPieces();
     }
 
@@ -73,22 +79,27 @@ public class ChessGame {
         /* Initialize the piece, the list of possible moves, and the list of valid moves */
         ChessPiece piece = this.board.getPiece(startPosition);
         Collection<ChessMove> possibleMoves = piece.pieceMoves(this.board, startPosition);
-        Collection<ChessMove> validMoves;
+        Collection<ChessMove> validMoves = new ArrayList<>();
+        ChessBoard real_board = copyBoard(this.board);
 
         for (ChessMove move : possibleMoves) {
             /* create a deepcopy of the board that we will do moves on */
             ChessBoard board_copy = copyBoard(this.board);
+            this.board = board_copy;
 
             /* make a move on the copied board, and check for check */
             board_copy.addPiece(move.getStartPosition(), null);
             board_copy.addPiece(move.getEndPosition(), piece);
-            Boolean possible_check = board_copy.isInCheck(this.teamTurn);
+            Boolean possible_check = isInCheck(this.teamTurn);
 
             if (possible_check == false) {
                 /* Only add the move if the king is not in check */
                 validMoves.add(move);
             }
         }  
+        /* Restore the old board */
+        this.board = real_board;
+
         /*Return the list of moves */
         return validMoves;
     }
@@ -115,10 +126,27 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        /*TODO: Get the list of the moves for this team */
-        /*TODO: Get the position of the opposing team's king */
-        /*TODO; Check the list of moves for the king's position, if he is there return true otherwise return false.*/
-        throw new RuntimeException("Not implemented");
+        /* Get the opposing team color */
+        TeamColor opTeam;
+        if (teamColor == TeamColor.WHITE) {
+            opTeam = TeamColor.BLACK;
+        } else {
+            opTeam = TeamColor.WHITE;
+        }
+
+        /* Get their positions, moves, and valid moves */
+        Collection<ChessPosition> opPositions = this.teamPieces.get(opTeam);
+        ChessPosition king = this.kingPieces.get(teamColor);
+
+        for (ChessPosition position : opPositions) {
+            for (ChessMove move: this.board.getPiece(position).pieceMoves(this.board, position)) {
+                if (move.getEndPosition().equals(king)) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
     }
 
     /**
@@ -128,8 +156,18 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        /* TODO: Get the list of moves for the king, if it's empty then return true otherwise return false */
-        throw new RuntimeException("Not implemented");
+        /* Checkmate will occur when the current team is in check and if there are no valid moves */
+        boolean inCheck = isInCheck(teamColor);
+        Collection<ChessMove> possibleMoves = new ArrayList<>();
+        if (inCheck) {
+            for (ChessPosition position: this.teamPieces.get(teamColor)){
+                possibleMoves.addAll(validMoves(position));
+            }
+            if (possibleMoves.isEmpty()){
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -140,7 +178,17 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        Collection<ChessMove> possibleMoves = new ArrayList<>();
+
+        for (ChessPosition position: this.teamPieces.get(teamColor)){
+            possibleMoves.addAll(validMoves(position));
+        }
+        if (possibleMoves.isEmpty()){
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
     /**
@@ -150,6 +198,15 @@ public class ChessGame {
      */
     public void setBoard(ChessBoard board) {
         this.board = board;
+    }
+
+        /**
+     * Gets the current chessboard
+     *
+     * @return the chessboard
+     */
+    public ChessBoard getBoard() {
+        return this.board;
     }
 
     /**
@@ -189,11 +246,10 @@ public class ChessGame {
                     this.teamPieces.get(piece.getTeamColor()).add(position);
                     if (piece.getPieceType() == PieceType.KING) {
                         /* If the piece is a king then we change it's position in the king dictionary as well */
-                        this.kingPieces.get(piece.getTeamColor()).add(position);
+                        this.kingPieces.put(piece.getTeamColor(), position);
                     }
                 }
             }
         }
-
     }
 }
