@@ -159,12 +159,40 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        /* Raise an error if it's not the right team's turn */
         if (this.board.getPiece(move.getStartPosition()).getTeamColor() != this.teamTurn){
             throw new InvalidMoveException("Not your team's turn");
         }
+
+        /* Get the piece */
         ChessPiece piece = this.board.getPiece(move.getStartPosition());
+        
+        /* Get the opposing team */
+        TeamColor opTeam;
+        if (this.teamTurn == TeamColor.WHITE) {
+            opTeam = TeamColor.BLACK;
+        } else {
+            opTeam = TeamColor.WHITE;
+        }
+
+ 
+        if (this.board.getPiece(move.getEndPosition()).getTeamColor() == null) {
+            /* Change the position of the pieces in the player's list */
+            this.teamPieces.get(this.teamTurn).remove(move.getStartPosition());
+            this.teamPieces.get(this.teamTurn).add(move.getEndPosition());
+        } else if (this.board.getPiece(move.getEndPosition()).getTeamColor() == opTeam) {
+            /* Change the position of the pieces in the opponent's pieces */
+            this.teamPieces.get(opTeam).remove(move.getEndPosition());
+            this.teamPieces.get(this.teamTurn).remove(move.getStartPosition());
+            this.teamPieces.get(this.teamTurn).add(move.getEndPosition());
+
+        } else {
+            throw new InvalidMoveException("Can't move on to same team");
+        }
+
         this.board.addPiece(move.getStartPosition(), null);
         this.board.addPiece(move.getEndPosition(), piece);
+
     }
 
     /**
