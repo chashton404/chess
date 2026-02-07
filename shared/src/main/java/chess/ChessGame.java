@@ -298,6 +298,7 @@ public class ChessGame {
      */
     public void setBoard(ChessBoard board) {
         this.board = board;
+        setTeamPieces();
     }
 
         /**
