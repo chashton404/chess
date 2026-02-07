@@ -59,7 +59,7 @@ public class ChessGame {
         Collection<ChessMove> possibleMoves = piece.pieceMoves(this.board, startPosition);
         Collection<ChessMove> validMoves;
 
-        /* create a copy of the board that we will do moves on */
+        /* create a deepcopy of the board that we will do moves on */
         ChessBoard board_copy = this.board;
 
         for (ChessMove move : possibleMoves) {
@@ -127,11 +127,22 @@ public class ChessGame {
     }
 
     /**
-     * Gets the current chessboard
-     *
-     * @return the chessboard
+     * Create a deep copy of the current chessBoard
+     * 
+     * @param board the chessBoard to copy
      */
-    public ChessBoard getBoard() {
-        return this.board;
+    public ChessBoard copyBoard(ChessBoard board) {
+        ChessBoard copy = new ChessBoard();
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                ChessPiece piece = board.squares[row][col];
+                if (piece != null) {
+                    copy.squares[row][col] = new ChessPiece(piece.getTeamColor(), piece.getPieceType());
+                } else {
+                    copy.squares[row][col] = null;
+                }
+            }
+        }
+        return copy;
     }
 }
