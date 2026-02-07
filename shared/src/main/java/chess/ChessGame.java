@@ -83,7 +83,7 @@ public class ChessGame {
             board_copy.addPiece(move.getStartPosition(), null);
             board_copy.addPiece(move.getEndPosition(), piece);
             Boolean possible_check = board_copy.isInCheck(this.teamTurn);
-            
+
             if (possible_check == false) {
                 /* Only add the move if the king is not in check */
                 validMoves.add(move);
