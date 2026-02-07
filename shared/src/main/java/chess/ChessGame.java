@@ -126,6 +126,11 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         /* Initialize the piece, the list of possible moves, and the list of valid moves */
         ChessPiece piece = this.board.getPiece(startPosition);
+        if (piece == null) {
+            return null;
+        }
+
+        TeamColor teamColor = piece.getTeamColor();
         Collection<ChessMove> possibleMoves = piece.pieceMoves(this.board, startPosition);
         Collection<ChessMove> validMoves = new ArrayList<>();
         ChessBoard real_board = copyBoard(this.board);
@@ -138,7 +143,7 @@ public class ChessGame {
             /* make a move on the copied board, and check for check */
             board_copy.addPiece(move.getStartPosition(), null);
             board_copy.addPiece(move.getEndPosition(), piece);
-            Boolean possible_check = isInCheck(this.teamTurn);
+            Boolean possible_check = isInCheck(teamColor);
 
             if (possible_check == false) {
                 /* Only add the move if the king is not in check */
