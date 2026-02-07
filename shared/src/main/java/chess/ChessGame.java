@@ -203,6 +203,7 @@ public class ChessGame {
 
         this.board.addPiece(move.getStartPosition(), null);
         this.board.addPiece(move.getEndPosition(), piece);
+        this.teamTurn = opTeam;
 
     }
 
