@@ -100,6 +100,9 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        if (this.board.getPiece(move.getStartPosition()).getTeamColor() != this.teamTurn){
+            throw new InvalidMoveException("Not your team's turn");
+        }
         ChessPiece piece = this.board.getPiece(move.getStartPosition());
         this.board.addPiece(move.getStartPosition(), null);
         this.board.addPiece(move.getEndPosition(), piece);
