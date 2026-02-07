@@ -59,16 +59,21 @@ public class ChessGame {
         Collection<ChessMove> possibleMoves = piece.pieceMoves(this.board, startPosition);
         Collection<ChessMove> validMoves;
 
-        /* create a deepcopy of the board that we will do moves on */
-        ChessBoard board_copy = this.board;
-
         for (ChessMove move : possibleMoves) {
-            board_copy.makeMove(move);
+            /* create a deepcopy of the board that we will do moves on */
+            ChessBoard board_copy = copyBoard(this.board);
+
+            /* make a move on the copied board, and check for check */
+            board_copy.addPiece(move.getStartPosition(), null);
+            board_copy.addPiece(move.getEndPosition(), piece);
             Boolean possible_check = board_copy.isInCheck(this.teamTurn);
+            
             if (possible_check == false) {
+                /* Only add the move if the king is not in check */
                 validMoves.add(move);
             }
         }  
+        /*Return the list of moves */
         return validMoves;
     }
 
@@ -79,7 +84,9 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        ChessPiece piece = this.board.getPiece(move.getStartPosition());
+        this.board.addPiece(move.getStartPosition(), null);
+        this.board.addPiece(move.getEndPosition(), piece);
     }
 
     /**
@@ -130,6 +137,7 @@ public class ChessGame {
      * Create a deep copy of the current chessBoard
      * 
      * @param board the chessBoard to copy
+     * @return a deep copy of the chessboard object
      */
     public ChessBoard copyBoard(ChessBoard board) {
         ChessBoard copy = new ChessBoard();
