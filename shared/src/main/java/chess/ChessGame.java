@@ -172,6 +172,12 @@ public class ChessGame {
         /* Get the piece */
         ChessPiece piece = this.board.getPiece(move.getStartPosition());
         
+        /* Raise an error if this move is not in the list of possible moves */
+        Collection<ChessMove> possibleMoves = validMoves(move.getStartPosition());
+        if (!possibleMoves.contains(move)) {
+            throw new InvalidMoveException("Not a valid move");
+        }
+        
         /* Get the opposing team */
         TeamColor opTeam;
         if (this.teamTurn == TeamColor.WHITE) {
