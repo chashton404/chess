@@ -171,7 +171,7 @@ public class ChessGame {
 
         /* Get the piece */
         ChessPiece piece = this.board.getPiece(move.getStartPosition());
-        
+
         /* Raise an error if this move is not in the list of possible moves */
         Collection<ChessMove> possibleMoves = validMoves(move.getStartPosition());
         if (!possibleMoves.contains(move)) {
