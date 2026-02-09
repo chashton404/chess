@@ -94,4 +94,50 @@ public class ChessBoard {
         squares[7][4] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
         squares[7][3] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder chessBoard = new StringBuilder();
+        chessBoard.append('|');
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                chessBoard.append('|');
+                ChessPiece piece = getPiece(new ChessPosition(row + 1, col + 1));
+                if (piece == null) {
+                    chessBoard.append(' ')
+                } else if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                    if (piece.getPieceType() == ChessPiece.PieceType.KING) {
+                        chessBoard.append('K');
+                    } else if (piece.getPieceType() == ChessPiece.PieceType.QUEEN) {
+                        chessBoard.append('Q');
+                    } else if (piece.getPieceType() == ChessPiece.PieceType.BISHOP) {
+                        chessBoard.append('B');
+                    } else if (piece.getPieceType() == ChessPiece.PieceType.KNIGHT) {
+                        chessBoard.append('N');
+                    } else if (piece.getPieceType() == ChessPiece.PieceType.ROOK) {
+                        chessBoard.append('R');
+                    } else if (piece.getPieceType() == ChessPiece.PieceType.PAWN) {
+                        chessBoard.append('P');
+                    }
+                } else {
+                    if (piece.getPieceType() == ChessPiece.PieceType.KING) {
+                        chessBoard.append('k');
+                    } else if (piece.getPieceType() == ChessPiece.PieceType.QUEEN) {
+                        chessBoard.append('q');
+                    } else if (piece.getPieceType() == ChessPiece.PieceType.BISHOP) {
+                        chessBoard.append('b');
+                    } else if (piece.getPieceType() == ChessPiece.PieceType.KNIGHT) {
+                        chessBoard.append('n');
+                    } else if (piece.getPieceType() == ChessPiece.PieceType.ROOK) {
+                        chessBoard.append('r');
+                    } else if (piece.getPieceType() == ChessPiece.PieceType.PAWN) {
+                        chessBoard.append('p');
+                    }
+                }
+            }
+            chessBoard.append('\n');
+        }
+
+        return chessBoard.toString();
+    }
 }
