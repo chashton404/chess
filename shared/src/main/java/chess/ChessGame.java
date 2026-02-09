@@ -41,9 +41,7 @@ public class ChessGame {
         setTeamPieces();
     }
 
-    
-
-
+    /* HASH AND EQUALS STUFF */
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -54,9 +52,6 @@ public class ChessGame {
         result = prime * result + ((kingPieces == null) ? 0 : kingPieces.hashCode());
         return result;
     }
-
-
-
 
     @Override
     public boolean equals(Object obj) {
@@ -86,9 +81,6 @@ public class ChessGame {
             return false;
         return true;
     }
-
-
-
 
     /**
      * @return Which team's turn it is
@@ -131,18 +123,49 @@ public class ChessGame {
         }
 
         TeamColor teamColor = piece.getTeamColor();
+
+        /* Get the opposing team */
+        TeamColor opTeam;
+        if (teamColor == TeamColor.WHITE) {
+            opTeam = TeamColor.BLACK;
+        } else {
+            opTeam = TeamColor.WHITE;
+        }
+
         Collection<ChessMove> possibleMoves = piece.pieceMoves(this.board, startPosition);
         Collection<ChessMove> validMoves = new ArrayList<>();
+
+        /* Create temporary variables to store the orignal board, pieces, and kings */
         ChessBoard real_board = copyBoard(this.board);
+        Map<ChessGame.TeamColor, Collection<ChessPosition>> real_pieces = copyPieces(this.teamPieces);
+        Map<ChessGame.TeamColor, ChessPosition> real_kings = copyKings(this.kingPieces);
 
         for (ChessMove move : possibleMoves) {
             /* create a deepcopy of the board that we will do moves on */
-            ChessBoard board_copy = copyBoard(this.board);
-            this.board = board_copy;
+            ChessBoard board_copy = copyBoard(real_board);
+            Map<ChessGame.TeamColor, Collection<ChessPosition>> copy_pieces = copyPieces(real_pieces);
+            Map<ChessGame.TeamColor, ChessPosition> copy_kings = copyKings(real_kings);
 
-            /* make a move on the copied board, and check for check */
+            this.board = board_copy;
+            this.teamPieces = copy_pieces;
+            this.kingPieces = copy_kings;
+
+            /* make a move on the copied board, update the lists accordingly, and check for check */
             board_copy.addPiece(move.getStartPosition(), null);
             board_copy.addPiece(move.getEndPosition(), piece);
+
+            if (this.board.getPiece(move.getEndPosition()).getTeamColor() == null) {
+                /* Change the position of the pieces in the player's list */
+                this.teamPieces.get(this.teamTurn).remove(move.getStartPosition());
+                this.teamPieces.get(this.teamTurn).add(move.getEndPosition());
+            } else if (this.board.getPiece(move.getEndPosition()).getTeamColor() == opTeam) {
+                /* Change the position of the pieces in the opponent's pieces */
+                this.teamPieces.get(opTeam).remove(move.getEndPosition());
+                this.teamPieces.get(this.teamTurn).remove(move.getStartPosition());
+                this.teamPieces.get(this.teamTurn).add(move.getEndPosition());
+    
+            }
+
             Boolean possible_check = isInCheck(teamColor);
 
             if (possible_check == false) {
@@ -150,8 +173,10 @@ public class ChessGame {
                 validMoves.add(move);
             }
         }  
-        /* Restore the old board */
+        /* Restore the old board and pieces*/
         this.board = real_board;
+        this.teamPieces = real_pieces;
+        this.kingPieces = real_kings;
 
         /*Return the list of moves */
         return validMoves;
@@ -311,27 +336,6 @@ public class ChessGame {
     }
 
     /**
-     * Create a deep copy of the current chessBoard
-     * 
-     * @param board the chessBoard to copy
-     * @return a deep copy of the chessboard object
-     */
-    public ChessBoard copyBoard(ChessBoard board) {
-        ChessBoard copy = new ChessBoard();
-        for (int row = 0; row < 8; row++) {
-            for (int col = 0; col < 8; col++) {
-                ChessPiece piece = board.squares[row][col];
-                if (piece != null) {
-                    copy.squares[row][col] = new ChessPiece(piece.getTeamColor(), piece.getPieceType());
-                } else {
-                    copy.squares[row][col] = null;
-                }
-            }
-        }
-        return copy;
-    }
-
-    /**
      * Initialize the teamPieces and kingPieces dictionaries with the positions of each of the pieces
      * 
      */
@@ -352,5 +356,62 @@ public class ChessGame {
                 }
             }
         }
+    }
+
+    /**
+     * Create a deep copy of the current chessBoard
+     * 
+     * @param board the chessBoard to copy
+     * @return a deep copy of the chessboard object
+     */
+        public ChessBoard copyBoard(ChessBoard board) {
+            ChessBoard copy = new ChessBoard();
+            for (int row = 0; row < 8; row++) {
+                for (int col = 0; col < 8; col++) {
+                    ChessPiece piece = board.squares[row][col];
+                    if (piece != null) {
+                        copy.squares[row][col] = new ChessPiece(piece.getTeamColor(), piece.getPieceType());
+                    } else {
+                        copy.squares[row][col] = null;
+                    }
+                }
+            }
+            return copy;
+        }
+
+    /**
+     * Create a deepcopies of the teamPieces so that they can be updated while we check for check
+     * @param chessPieces the list of chesspieces to be copied
+     * @return a deepcopy of the chesspieces
+     */
+    public Map<ChessGame.TeamColor, Collection<ChessPosition>> copyPieces(Map<ChessGame.TeamColor, Collection<ChessPosition>> chessPieces) {
+        Map<ChessGame.TeamColor, Collection<ChessPosition>> piecesCopy = new HashMap<>();
+        piecesCopy.put(ChessGame.TeamColor.WHITE, new ArrayList<>());
+        piecesCopy.put(ChessGame.TeamColor.BLACK, new ArrayList<>());
+
+        for (ChessGame.TeamColor team : chessPieces.keySet()){
+            for (ChessPosition position : chessPieces.get(team)) {
+                piecesCopy.get(team).add(position);
+            }
+        }
+
+        return piecesCopy;
+    }
+
+    /**
+     * Create a deepcopy of the kingPieces that can then be updated while we check for check
+     * @param kingPieces the dictionary containing the king's pieces
+     * @param kingsCopy the copied list of kings
+     */
+    public Map<ChessGame.TeamColor, ChessPosition> copyKings(Map<ChessGame.TeamColor, ChessPosition> kingPieces) {
+        Map<ChessGame.TeamColor, ChessPosition> kingsCopy = new HashMap<>();
+        kingsCopy.put(ChessGame.TeamColor.WHITE, new ChessPosition(0, 0));
+        kingsCopy.put(ChessGame.TeamColor.BLACK, new ChessPosition(0, 0));
+
+        for (ChessGame.TeamColor team : kingPieces.keySet()){
+                kingsCopy.put(team, kingsCopy.get(team));
+
+        }
+        return kingsCopy;
     }
 }
