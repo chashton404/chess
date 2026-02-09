@@ -104,7 +104,7 @@ public class ChessBoard {
                 chessBoard.append('|');
                 ChessPiece piece = getPiece(new ChessPosition(row + 1, col + 1));
                 if (piece == null) {
-                    chessBoard.append(' ')
+                    chessBoard.append(' ');
                 } else if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
                     if (piece.getPieceType() == ChessPiece.PieceType.KING) {
                         chessBoard.append('K');
