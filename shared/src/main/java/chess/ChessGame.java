@@ -308,6 +308,9 @@ public class ChessGame {
         Collection<ChessMove> possibleMoves = new ArrayList<>();
         if (inCheck) {
             for (ChessPosition position: this.teamPieces.get(teamColor)){
+                if (validMoves(position) == null) {
+                    continue;
+                }
                 possibleMoves.addAll(validMoves(position));
             }
             if (possibleMoves.isEmpty()){
@@ -328,6 +331,9 @@ public class ChessGame {
         Collection<ChessMove> possibleMoves = new ArrayList<>();
 
         for (ChessPosition position: this.teamPieces.get(teamColor)){
+            if (validMoves(position) == null) {
+                continue;
+            }
             possibleMoves.addAll(validMoves(position));
         }
 
@@ -364,6 +370,17 @@ public class ChessGame {
      * 
      */
     public void setTeamPieces(){
+        
+        /* Create the new dictionary for the teamPieces */
+        this.teamPieces = new HashMap<>();
+        this.teamPieces.put(ChessGame.TeamColor.WHITE, new ArrayList<>());
+        this.teamPieces.put(ChessGame.TeamColor.BLACK, new ArrayList<>());
+
+        /* Create the new dictionary for the kingPieces */
+        this.kingPieces = new HashMap<>();
+        this.kingPieces.put(ChessGame.TeamColor.WHITE, new ChessPosition(0, 0));
+        this.kingPieces.put(ChessGame.TeamColor.BLACK, new ChessPosition(0, 0));
+
         /* Iterate over each of the team pieces and put them in a dictionary to allow for easy access */
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
