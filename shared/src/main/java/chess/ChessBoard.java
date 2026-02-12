@@ -98,10 +98,10 @@ public class ChessBoard {
     @Override
     public String toString() {
         StringBuilder chessBoard = new StringBuilder();
-        chessBoard.append('|');
+        chessBoard.append('\n');
         for (int row = 0; row < 8; row++) {
+            chessBoard.append('|');
             for (int col = 0; col < 8; col++) {
-                chessBoard.append('|');
                 ChessPiece piece = getPiece(new ChessPosition(row + 1, col + 1));
                 if (piece == null) {
                     chessBoard.append(' ');
@@ -134,6 +134,7 @@ public class ChessBoard {
                         chessBoard.append('p');
                     }
                 }
+                chessBoard.append('|');
             }
             chessBoard.append('\n');
         }
