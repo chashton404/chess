@@ -330,7 +330,8 @@ public class ChessGame {
         for (ChessPosition position: this.teamPieces.get(teamColor)){
             possibleMoves.addAll(validMoves(position));
         }
-        if (possibleMoves.isEmpty()){
+
+        if (possibleMoves.isEmpty() && !isInCheckmate(teamColor)){
             return true;
         } else {
             return false;
