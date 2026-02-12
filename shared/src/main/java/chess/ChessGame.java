@@ -249,7 +249,12 @@ public class ChessGame {
         }
 
         this.board.addPiece(move.getStartPosition(), null);
-        this.board.addPiece(move.getEndPosition(), piece);
+        if (move.getPromotionPiece() != null) {
+            this.board.addPiece(move.getEndPosition(), new ChessPiece(this.teamTurn, move.getPromotionPiece()));
+        } else {
+            this.board.addPiece(move.getEndPosition(), piece);    
+        }
+        
         this.teamTurn = opTeam;
 
     }
