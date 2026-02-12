@@ -37,10 +37,12 @@ public class ChessGame {
         this.kingPieces.put(ChessGame.TeamColor.WHITE, new ChessPosition(0, 0));
         this.kingPieces.put(ChessGame.TeamColor.BLACK, new ChessPosition(0, 0));
 
+        this.board.resetBoard();
         setTeamPieces();
     }
 
-    /* HASH AND EQUALS STUFF */
+    
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -51,6 +53,8 @@ public class ChessGame {
         result = prime * result + ((kingPieces == null) ? 0 : kingPieces.hashCode());
         return result;
     }
+
+
 
     @Override
     public boolean equals(Object obj) {
@@ -80,6 +84,8 @@ public class ChessGame {
             return false;
         return true;
     }
+
+
 
     /**
      * @return Which team's turn it is
@@ -149,21 +155,28 @@ public class ChessGame {
             this.teamPieces = copy_pieces;
             this.kingPieces = copy_kings;
 
-            /* make a move on the copied board, update the lists accordingly, and check for check */
-            board_copy.addPiece(move.getStartPosition(), null);
-            board_copy.addPiece(move.getEndPosition(), piece);
-
-            if (this.board.getPiece(move.getEndPosition()).getTeamColor() == null) {
+            if (this.board.getPiece(move.getEndPosition()) == null) {
                 /* Change the position of the pieces in the player's list */
-                this.teamPieces.get(this.teamTurn).remove(move.getStartPosition());
-                this.teamPieces.get(this.teamTurn).add(move.getEndPosition());
+                this.teamPieces.get(piece.getTeamColor()).remove(move.getStartPosition());
+                this.teamPieces.get(piece.getTeamColor()).add(move.getEndPosition());
+                /* If it's a king then we need to update the position of the king in the list */
+                if (piece.getPieceType() == PieceType.KING) {
+                    this.kingPieces.put(piece.getTeamColor(), move.getEndPosition());
+                }
             } else if (this.board.getPiece(move.getEndPosition()).getTeamColor() == opTeam) {
                 /* Change the position of the pieces in the opponent's pieces */
                 this.teamPieces.get(opTeam).remove(move.getEndPosition());
-                this.teamPieces.get(this.teamTurn).remove(move.getStartPosition());
-                this.teamPieces.get(this.teamTurn).add(move.getEndPosition());
-    
+                this.teamPieces.get(piece.getTeamColor()).remove(move.getStartPosition());
+                this.teamPieces.get(piece.getTeamColor()).add(move.getEndPosition());
+                /* If it's a king then we need to update the position of the king in the list */
+                if (piece.getPieceType() == PieceType.KING) {
+                    this.kingPieces.put(piece.getTeamColor(), move.getEndPosition());
+                }
             }
+
+            /* make a move on the copied board, update the lists accordingly, and check for check */
+            board_copy.addPiece(move.getStartPosition(), null);
+            board_copy.addPiece(move.getEndPosition(), piece);
 
             Boolean possible_check = isInCheck(teamColor);
 
@@ -189,6 +202,9 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         /* Raise an error if it's not the right team's turn */
+        if (this.board.getPiece(move.getStartPosition()) == null) {
+            throw new InvalidMoveException("Not your team's turn");
+        }
         if (this.board.getPiece(move.getStartPosition()).getTeamColor() != this.teamTurn){
             throw new InvalidMoveException("Not your team's turn");
         }
@@ -211,16 +227,23 @@ public class ChessGame {
         }
 
  
-        if (this.board.getPiece(move.getEndPosition()).getTeamColor() == null) {
+        if (this.board.getPiece(move.getEndPosition()) == null) {
             /* Change the position of the pieces in the player's list */
             this.teamPieces.get(this.teamTurn).remove(move.getStartPosition());
             this.teamPieces.get(this.teamTurn).add(move.getEndPosition());
+            /* If it's a king then we need to update the position of the king in the list */
+            if (piece.getPieceType() == PieceType.KING) {
+                this.kingPieces.put(piece.getTeamColor(), move.getEndPosition());
+            }
         } else if (this.board.getPiece(move.getEndPosition()).getTeamColor() == opTeam) {
             /* Change the position of the pieces in the opponent's pieces */
             this.teamPieces.get(opTeam).remove(move.getEndPosition());
             this.teamPieces.get(this.teamTurn).remove(move.getStartPosition());
             this.teamPieces.get(this.teamTurn).add(move.getEndPosition());
-
+            /* If it's a king then we need to update the position of the king in the list */
+            if (piece.getPieceType() == PieceType.KING) {
+                this.kingPieces.put(piece.getTeamColor(), move.getEndPosition());
+            }
         } else {
             throw new InvalidMoveException("Can't move on to same team");
         }
@@ -321,6 +344,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
+        this.board.squares = new ChessPiece[8][8];
         this.board = board;
         setTeamPieces();
     }
@@ -408,7 +432,7 @@ public class ChessGame {
         kingsCopy.put(ChessGame.TeamColor.BLACK, new ChessPosition(0, 0));
 
         for (ChessGame.TeamColor team : kingPieces.keySet()){
-                kingsCopy.put(team, kingsCopy.get(team));
+                kingsCopy.put(team, kingPieces.get(team));
 
         }
         return kingsCopy;
