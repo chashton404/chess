@@ -26,7 +26,6 @@ public class ChessGame {
     public ChessGame() {
         this.teamTurn = TeamColor.WHITE;
         this.board = new ChessBoard();
-        this.board.resetBoard();
 
         /* Create the new dictionary for the teamPieces */
         this.teamPieces = new HashMap<>();
@@ -168,7 +167,7 @@ public class ChessGame {
 
             Boolean possible_check = isInCheck(teamColor);
 
-            if (possible_check == false) {
+            if (!possible_check) {
                 /* Only add the move if the king is not in check */
                 validMoves.add(move);
             }
