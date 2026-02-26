@@ -12,3 +12,6 @@ out/
 
 ### Chess project ###
 server/**/db.properties
+
+### Personal Notes ###
+notes

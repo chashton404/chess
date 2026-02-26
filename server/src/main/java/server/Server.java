@@ -1,3 +1,4 @@
+// Because I wanted to keep using VSCode instead of intelliJ, we learned how to use the 
 package server;
 
 import io.javalin.*;

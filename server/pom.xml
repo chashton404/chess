@@ -19,6 +19,10 @@
             <resource>
                 <directory>src/main/resources</directory>
             </resource>
+            <resource>
+                <directory>src/main/resources/web</directory>
+                <targetPath>web</targetPath>
+            </resource>
         </resources>
         <plugins>
             <plugin>
