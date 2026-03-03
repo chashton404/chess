@@ -4,10 +4,14 @@ import dataaccess.DataAccessException;
 import model.*;
 
 public interface GameDAO {
-    void clear() throws DataAccessException;
+    void createGame() throws DataAccessException;
 
-    void createUser() throws DataAccessException;
+    void getGame() throws DataAccessException;
 
-    //These are some of the functions that we may want to implement:
-    //createGame, getGame, listGames, updateGame
+    void listGames() throws DataAccessException;
+
+    void updateGame() throws DataAccessException;
+
+    void clearGames() throws DataAccessException;
+
 }
