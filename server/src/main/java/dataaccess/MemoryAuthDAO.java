@@ -1,11 +1,7 @@
 package dataaccess;
 
-import dataaccess.DataAccessException;
-
 import model.AuthData;
-import dataaccess.AuthDAO;
 import java.util.HashMap;
-import java.util.UUID;
 
 public class MemoryAuthDAO implements AuthDAO {
     

@@ -37,7 +37,7 @@ public class UserService {
 
         // Check to see if there exists a user with the name
         if (userDAO.checkUser(req.username()) == true){
-            throw new AlreadyTakenException("Error: already taken"));
+            throw new AlreadyTakenException("Error: already taken");
         }
 
         // Create a UserData object using the model, and use the request for the constructor

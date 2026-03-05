@@ -3,7 +3,6 @@ package server;
 
 // Import the javalin stuff
 import io.javalin.*;
-import io.javalin.http.Context;
 
 // Import the services being used
 import service.*;

@@ -1,6 +1,5 @@
 package dataaccess;
 
-import dataaccess.DataAccessException;
 import model.*;
 
 public interface UserDAO {

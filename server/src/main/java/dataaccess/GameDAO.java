@@ -1,8 +1,5 @@
 package dataaccess;
 
-import dataaccess.DataAccessException;
-import model.*;
-
 public interface GameDAO {
     void createGame() throws DataAccessException;
 
