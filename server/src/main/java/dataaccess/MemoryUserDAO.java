@@ -25,6 +25,11 @@ public class MemoryUserDAO implements UserDAO {
         return userExists;
     }
 
+    public UserData getUser(String username) {
+        UserData user = users.get(username);
+        return user;
+    }
+
     public void clearUsers() {
         users.clear();
     }
