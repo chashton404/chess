@@ -5,9 +5,9 @@ import model.*;
 
 public interface UserDAO {
 
-    void createUser() throws DataAccessException;
+    void createUser(UserData u) throws DataAccessException;
 
-    boolean checkUser() throws DataAccessException;
+    boolean checkUser(String username) throws DataAccessException;
 
     void clearUsers() throws DataAccessException;
 

@@ -17,7 +17,6 @@ public class MemoryAuthDAO implements AuthDAO {
 
         // Add the new input
         auths.put(a.authToken(), a);
-
     }
 
     public void clearAuth(){
@@ -32,12 +31,6 @@ public class MemoryAuthDAO implements AuthDAO {
         } else if (a.username() == null) {
             throw new DataAccessException("Error: Null Username");
         }
-    }
-
-    @Override
-    public void createAuth() throws DataAccessException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'createAuth'");
     }
 
     @Override

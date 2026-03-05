@@ -2,7 +2,6 @@ package dataaccess;
 
 import java.util.HashMap;
 import model.UserData;
-import dataaccess.UserDAO;
 
 public class MemoryUserDAO implements UserDAO {
     
@@ -16,12 +15,13 @@ public class MemoryUserDAO implements UserDAO {
         users.put(u.username(), u);
     }
 
-    public boolean checkUser(UserData u) throws DataAccessException{
-        // Check to verify that the UserData is valid data
-        validUserData(u);
+    public boolean checkUser(String username) throws DataAccessException{
+        if (username == null){
+            throw new DataAccessException("Error: Null Username");
+        }
 
         // Return whether or not user exists
-        Boolean userExists = users.containsKey(u.username());
+        Boolean userExists = users.containsKey(username);
         return userExists;
     }
 
@@ -40,17 +40,4 @@ public class MemoryUserDAO implements UserDAO {
             throw new DataAccessException("Error: Missing Email");
         }
     }
-
-    @Override
-    public void createUser() throws DataAccessException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'createUser'");
-    }
-
-    @Override
-    public boolean checkUser() throws DataAccessException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'checkUser'");
-    }
-
 }

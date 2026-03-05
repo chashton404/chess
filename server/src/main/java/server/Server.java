@@ -29,7 +29,7 @@ public class Server {
     // Initialize the services
     private final AuthService authService = new AuthService(authDAO);
     private final GameService gameService = new GameService(gameDAO);
-    private final UserService userService = new UserService(userDAO);
+    private final UserService userService = new UserService(userDAO, authDAO);
 
     // Initialize the handlers
     private final ClearHandler clearHandler = new ClearHandler(authService, gameService, userService);
