@@ -24,6 +24,10 @@ public class MemoryUserDAO {
         return userExists;
     }
 
+    public void clearUsers() {
+        users.clear();
+    }
+
     private void validUserData(UserData u) throws DataAccessException {
         if (u == null) {
             throw new DataAccessException("Error: Null UserData");
