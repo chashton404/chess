@@ -19,6 +19,7 @@ public class Server {
 
         .post("/session", this::loginUser)
         .delete("/db", this::clearData)
+        .post("/user", this::registerUser)
 
     }
 
@@ -32,8 +33,10 @@ public class Server {
     }
 
     private String loginUser(Context ctx) {
-
+        
     }
+
+
 
     private void clearData(Context ctx) {
         authService.clearAuth();
