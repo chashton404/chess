@@ -3,10 +3,11 @@ package dataaccess;
 import dataaccess.DataAccessException;
 
 import model.AuthData;
+import dataaccess.AuthDAO;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class MemoryAuthDAO {
+public class MemoryAuthDAO implements AuthDAO {
     
     final private HashMap<String, AuthData> auths = new HashMap<>();
 
@@ -31,5 +32,23 @@ public class MemoryAuthDAO {
         } else if (a.username() == null) {
             throw new DataAccessException("Error: Null Username");
         }
+    }
+
+    @Override
+    public void createAuth() throws DataAccessException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'createAuth'");
+    }
+
+    @Override
+    public String getAuth() throws DataAccessException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getAuth'");
+    }
+
+    @Override
+    public void deleteAuth() throws DataAccessException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'deleteAuth'");
     }
 }

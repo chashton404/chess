@@ -1,26 +1,42 @@
 // Because I wanted to keep using VSCode instead of intelliJ, we learned how to use the 
 package server;
 
+// Import the javalin stuff
 import io.javalin.*;
 import io.javalin.http.Context;
-import service.AuthService;
-import service.GameService;
-import service.UserService;
+
+// Import the services being used
+import service.*;
+
+// Import the DAOS and local storage
+import dataaccess.AuthDAO;
+import dataaccess.GameDAO;
+import dataaccess.UserDAO;
+import dataaccess.MemoryAuthDAO;
+import dataaccess.MemoryGameDAO;
+import dataaccess.MemoryUserDAO;
 
 public class Server {
 
+    // Initialize Javalin
     private final Javalin javalin;
-    private final AuthService authService = new AuthService();
-    private final GameService gameService = new GameService();
-    private final UserService userService = new UserService();
+
+    // Initialize the DAOs
+    private final UserDAO userDAO = new MemoryUserDAO();
+    private final AuthDAO authDAO = new MemoryAuthDAO();
+    private final GameDAO gameDAO = new MemoryGameDAO();
+
+    // Initialize the services
+    private final AuthService authService = new AuthService(authDAO);
+    private final GameService gameService = new GameService(gameDAO);
+    private final UserService userService = new UserService(userDAO);
+
+    // Initialize the handlers
+    private final ClearHandler clearHandler = new ClearHandler(authService, gameService, userService);
 
     public Server() {
-        javalin = Javalin.create(config -> config.staticFiles.add("web"));
-
-        .post("/session", this::loginUser)
-        .delete("/db", this::clearData)
-        .post("/user", this::registerUser)
-
+        javalin = Javalin.create(config -> config.staticFiles.add("web"))
+            .delete("/db", clearHandler::clear);
     }
 
     public int run(int desiredPort) {
@@ -30,19 +46,5 @@ public class Server {
 
     public void stop() {
         javalin.stop();
-    }
-
-    private String loginUser(Context ctx) {
-        
-    }
-
-
-
-    private void clearData(Context ctx) {
-        authService.clearAuth();
-        gameService.clearGames();
-        userService.clearUsers();
-
-        ctx.status(200);
     }
 }

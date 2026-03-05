@@ -2,8 +2,9 @@ package dataaccess;
 
 import java.util.HashMap;
 import model.UserData;
+import dataaccess.UserDAO;
 
-public class MemoryUserDAO {
+public class MemoryUserDAO implements UserDAO {
     
     final private HashMap<String, UserData> users = new HashMap<>();
 
@@ -38,6 +39,18 @@ public class MemoryUserDAO {
         } else if (u.email() == null) {
             throw new DataAccessException("Error: Missing Email");
         }
+    }
+
+    @Override
+    public void createUser() throws DataAccessException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'createUser'");
+    }
+
+    @Override
+    public boolean checkUser() throws DataAccessException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'checkUser'");
     }
 
 }
