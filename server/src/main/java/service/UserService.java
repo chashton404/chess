@@ -69,7 +69,7 @@ public class UserService {
         if (!userDAO.getUser(req.username()).password().equals(req.password())) {
             throw new UnauthorizedException("Error: unauthorized");
         }
-        
+        //TODO: make it so that the user can't login if they are already logged in
         String newAuthToken = UUID.randomUUID().toString();
         AuthData authData = new AuthData(newAuthToken, req.username());
         authDAO.createAuth(authData);
