@@ -21,7 +21,7 @@ public class MemoryUserDAO implements UserDAO {
         }
 
         // Return whether or not user exists
-        Boolean userExists = users.containsKey(username);
+        boolean userExists = users.containsKey(username);
         return userExists;
     }
 

@@ -3,7 +3,6 @@ package server;
 import dataaccess.AlreadyTakenException;
 import dataaccess.BadRequestException;
 import io.javalin.http.Context;
-import service.AuthService;
 import service.UserService;
 
 import model.RegisterRequest;
@@ -13,11 +12,9 @@ import java.util.Map;
 
 public class UserHandler {
 
-    private final AuthService authService;
     private final UserService userService;
 
-    public UserHandler(AuthService authService, UserService userService) {
-        this.authService = authService;
+    public UserHandler(UserService userService) {
         this.userService = userService;
     }
 

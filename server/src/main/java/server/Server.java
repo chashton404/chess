@@ -33,7 +33,7 @@ public class Server {
 
     // Initialize the handlers
     private final ClearHandler clearHandler = new ClearHandler(authService, gameService, userService);
-    private final UserHandler userHandler = new UserHandler(authService, userService);
+    private final UserHandler userHandler = new UserHandler(userService);
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
