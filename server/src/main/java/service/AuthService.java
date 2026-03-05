@@ -1,17 +1,18 @@
 package service;
 
+import dataaccess.DataAccessException;
+import dataaccess.AuthDAO;
+
 public class AuthService {
+
+    private final AuthDAO authDAO;
+
+    public AuthService(AuthDAO authDAO) {
+        this.authDAO = authDAO;
+    }
     
-    public void clearAuth() {
-
-        //public void deleteAllPets() throws ResponseException {
-        //    Collection<Pet> pets = dataAccess.listPets();
-        //    if (!pets.isEmpty()) {
-        //        dataAccess.deleteAllPets();
-        //    }
-        }
-        
-
+    public void clearAuth() throws DataAccessException {
+        authDAO.clearAuth();
     }
 
 }
