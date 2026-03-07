@@ -77,4 +77,9 @@ public class UserService {
         return new LoginResult(req.username(), newAuthToken);
     }
 
+    public void logout(String authToken) 
+        throws DataAccessException, UnauthorizedException {
+        authDAO.deleteAuth(authToken);
+    }   
+
 }

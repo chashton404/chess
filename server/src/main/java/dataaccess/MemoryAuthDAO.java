@@ -35,9 +35,14 @@ public class MemoryAuthDAO implements AuthDAO {
         throw new UnsupportedOperationException("Unimplemented method 'getAuth'");
     }
 
-    @Override
-    public void deleteAuth() throws DataAccessException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteAuth'");
+    public void deleteAuth(String authKey) throws DataAccessException, UnauthorizedException {
+        if (authKey == null) {
+            throw new DataAccessException("Error: authKey is null");
+        }
+
+        AuthData removedAuth = auths.remove(authKey);
+        if (removedAuth == null || !authKey.equals(removedAuth.authToken())) {
+            throw new UnauthorizedException("Error: Unauthorized");
+        }
     }
 }

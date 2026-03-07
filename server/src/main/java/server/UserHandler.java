@@ -62,4 +62,20 @@ public class UserHandler {
             ctx.json(Map.of("message", e.getMessage()));
         }
     }
+
+    public void logout(Context ctx) {
+        String authToken = ctx.header("authorization");
+
+        try {
+            userService.logout(authToken);
+            ctx.status(200);
+            ctx.result("{}");
+        } catch (UnauthorizedException e) {
+            ctx.status(401);
+            ctx.json(Map.of("message", e.getMessage()));
+        } catch (Exception e) {
+            ctx.status(500);
+            ctx.json(Map.of("message", e.getMessage()));
+        }
+    }
 }
