@@ -33,6 +33,7 @@ public class Server {
     // Initialize the handlers
     private final ClearHandler clearHandler = new ClearHandler(authService, gameService, userService);
     private final UserHandler userHandler = new UserHandler(userService);
+    private final GameHandler gameHandler = new GameHandler(gameService);
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
@@ -40,6 +41,7 @@ public class Server {
             .post("/user", userHandler::registerUser)
             .post("/session", userHandler::login)
             .delete("/session", userHandler::logout);
+            .post("/game", gameHandler::createGame);
     }
 
     public int run(int desiredPort) {

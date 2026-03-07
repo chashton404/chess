@@ -13,7 +13,7 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public void createGame() throws DataAccessException {
+    public void createGame(Integer gameID) throws DataAccessException {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'createGame'");
     }
