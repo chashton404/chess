@@ -58,30 +58,40 @@ public class ChessGame {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }  
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         ChessGame other = (ChessGame) obj;
-        if (teamTurn != other.teamTurn)
+        if (teamTurn != other.teamTurn) {
             return false;
+        }
         if (board == null) {
-            if (other.board != null)
+            if (other.board != null) {
                 return false;
-        } else if (!board.equals(other.board))
+            }
+        } else if (!board.equals(other.board)) {
             return false;
+        }
         if (teamPieces == null) {
-            if (other.teamPieces != null)
+            if (other.teamPieces != null) {
                 return false;
-        } else if (!teamPieces.equals(other.teamPieces))
+            }
+        } else if (!teamPieces.equals(other.teamPieces)) {
             return false;
+        }
         if (kingPieces == null) {
-            if (other.kingPieces != null)
+            if (other.kingPieces != null) {
                 return false;
-        } else if (!kingPieces.equals(other.kingPieces))
+            } 
+        } else if (!kingPieces.equals(other.kingPieces)) {
             return false;
+        }   
         return true;
     }
 
