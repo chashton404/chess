@@ -1,6 +1,7 @@
 package service;
 
 import dataaccess.GameDAO;
+import dataaccess.AlreadyTakenException;
 import dataaccess.AuthDAO;
 import dataaccess.UnauthorizedException;
 import dataaccess.DataAccessException;
@@ -62,10 +63,40 @@ public class GameService {
 
     }
 
-    public void joinGame(JoinGameRequest req) {
+    public void joinGame(String authToken, JoinGameRequest req) 
+        throws BadRequestException, UnauthorizedException, AlreadyTakenException, DataAccessException {
         
         //Check to validate the request
-        if ()
+        if (!(req.playerColor() == "WHITE" || req.playerColor() == "BLACK")) {
+            throw new BadRequestException("Error: bad request");
+        }
+
+        if (req.gameID() == null || authToken == null) {
+            throw new BadRequestException("Error: bad request");
+        }
+
+        // Check the authToken is valid
+        if (!authDAO.checkAuth(authToken)){
+            throw new UnauthorizedException("Error: unauthorized");
+        }
+
+        // Check the game exists
+        if (!gameDAO.checkGame(req.gameID())){
+            throw new UnauthorizedException("Error: bad request");
+        }
+
+        // Verify that the current color that has been chosen is empty
+        if (req.playerColor() == "WHITE") {
+            // Check the whiteUsername
+
+        } else {
+            // Check the blackUsername
+
+        }
+
+
+
+
 
     }
 }

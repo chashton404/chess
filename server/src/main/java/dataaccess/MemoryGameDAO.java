@@ -41,6 +41,10 @@ public class MemoryGameDAO implements GameDAO {
         return list;
     }
 
+    public Boolean checkGame(Integer gameID) {
+        return games.containsKey(gameID);
+    }
+
     @Override
     public void getGame() throws DataAccessException {
         // TODO Auto-generated method stub

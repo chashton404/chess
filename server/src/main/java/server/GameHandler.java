@@ -70,7 +70,7 @@ public class GameHandler {
             String authToken = ctx.header("authorization");
             JoinGameRequest req = ctx.bodyAsClass(JoinGameRequest.class);
 
-            gameService.joinGame(req);
+            gameService.joinGame(authToken, req);
 
             ctx.status(200);
             ctx.result("{}");

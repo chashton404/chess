@@ -12,6 +12,8 @@ public interface GameDAO {
 
     Collection<ListGameData> listGames() throws DataAccessException;
 
+    Boolean checkGame(Integer gameID) throws DataAccessException;
+
     void updateGame() throws DataAccessException;
 
     void clearGames() throws DataAccessException;
