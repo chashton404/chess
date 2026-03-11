@@ -45,6 +45,28 @@ public class MemoryGameDAO implements GameDAO {
         return games.containsKey(gameID);
     }
 
+    public Boolean checkColor(Integer gameID, String playerColor) {
+        GameData game = games.get(gameID);
+       
+        if (playerColor.equals("WHITE")) {
+            if (!(game.whiteUsername() == null)) {
+                return false;
+            } else {
+                return true;
+            }
+
+        } else if (playerColor.equals("BLACK")) {
+            if (!(game.blackUsername() == null)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        // for invalid types return false
+        return false;
+    }
+
     @Override
     public void getGame() throws DataAccessException {
         // TODO Auto-generated method stub

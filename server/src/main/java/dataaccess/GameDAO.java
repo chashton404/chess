@@ -14,6 +14,8 @@ public interface GameDAO {
 
     Boolean checkGame(Integer gameID) throws DataAccessException;
 
+    Boolean checkColor(Integer gameID, String playerColor);
+
     void updateGame() throws DataAccessException;
 
     void clearGames() throws DataAccessException;

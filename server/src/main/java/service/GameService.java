@@ -85,13 +85,9 @@ public class GameService {
             throw new UnauthorizedException("Error: bad request");
         }
 
-        // Verify that the current color that has been chosen is empty
-        if (req.playerColor() == "WHITE") {
-            // Check the whiteUsername
-
-        } else {
-            // Check the blackUsername
-
+        // Verify that the color spot is empty
+        if (!gameDAO.checkColor(req.gameID(), req.playerColor())) {
+            throw new AlreadyTakenException("Error: already taken");
         }
 
 
