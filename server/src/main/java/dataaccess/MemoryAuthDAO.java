@@ -48,4 +48,8 @@ public class MemoryAuthDAO implements AuthDAO {
             throw new UnauthorizedException("Error: Unauthorized");
         }
     }
+
+    public String getUser(String authToken) throws DataAccessException {
+        return auths.get(authToken).username();
+    }
 }

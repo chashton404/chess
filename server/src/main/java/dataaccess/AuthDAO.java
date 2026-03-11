@@ -8,6 +8,8 @@ public interface AuthDAO {
 
     Boolean checkAuth(String authToken) throws DataAccessException;
 
+    String getUser(String authToken) throws DataAccessException;
+
     void deleteAuth(String authToken) throws DataAccessException, UnauthorizedException;
 
     void clearAuth() throws DataAccessException;

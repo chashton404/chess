@@ -67,16 +67,14 @@ public class MemoryGameDAO implements GameDAO {
         return false;
     }
 
-    @Override
-    public void getGame() throws DataAccessException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getGame'");
-    }
-
-    @Override
-    public void updateGame() throws DataAccessException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateGame'");
+    public void updateGame(Integer gameID, String playerColor, String username) throws DataAccessException {
+        if (playerColor.equals("WHITE")) {
+            GameData updatedGame = games.get(gameID).updateWhite(username);
+            games.put(gameID, updatedGame);
+        } else if (playerColor.equals("BLACK")) {
+            GameData updatedGame = games.get(gameID).updateBlack(username);
+            games.put(gameID, updatedGame);
+        }
     }
     
 }

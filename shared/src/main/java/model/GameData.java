@@ -9,4 +9,12 @@ public record GameData(int gameID, String whiteUsername, String blackUsername, S
         return new Gson().toJson(this);
     }
 
+    public GameData updateWhite(String username) {
+        return new GameData(this.gameID, username, this.blackUsername, this.gameName, this.game);
+    }
+
+    public GameData updateBlack(String username) {
+        return new GameData(this.gameID, this.whiteUsername, username, this.gameName, this.game);
+    }
+
 }

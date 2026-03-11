@@ -67,7 +67,7 @@ public class GameService {
         throws BadRequestException, UnauthorizedException, AlreadyTakenException, DataAccessException {
         
         //Check to validate the request
-        if (!(req.playerColor() == "WHITE" || req.playerColor() == "BLACK")) {
+        if (!(req.playerColor().equals("WHITE") || req.playerColor().equals("BLACK"))) {
             throw new BadRequestException("Error: bad request");
         }
 
@@ -90,9 +90,9 @@ public class GameService {
             throw new AlreadyTakenException("Error: already taken");
         }
 
-
-
-
+        // get the username for the given authKey
+        String username = authDAO.getUser(authToken);
+        gameDAO.updateGame(req.gameID(), req.playerColor(), username);
 
     }
 }
