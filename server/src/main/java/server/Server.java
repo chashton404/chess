@@ -36,7 +36,7 @@ public class Server {
     private final GameHandler gameHandler = new GameHandler(gameService);
 
     public Server() {
-        javalin = Javalin.create(config -> config.staticFiles.add("web"))
+        javalin = Javalin.create(config -> {config.staticFiles.add("web"); config.jsonMapper(new GsonJsonMapper());})
             .delete("/db", clearHandler::clear)
             .post("/user", userHandler::registerUser)
             .post("/session", userHandler::login)
