@@ -27,7 +27,7 @@ public class Server {
 
     // Initialize the services
     private final AuthService authService = new AuthService(authDAO);
-    private final GameService gameService = new GameService(gameDAO);
+    private final GameService gameService = new GameService(gameDAO, authDAO);
     private final UserService userService = new UserService(userDAO, authDAO);
 
     // Initialize the handlers
@@ -40,8 +40,9 @@ public class Server {
             .delete("/db", clearHandler::clear)
             .post("/user", userHandler::registerUser)
             .post("/session", userHandler::login)
-            .delete("/session", userHandler::logout);
-            .post("/game", gameHandler::createGame);
+            .delete("/session", userHandler::logout)
+            .post("/game", gameHandler::createGame)
+            .get("/game", gameHandler::listGames);
     }
 
     public int run(int desiredPort) {

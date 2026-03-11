@@ -6,7 +6,7 @@ public interface AuthDAO {
 
     void createAuth(AuthData a) throws DataAccessException;
 
-    String getAuth() throws DataAccessException;
+    Boolean checkAuth(String authToken) throws DataAccessException;
 
     void deleteAuth(String authToken) throws DataAccessException, UnauthorizedException;
 

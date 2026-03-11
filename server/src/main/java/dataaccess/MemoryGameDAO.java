@@ -1,21 +1,32 @@
 package dataaccess;
 
 import model.GameData;
-import dataaccess.GameDAO;
 import java.util.HashMap;
+
+import chess.ChessGame;
 
 public class MemoryGameDAO implements GameDAO {
     
     final private HashMap<Integer, GameData> games = new HashMap<>();
 
+    Integer gameID = 1;
+
     public void clearGames() {
         games.clear();
     }
 
-    @Override
-    public void createGame(Integer gameID) throws DataAccessException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'createGame'");
+    public Integer createGame(String gameName) throws DataAccessException {
+        if (gameName == null) {
+            throw new DataAccessException("Error: Game Name is Null");
+        }
+
+        GameData newGame = new GameData(gameID, null, null, gameName, new ChessGame());
+
+        games.put(gameID, newGame);
+        Integer oldGameID = gameID;
+        gameID += 1;
+
+        return oldGameID;
     }
 
     @Override

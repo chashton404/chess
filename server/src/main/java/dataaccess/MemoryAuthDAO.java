@@ -29,10 +29,13 @@ public class MemoryAuthDAO implements AuthDAO {
         }
     }
 
-    @Override
-    public String getAuth() throws DataAccessException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAuth'");
+    public Boolean checkAuth(String authToken) throws DataAccessException {
+        if (authToken == null) {
+            throw new DataAccessException(("Error: Nullt AuthToken"));
+        }
+
+        Boolean authExists = auths.containsKey(authToken);
+        return authExists;
     }
 
     public void deleteAuth(String authKey) throws DataAccessException, UnauthorizedException {

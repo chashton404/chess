@@ -1,7 +1,7 @@
 package dataaccess;
 
 public interface GameDAO {
-    void createGame() throws DataAccessException;
+    Integer createGame(String gameName) throws DataAccessException;
 
     void getGame() throws DataAccessException;
 
