@@ -6,7 +6,10 @@ import dataaccess.UnauthorizedException;
 import dataaccess.DataAccessException;
 import dataaccess.BadRequestException;
 import model.CreateGameResult;
+import model.JoinGameRequest;
 import model.CreateGameRequest;
+import model.ListGamesResult;
+import model.JoinGameRequest;
 
 public class GameService {
 
@@ -53,9 +56,16 @@ public class GameService {
         if (!authDAO.checkAuth(authToken)){
             throw new UnauthorizedException("Error: unauthorized");
         } else {
-            gameDAO.getGames();
+            ListGamesResult games = new ListGamesResult(gameDAO.listGames());
+            return games;
         }
 
+    }
+
+    public void joinGame(JoinGameRequest req) {
+        
+        //Check to validate the request
+        if ()
 
     }
 }

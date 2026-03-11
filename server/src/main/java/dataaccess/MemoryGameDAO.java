@@ -1,7 +1,10 @@
 package dataaccess;
 
 import model.GameData;
+import model.ListGameData;
 import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import chess.ChessGame;
 
@@ -29,16 +32,19 @@ public class MemoryGameDAO implements GameDAO {
         return oldGameID;
     }
 
+    public Collection<ListGameData> listGames() {
+        Collection<ListGameData> list = new ArrayList<>();
+        for (GameData game : games.values()) {
+            ListGameData newListItem = new ListGameData(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName());
+            list.add(newListItem);
+        }
+        return list;
+    }
+
     @Override
     public void getGame() throws DataAccessException {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getGame'");
-    }
-
-    @Override
-    public void listGames() throws DataAccessException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'listGames'");
     }
 
     @Override

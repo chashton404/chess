@@ -7,6 +7,8 @@ import io.javalin.http.Context;
 import service.GameService;
 import model.CreateGameRequest;
 import model.CreateGameResult;
+import model.ListGamesResult;
+import model.JoinGameRequest;
 
 import java.util.Map;
 
@@ -56,6 +58,30 @@ public class GameHandler {
             ctx.json(games);
         } catch (UnauthorizedException e) {
             ctx.status(200);
+            ctx.json(Map.of("message", e.getMessage()));
+        } catch (Exception e) {
+            ctx.status(500);
+            ctx.json(Map.of("message", e.getMessage()));
+        }
+    }
+
+    public void joinGame(Context ctx) {
+        try {
+            String authToken = ctx.header("authorization");
+            JoinGameRequest req = ctx.bodyAsClass(JoinGameRequest.class);
+
+            gameService.joinGame(req);
+
+            ctx.status(200);
+            ctx.result("{}");
+        } catch (BadRequestException e) {
+            ctx.status(400);
+            ctx.json(Map.of("message", e.getMessage()));
+        } catch (UnauthorizedException e) {
+            ctx.status(401);
+            ctx.json(Map.of("message", e.getMessage()));
+        } catch (AlreadyTakenException e) {
+            ctx.status(403);
             ctx.json(Map.of("message", e.getMessage()));
         } catch (Exception e) {
             ctx.status(500);
