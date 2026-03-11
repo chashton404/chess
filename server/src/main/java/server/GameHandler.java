@@ -57,7 +57,7 @@ public class GameHandler {
             ctx.status(200);
             ctx.json(games);
         } catch (UnauthorizedException e) {
-            ctx.status(200);
+            ctx.status(401);
             ctx.json(Map.of("message", e.getMessage()));
         } catch (Exception e) {
             ctx.status(500);

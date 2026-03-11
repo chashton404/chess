@@ -67,11 +67,11 @@ public class GameService {
         throws BadRequestException, UnauthorizedException, AlreadyTakenException, DataAccessException {
         
         //Check to validate the request
-        if (!(req.playerColor().equals("WHITE") || req.playerColor().equals("BLACK"))) {
+        if (req == null || req.gameID() == null || req.playerColor() == null || authToken == null) {
             throw new BadRequestException("Error: bad request");
         }
 
-        if (req.gameID() == null || authToken == null) {
+        if (!(req.playerColor().equals("WHITE") || req.playerColor().equals("BLACK"))) {
             throw new BadRequestException("Error: bad request");
         }
 
@@ -82,7 +82,7 @@ public class GameService {
 
         // Check the game exists
         if (!gameDAO.checkGame(req.gameID())){
-            throw new UnauthorizedException("Error: bad request");
+            throw new BadRequestException("Error: bad request");
         }
 
         // Verify that the color spot is empty
