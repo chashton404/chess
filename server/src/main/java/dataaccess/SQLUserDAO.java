@@ -2,7 +2,16 @@ package dataaccess;
 
 import model.UserData;
 
+import java.sql.*;
+
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
+import static java.sql.Types.NULL;
+
 public class SQLUserDAO implements UserDAO {
+
+    public SQLUserDAO() throws DataAccessException {
+        DatabaseManager.configureDatabase();
+    }
 
     @Override
     public void createUser(UserData u) throws DataAccessException {
@@ -11,7 +20,7 @@ public class SQLUserDAO implements UserDAO {
     }
 
     @Override
-    public boolean checkUser(String username) throws DataAccessException {
+    public Boolean checkUser(String username) throws DataAccessException {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'checkUser'");
     }
@@ -22,10 +31,16 @@ public class SQLUserDAO implements UserDAO {
         throw new UnsupportedOperationException("Unimplemented method 'getUser'");
     }
 
-    @Override
+
     public void clearUsers() throws DataAccessException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'clearUsers'");
+        var statement = "DELETE FROM user";
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.executeUpdate();
+            }
+        } catch (Exception e) {
+            throw new DataAccessException(String.format("Unable to clear user table: %s", e.getMessage()));
+        }
     }
     
 }

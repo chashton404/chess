@@ -28,10 +28,16 @@ public class SQLAuthDAO implements AuthDAO{
         throw new UnsupportedOperationException("Unimplemented method 'deleteAuth'");
     }
 
-    @Override
+
     public void clearAuth() throws DataAccessException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'clearAuth'");
+        var statement = "TRUNCATE auth";
+        try (var conn = DatabaseManager.getConnection()) {
+            try ( var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.executeUpdate();
+            }
+        } catch (Exception e) {
+            throw new DataAccessException(String.format("Unable to clear auth table: %s", e.getMessage()));
+        }
     }
     
 }

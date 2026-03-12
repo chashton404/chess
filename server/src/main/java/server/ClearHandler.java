@@ -20,8 +20,8 @@ public class ClearHandler {
 
     public void clear(Context ctx) {
         try {
-            authService.clearAuth();
             gameService.clearGames();
+            authService.clearAuth();
             userService.clearUsers();
     
             ctx.status(200);

@@ -9,33 +9,56 @@ import service.*;
 
 // Import the DAOS and local storage
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
+import dataaccess.SQLAuthDAO;
+import dataaccess.SQLGameDAO;
+import dataaccess.SQLUserDAO;
+import dataaccess.DatabaseManager;
 
 public class Server {
-
+    private UserDAO userDAO;
+    private AuthDAO authDAO;
+    private GameDAO gameDAO;
+    
     // Initialize Javalin
     private final Javalin javalin;
-
-    // Initialize the DAOs
-    private final UserDAO userDAO = new MemoryUserDAO();
-    private final AuthDAO authDAO = new MemoryAuthDAO();
-    private final GameDAO gameDAO = new MemoryGameDAO();
-
-    // Initialize the services
-    private final AuthService authService = new AuthService(authDAO);
-    private final GameService gameService = new GameService(gameDAO, authDAO);
-    private final UserService userService = new UserService(userDAO, authDAO);
-
-    // Initialize the handlers
-    private final ClearHandler clearHandler = new ClearHandler(authService, gameService, userService);
-    private final UserHandler userHandler = new UserHandler(userService);
-    private final GameHandler gameHandler = new GameHandler(gameService);
+    
 
     public Server() {
+        boolean useSQL = true; 
+
+        // Initialize the DAOs
+        if (useSQL) {
+            try {
+                DatabaseManager.configureDatabase();
+                userDAO = new SQLUserDAO();
+                authDAO = new SQLAuthDAO();
+                gameDAO = new SQLGameDAO();
+            } catch (DataAccessException e) {
+                System.err.println(String.format("Database Setup FAILED %s", e.getMessage()));
+                System.exit(1);
+            }
+        } else {
+            userDAO = new MemoryUserDAO();
+            authDAO = new MemoryAuthDAO();
+            gameDAO = new MemoryGameDAO();
+        }
+
+        // Initialize the Services
+        AuthService authService = new AuthService(authDAO);
+        GameService gameService = new GameService(gameDAO, authDAO);
+        UserService userService = new UserService(userDAO, authDAO);
+
+        // Initialize the Handlers
+        ClearHandler clearHandler = new ClearHandler(authService, gameService, userService);
+        UserHandler userHandler = new UserHandler(userService);
+        GameHandler gameHandler = new GameHandler(gameService);
+
         javalin = Javalin.create(config -> {config.staticFiles.add("web"); config.jsonMapper(new GsonJsonMapper());})
             .delete("/db", clearHandler::clear)
             .post("/user", userHandler::registerUser)

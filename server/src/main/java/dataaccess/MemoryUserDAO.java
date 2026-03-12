@@ -15,13 +15,13 @@ public class MemoryUserDAO implements UserDAO {
         users.put(u.username(), u);
     }
 
-    public boolean checkUser(String username) throws DataAccessException{
+    public Boolean checkUser(String username) throws DataAccessException{
         if (username == null){
             throw new DataAccessException("Error: Null Username");
         }
 
         // Return whether or not user exists
-        boolean userExists = users.containsKey(username);
+        Boolean userExists = users.containsKey(username);
         return userExists;
     }
 

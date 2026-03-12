@@ -36,10 +36,16 @@ public class SQLGameDAO implements GameDAO {
         throw new UnsupportedOperationException("Unimplemented method 'updateGame'");
     }
 
-    @Override
     public void clearGames() throws DataAccessException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'clearGames'");
+        var statement = "TRUNCATE game";
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.executeUpdate();
+            }
+        } catch (Exception e) {
+            throw new DataAccessException(String.format("Unable to clear game table: %s", e.getMessage()));
+        }
+
     }
     
 }
