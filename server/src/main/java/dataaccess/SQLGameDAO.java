@@ -1,6 +1,7 @@
 package dataaccess;
 
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import com.google.gson.Gson;
@@ -40,10 +41,22 @@ public class SQLGameDAO implements GameDAO {
         return null;
     }
 
-    @Override
     public Collection<ListGameData> listGames() throws DataAccessException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'listGames'");
+        Collection<ListGameData> list = new ArrayList<>();
+        var statement = "SELECT gameID, whiteUsername, blackUsername, gameName FROM game";
+
+        try (var conn = DatabaseManager.getConnection(); var preparedStatement = conn.prepareStatement(statement)){
+            try (var resultSet = preparedStatement.executeQuery()){
+                while (resultSet.next()) {
+                    ListGameData listItem = new ListGameData(resultSet.getInt("gameID"), resultSet.getString("whiteUsername"), 
+                                                            resultSet.getString("blackUsername"), resultSet.getString("gameName"));
+                    list.add(listItem);
+                }
+                return list;
+            }
+        } catch (Exception e) {
+            throw new DataAccessException(String.format("Unable to list games: %s", e.getMessage()));
+        }
     }
 
     @Override
