@@ -4,10 +4,18 @@ import model.AuthData;
 
 public class SQLAuthDAO implements AuthDAO{
 
-    @Override
     public void createAuth(AuthData a) throws DataAccessException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'createAuth'");
+        var statement = "INSERT INTO auth (authToken, username) VALUES (?, ?)";
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(statement)){
+                preparedStatement.setString(1, a.authToken());
+                preparedStatement.setString(2, a.username());
+
+                preparedStatement.executeUpdate();
+            }
+        } catch (Exception e) {
+            throw new DataAccessException(String.format("Failed to add auth to db: %s", e.getMessage()));
+        }
     }
 
     @Override
