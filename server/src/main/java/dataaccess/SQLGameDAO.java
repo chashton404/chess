@@ -1,12 +1,12 @@
 package dataaccess;
 
+import java.lang.runtime.ExactConversionsSupport;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import com.google.gson.Gson;
 
-import model.GameData;
 import model.ListGameData;
 import chess.ChessGame;
 
@@ -35,7 +35,7 @@ public class SQLGameDAO implements GameDAO {
             }
 
         } catch (Exception e) {
-            throw new DataAccessException(String.format("Unable to add new game: %s", e.getMessage()));
+            throw new DataAccessException(String.format("Error: Unable to add new game: %s", e.getMessage()));
         }
 
         return null;
@@ -55,26 +55,64 @@ public class SQLGameDAO implements GameDAO {
                 return list;
             }
         } catch (Exception e) {
-            throw new DataAccessException(String.format("Unable to list games: %s", e.getMessage()));
+            throw new DataAccessException(String.format("Error: Unable to list games: %s", e.getMessage()));
         }
     }
 
-    @Override
     public Boolean checkGame(Integer gameID) throws DataAccessException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'checkGame'");
+        var statement = "SELECT EXISTS(SELECT 1 FROM game WHERE gameID = ?)";
+        try (var conn = DatabaseManager.getConnection(); var preparedStatement = conn.prepareStatement(statement)) {
+            preparedStatement.setInt(1, gameID);
+
+            try (var resultSet = preparedStatement.executeQuery()){
+                if (resultSet.next()){
+                    return resultSet.getBoolean(1);
+                }
+            }
+        } catch (Exception e) {
+            throw new DataAccessException(String.format("Error: Error checking game exsitence: %s", e.getMessage()));
+        }
+        return false;
     }
 
-    @Override
-    public Boolean checkColor(Integer gameID, String playerColor) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'checkColor'");
+    public Boolean checkColor(Integer gameID, String playerColor) throws DataAccessException {
+        var statement = "";
+        String column = null;
+       
+        if (playerColor.equals("WHITE")){
+            statement = "SELECT whiteUsername FROM game WHERE gameID = ?";
+            column = "whiteUsername";
+       } else if (playerColor.equals("BLACK")){
+            statement = "SELECT blackUsername FROM game WHERE gameID = ?";
+            column = "blackUsername";
+       }
+
+       try (var conn = DatabaseManager.getConnection(); var preparedStatement = conn.prepareStatement(statement)){
+            preparedStatement.setInt(1, gameID);    
+
+            try (var resultSet = preparedStatement.executeQuery()){
+                if (resultSet.next()) {
+                    String username = resultSet.getString(column);
+                    return username == null;
+                }
+            }
+       } catch (Exception e) {
+            throw new DataAccessException(String.format("Error: Error checking the color: %s", e.getMessage()));
+       }
+       return true;
     }
 
-    @Override
     public void updateGame(Integer gameID, String playerColor, String username) throws DataAccessException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateGame'");
+        String column = playerColor.equals("WHITE") ? "whiteUsername" : "blackUsername";
+        var statement = "UPDATE game SET " + column + " = ? WHERE gameID = ?";
+        try (var conn = DatabaseManager.getConnection(); var preparedStatement = conn.prepareStatement(statement)) {
+            preparedStatement.setString(1, username);
+            preparedStatement.setInt(2, gameID);
+
+            preparedStatement.executeUpdate();
+        } catch (Exception e) {
+            throw new DataAccessException(String.format("Error: Error updating game: %s", e.getMessage()));
+        }
     }
 
     public void clearGames() throws DataAccessException {
@@ -84,7 +122,7 @@ public class SQLGameDAO implements GameDAO {
                 preparedStatement.executeUpdate();
             }
         } catch (Exception e) {
-            throw new DataAccessException(String.format("Unable to clear game table: %s", e.getMessage()));
+            throw new DataAccessException(String.format("Error: Unable to clear game table: %s", e.getMessage()));
         }
 
     }

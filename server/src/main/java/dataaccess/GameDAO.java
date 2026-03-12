@@ -10,7 +10,7 @@ public interface GameDAO {
 
     Boolean checkGame(Integer gameID) throws DataAccessException;
 
-    Boolean checkColor(Integer gameID, String playerColor);
+    Boolean checkColor(Integer gameID, String playerColor) throws DataAccessException;
 
     void updateGame(Integer gameID, String playerColor, String username) throws DataAccessException;
 

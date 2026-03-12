@@ -31,7 +31,7 @@ public class SQLUserDAO implements UserDAO {
                 preparedStatement.executeUpdate();
             }
         } catch (Exception e) {
-            throw new DataAccessException(String.format("Failed to create user: %s", e.getMessage()));
+            throw new DataAccessException(String.format("Error: Failed to create user: %s", e.getMessage()));
         }
     }
 
@@ -48,7 +48,7 @@ public class SQLUserDAO implements UserDAO {
                 }
             }
         } catch (Exception e) {
-            throw new DataAccessException(String.format("Unable to search for user: %s", e.getMessage()));
+            throw new DataAccessException(String.format("Error: Unable to search for user: %s", e.getMessage()));
         }
         return false;
     }
@@ -64,7 +64,7 @@ public class SQLUserDAO implements UserDAO {
             }
 
         } catch (Exception e) {
-            throw new DataAccessException(String.format("Unable to get user: %s", e.getMessage()));
+            throw new DataAccessException(String.format("Error: Unable to get user: %s", e.getMessage()));
         }
         return new UserData(null, null, null);
     }
@@ -77,7 +77,7 @@ public class SQLUserDAO implements UserDAO {
                 preparedStatement.executeUpdate();
             }
         } catch (Exception e) {
-            throw new DataAccessException(String.format("Unable to clear user table: %s", e.getMessage()));
+            throw new DataAccessException(String.format("Error: Unable to clear user table: %s", e.getMessage()));
         }
     }
     

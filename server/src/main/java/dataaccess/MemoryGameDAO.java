@@ -41,7 +41,11 @@ public class MemoryGameDAO implements GameDAO {
         return list;
     }
 
-    public Boolean checkGame(Integer gameID) {
+    public Boolean checkGame(Integer gameID) throws DataAccessException {
+        if (gameID == null) {
+            throw new DataAccessException("Error: gameID is null");
+        }
+
         return games.containsKey(gameID);
     }
 

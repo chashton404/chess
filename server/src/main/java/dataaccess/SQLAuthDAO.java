@@ -14,7 +14,7 @@ public class SQLAuthDAO implements AuthDAO{
                 preparedStatement.executeUpdate();
             }
         } catch (Exception e) {
-            throw new DataAccessException(String.format("Failed to add auth to db: %s", e.getMessage()));
+            throw new DataAccessException(String.format("Error: Failed to add auth to db: %s", e.getMessage()));
         }
     }
 
@@ -31,13 +31,13 @@ public class SQLAuthDAO implements AuthDAO{
                 }
             }
         } catch (Exception e) {
-            throw new DataAccessException(String.format("Unable to search for AuthToken: %s", e.getMessage()));
+            throw new DataAccessException(String.format("Error: Unable to search for AuthToken: %s", e.getMessage()));
         }
         return false;
     }
 
     public Boolean checkUser(String username) throws DataAccessException {
-        var statement = "SELECT EXISTS(SELECT 1 FROM auth where username = ?)";
+        var statement = "SELECT EXISTS(SELECT 1 FROM auth WHERE username = ?)";
         try (var conn = DatabaseManager.getConnection(); var preparedStatement = conn.prepareStatement(statement)) {
             preparedStatement.setString(1, username);
 
@@ -47,15 +47,24 @@ public class SQLAuthDAO implements AuthDAO{
                 }
             }
         } catch (Exception e) {
-            throw new DataAccessException(String.format("Unable to search for user in auth: %s", e.getMessage()));
+            throw new DataAccessException(String.format("Error: Unable to search for user in auth: %s", e.getMessage()));
         }
         return false;
     }
 
-    @Override
     public String getUser(String authToken) throws DataAccessException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getUser'");
+        var statement = "SELECT username FROM auth WHERE authToken = ?";
+        try (var conn = DatabaseManager.getConnection(); var preparedStatement = conn.prepareStatement(statement)) {
+            preparedStatement.setString(1, authToken);
+            try (var resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getString("username");
+                }
+            }
+        } catch (Exception e) {
+            throw new DataAccessException(String.format("Error: Unable to fetch user from db: %s", e.getMessage()));
+        }
+        return null;
     }
 
     public void deleteAuth(String authToken) throws DataAccessException, UnauthorizedException {
@@ -69,7 +78,7 @@ public class SQLAuthDAO implements AuthDAO{
             preparedStatement.setString(1, authToken);
             preparedStatement.executeUpdate();
         } catch (Exception e) {
-            throw new DataAccessException(String.format("Error deleting the authToken: %s", e.getMessage()));
+            throw new DataAccessException(String.format("Error: Error deleting the authToken: %s", e.getMessage()));
         }
     }
 
@@ -81,7 +90,7 @@ public class SQLAuthDAO implements AuthDAO{
                 preparedStatement.executeUpdate();
             }
         } catch (Exception e) {
-            throw new DataAccessException(String.format("Unable to clear auth table: %s", e.getMessage()));
+            throw new DataAccessException(String.format("Error: Unable to clear auth table: %s", e.getMessage()));
         }
     }
     
