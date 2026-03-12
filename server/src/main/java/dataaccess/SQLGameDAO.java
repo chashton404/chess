@@ -1,15 +1,43 @@
 package dataaccess;
 
+import java.sql.Statement;
 import java.util.Collection;
 
+import com.google.gson.Gson;
+
+import model.GameData;
 import model.ListGameData;
+import chess.ChessGame;
 
 public class SQLGameDAO implements GameDAO {
 
-    @Override
     public Integer createGame(String gameName) throws DataAccessException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'createGame'");
+
+        var statement = "INSERT INTO game (whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?)";
+
+        ChessGame newGame = new ChessGame();
+
+        var gameJson = new Gson().toJson(newGame);
+
+        try (var conn = DatabaseManager.getConnection(); var preparedStatement = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)){
+            preparedStatement.setString(1, null);
+            preparedStatement.setString(2, null);
+            preparedStatement.setString(3, gameName);
+            preparedStatement.setString(4, gameJson);
+
+            preparedStatement.executeUpdate();
+
+            try (var resultSet = preparedStatement.getGeneratedKeys()){
+                if (resultSet.next()) {
+                    return resultSet.getInt(1);
+                }
+            }
+
+        } catch (Exception e) {
+            throw new DataAccessException(String.format("Unable to add new game: %s", e.getMessage()));
+        }
+
+        return null;
     }
 
     @Override
