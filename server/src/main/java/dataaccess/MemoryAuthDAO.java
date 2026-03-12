@@ -31,7 +31,7 @@ public class MemoryAuthDAO implements AuthDAO {
 
     public Boolean checkAuth(String authToken) throws DataAccessException {
         if (authToken == null) {
-            throw new DataAccessException(("Error: Nullt AuthToken"));
+            throw new DataAccessException(("Error: Null AuthToken"));
         }
 
         Boolean authExists = auths.containsKey(authToken);
