@@ -18,10 +18,22 @@ public class SQLAuthDAO implements AuthDAO{
         }
     }
 
-    @Override
     public Boolean checkAuth(String authToken) throws DataAccessException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'checkAuth'");
+        // User the question mark to avoid SQL injection
+        var statment = "SELECT EXISTS(SELECT 1 FROM auth WHERE authToken = ?)";
+        try (var conn = DatabaseManager.getConnection(); var preparedStatement = conn.prepareStatement(statment)){
+            preparedStatement.setString(1, authToken);
+
+            // Use a try block so the connection gets closed
+            try (var resultSet = preparedStatement.executeQuery()){
+                if (resultSet.next()) {
+                    return resultSet.getBoolean(1);
+                }
+            }
+        } catch (Exception e) {
+            throw new DataAccessException(String.format("Unable to search for AuthToken: %s", e.getMessage()));
+        }
+        return false;
     }
 
     @Override
@@ -30,10 +42,12 @@ public class SQLAuthDAO implements AuthDAO{
         throw new UnsupportedOperationException("Unimplemented method 'getUser'");
     }
 
-    @Override
     public void deleteAuth(String authToken) throws DataAccessException, UnauthorizedException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteAuth'");
+        if(!checkAuth(authToken)){
+            throw new UnauthorizedException("Error: unauthorized");
+        }
+
+        var statement = "DELETE from auth"
     }
 
 
