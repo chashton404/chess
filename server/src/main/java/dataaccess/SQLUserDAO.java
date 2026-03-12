@@ -38,15 +38,13 @@ public class SQLUserDAO implements UserDAO {
     public Boolean checkUser(String username) throws DataAccessException {
         // User the question mark to avoid SQL injection
         var statment = "SELECT EXISTS(SELECT 1 FROM user WHERE username = ?)";
-        try (var conn = DatabaseManager.getConnection()){
-            try (var preparedStatement = conn.prepareStatement(statment)){
-                preparedStatement.setString(1, username);
+        try (var conn = DatabaseManager.getConnection(); var preparedStatement = conn.prepareStatement(statment)){
+            preparedStatement.setString(1, username);
 
-                // Use a try block so the connection gets closed
-                try (var resultSet = preparedStatement.executeQuery()){
-                    if (resultSet.next()) {
-                        return resultSet.getBoolean(1);
-                    }
+            // Use a try block so the connection gets closed
+            try (var resultSet = preparedStatement.executeQuery()){
+                if (resultSet.next()) {
+                    return resultSet.getBoolean(1);
                 }
             }
         } catch (Exception e) {
@@ -55,10 +53,20 @@ public class SQLUserDAO implements UserDAO {
         return false;
     }
 
-    @Override
     public UserData getUser(String username) throws DataAccessException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getUser'");
+        var statement = "SELECT username, password, email FROM user WHERE username = ?";
+        try (var conn = DatabaseManager.getConnection(); var preparedStatement = conn.prepareStatement(statement)) {
+            preparedStatement.setString(1, username);
+            try (var resultSet = preparedStatement.executeQuery()){
+                if (resultSet.next()) {
+                    return new UserData(resultSet.getString("username"), resultSet.getString("password"), resultSet.getString("email"));
+                }
+            }
+
+        } catch (Exception e) {
+            throw new DataAccessException(String.format("Unable to get user: %s", e.getMessage()));
+        }
+        return new UserData(null, null, null);
     }
 
 

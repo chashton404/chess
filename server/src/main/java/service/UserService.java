@@ -9,6 +9,8 @@ import dataaccess.UnauthorizedException;
 
 import java.util.UUID;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import model.RegisterRequest;
 import model.LoginRequest;
 import model.LoginResult;
@@ -65,11 +67,12 @@ public class UserService {
         if (userDAO.checkUser(req.username()) == false) {
             throw new UnauthorizedException("Error: unauthorized");
         }
+
         // Now we make sure that the password matches the db
-        if (!userDAO.getUser(req.username()).password().equals(req.password())) {
+        if (!BCrypt.checkpw(req.password(), userDAO.getUser(req.username()).password())) {
             throw new UnauthorizedException("Error: unauthorized");
         }
-        //TODO: make it so that the user can't login if they are already logged in
+
         String newAuthToken = UUID.randomUUID().toString();
         AuthData authData = new AuthData(newAuthToken, req.username());
         authDAO.createAuth(authData);
