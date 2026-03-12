@@ -36,6 +36,22 @@ public class SQLAuthDAO implements AuthDAO{
         return false;
     }
 
+    public Boolean checkUser(String username) throws DataAccessException {
+        var statement = "SELECT EXISTS(SELECT 1 FROM auth where username = ?)";
+        try (var conn = DatabaseManager.getConnection(); var preparedStatement = conn.prepareStatement(statement)) {
+            preparedStatement.setString(1, username);
+
+            try (var resultSet = preparedStatement.executeQuery()){
+                if (resultSet.next()) {
+                    return resultSet.getBoolean(1);
+                }
+            }
+        } catch (Exception e) {
+            throw new DataAccessException(String.format("Unable to search for user in auth: %s", e.getMessage()));
+        }
+        return false;
+    }
+
     @Override
     public String getUser(String authToken) throws DataAccessException {
         // TODO Auto-generated method stub
@@ -47,7 +63,14 @@ public class SQLAuthDAO implements AuthDAO{
             throw new UnauthorizedException("Error: unauthorized");
         }
 
-        var statement = "DELETE from auth"
+        var statement = "DELETE FROM auth WHERE authToken = ?";
+
+        try (var conn = DatabaseManager.getConnection(); var preparedStatement = conn.prepareStatement(statement)){
+            preparedStatement.setString(1, authToken);
+            preparedStatement.executeUpdate();
+        } catch (Exception e) {
+            throw new DataAccessException(String.format("Error deleting the authToken: %s", e.getMessage()));
+        }
     }
 
 

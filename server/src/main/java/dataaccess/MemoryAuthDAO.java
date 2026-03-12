@@ -38,6 +38,15 @@ public class MemoryAuthDAO implements AuthDAO {
         return authExists;
     }
 
+    public Boolean checkUser(String username) throws DataAccessException {
+        if (username == null) {
+            throw new DataAccessException(("Error: Null AuthToken"));
+        }
+
+        //TODO: Work on this function in the localStorage
+        return false;
+    }
+
     public void deleteAuth(String authKey) throws DataAccessException, UnauthorizedException {
         if (authKey == null) {
             throw new DataAccessException("Error: authKey is null");

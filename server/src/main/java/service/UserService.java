@@ -63,6 +63,7 @@ public class UserService {
         if (req.username() == null || req.password() == null) {
             throw new BadRequestException("Error: bad request");
         }
+
         // Next we check to see if their username is in the database
         if (userDAO.checkUser(req.username()) == false) {
             throw new UnauthorizedException("Error: unauthorized");
@@ -71,6 +72,11 @@ public class UserService {
         // Now we make sure that the password matches the db
         if (!BCrypt.checkpw(req.password(), userDAO.getUser(req.username()).password())) {
             throw new UnauthorizedException("Error: unauthorized");
+        }
+
+        // Finally, we check to make sure that the user is not already logged in
+        if (authDAO.checkUser(req.username())) {
+            throw new BadRequestException("Error: bad request");
         }
 
         String newAuthToken = UUID.randomUUID().toString();
