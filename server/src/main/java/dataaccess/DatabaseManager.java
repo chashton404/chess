@@ -35,7 +35,7 @@ public class DatabaseManager {
     private static final String[] createStatements = {
         """
         CREATE TABLE IF NOT EXISTS user (
-            username VARCHAR(225) NOT NULL PRIMARY KEY,
+            username VARCHAR(225) NOT NULL UNIQUE PRIMARY KEY,
             password VARCHAR(225) NOT NULL,
             email VARCHAR(225) NOT NULL
         )

@@ -2,6 +2,10 @@ package dataaccess;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.Collection;
+import model.ListGameData;
 
 public class SQLGameDAOTest {
     private final GameDAO gameDAO = new SQLGameDAO();
@@ -33,7 +37,11 @@ public class SQLGameDAOTest {
 
     @Test
     void positiveTestClearGames() throws DataAccessException {
+        gameDAO.createGame("New Game");
+        gameDAO.clearGames();
+        Collection <ListGameData> games = gameDAO.listGames();
 
+        assertEquals(0, games.size(), "Database should be empty after clear");
     }
 
     @Test
