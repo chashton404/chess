@@ -133,34 +133,6 @@ public class ChessPiece {
     }
 
 
-    /**
-     * Calculates all the positions a chess piece can move to
-     * Does not take into account moves that are illegal due to leaving the king in
-     * danger
-     * 
-     * We use a switch statement instead of doing a set of if's and elif's
-     * 
-     * @param board
-     * @param myPosition
-     * @return
-     */
-    // public Collection<ChessMove> pieceMovesSwitch(ChessBoard board, ChessPosition myPosition) {
-    //     List<ChessMove> moves = new ArrayList<>();
-    //     ChessPiece piece = board.getPiece(myPosition);
-    //     PieceType pieceType = piece.getPieceType();
-
-    //     return switch(pieceType) {
-    //         case PAWN -> getPawnMoves(board, myPosition, piece);
-    //         case BISHOP -> getBishopMoves(board, myPosition, piece);
-    //         case ROOK ->  getRookMoves(board, myPosition, piece);
-    //         case KNIGHT -> getKnightMoves(board, myPosition, piece);
-    //         case KING -> getKingMoves(board, myPosition, piece);
-    //         case QUEEN -> getQueenMoves(board, myPosition, piece);
-    //     };
-
-    // }
-
-
     // ---------------------------- BISHOP MOVES ------------------------------------
     private Collection<ChessMove> bishopMovesFunction(ChessBoard board, ChessPosition myPosition, ChessPiece piece) {
         List<ChessMove> moves = new ArrayList<>();

@@ -74,11 +74,6 @@ public class UserService {
             throw new UnauthorizedException("Error: unauthorized");
         }
 
-        // Finally, we check to make sure that the user is not already logged in
-        // if (authDAO.checkUser(req.username())) {
-        //     throw new BadRequestException("Error: bad request");
-        // }
-
         String newAuthToken = UUID.randomUUID().toString();
         AuthData authData = new AuthData(newAuthToken, req.username());
         authDAO.createAuth(authData);

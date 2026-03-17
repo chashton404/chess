@@ -42,8 +42,6 @@ public class MemoryAuthDAO implements AuthDAO {
         if (username == null) {
             throw new DataAccessException(("Error: Null AuthToken"));
         }
-
-        //TODO: Work on this function in the localStorage
         return false;
     }
 

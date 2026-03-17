@@ -32,7 +32,7 @@ public class DatabaseManager {
     /**
      * Creates the tables if they don't yet exist
      */
-    private static final String[] CreateStatements = {
+    private static final String[] CREATE_STATEMENTS = {
         """
         CREATE TABLE IF NOT EXISTS user (
             username VARCHAR(225) NOT NULL UNIQUE PRIMARY KEY,
@@ -63,7 +63,7 @@ public class DatabaseManager {
     static public void configureDatabase() throws DataAccessException {
         createDatabase();
         try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : CreateStatements) {
+            for (var statement : CREATE_STATEMENTS) {
                 try (var preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();
                 }
