@@ -97,7 +97,6 @@ public class SQLGameDAOTest {
     }
 
     @Test
-    // TODO: finish this test
     void negativeTestUpdateGame() throws DataAccessException {
         int id = gameDAO.createGame("newGame");
         userDAO.createUser(new UserData("username", "password", "email@example.com"));
