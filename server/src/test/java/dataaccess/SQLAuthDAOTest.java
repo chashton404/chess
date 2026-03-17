@@ -4,6 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+import javax.xml.crypto.Data;
+
 import model.AuthData;
 import model.UserData;
 
@@ -26,23 +28,27 @@ public class SQLAuthDAOTest {
     
     
     @Test
-    void positiveTestCheckAuth() {
-
+    void positiveTestCheckAuth() throws DataAccessException{
+        AuthData testAuth = new AuthData("token", "username");
+        authDAO.createAuth(testAuth);
+        assertTrue(authDAO.checkAuth("token"), "All positive authTokens exist in the db.");
     }
 
     @Test
     void negativeTestCheckAuth() {
-
+        assertThrows(DataAccessException.class, () -> authDAO.checkAuth(null), "Null values throw errors");
     }
 
     @Test
-    void positiveTestCheckUser() {
-
+    void positiveTestCheckUser() throws DataAccessException {
+        AuthData testAuth = new AuthData("token", "username");
+        authDAO.createAuth(testAuth);
+        assertTrue(authDAO.checkUser("username"), "All existent users should be in the DAO");
     }
 
     @Test
     void negativeTestCheckUser() {
-
+        assertThrows(DataAccessException.class, () -> authDAO.checkUser(null), "Null values throw errors");
     }
 
     @Test
@@ -57,32 +63,47 @@ public class SQLAuthDAOTest {
     }
 
     @Test
-    void positiveTestCreateAuth() {
+    void positiveTestCreateAuth() throws DataAccessException {
+        
+        AuthData testAuth = new AuthData("token", "username");
+        authDAO.createAuth(testAuth);
+        assertTrue(authDAO.checkAuth("token"), "All positive authTokens exist in the db.");
 
     }
 
     @Test
-    void negativeTestCreateAuth() {
+    void negativeTestCreateAuth() throws DataAccessException {
+
+        AuthData testAuth = new AuthData(null, null);
+        assertThrows(DataAccessException.class, () -> authDAO.createAuth(testAuth), "Creation requests cannot have null fields");
 
     }
 
     @Test
-    void positiveTestDeleteAuth() {
+    void positiveTestDeleteAuth() throws DataAccessException, UnauthorizedException {
+
+        AuthData testAuth = new AuthData("token", "username");
+        authDAO.createAuth(testAuth);
+        authDAO.deleteAuth(testAuth.authToken());
+
+        assertFalse(authDAO.checkAuth("token"), "All nonexistent authTokens shouldn't exist in the db.");
 
     }
 
     @Test
     void negativeTestDeleteAuth() {
-
+        assertThrows(UnauthorizedException.class, () -> authDAO.deleteAuth("5"), "AuthToken must be vaild to logout");
     }
 
     @Test
-    void positiveTestGetUser() {
-
+    void positiveTestGetUser() throws DataAccessException {
+        AuthData testAuth = new AuthData("token", "username");
+        authDAO.createAuth(testAuth);
+        assertEquals("username", authDAO.getUser("token"), "Get user should retrieve existing users");
     }
 
     @Test
     void negativeTestGetUser() {
-
+        assertThrows(DataAccessException.class, () -> authDAO.getUser(null), "Null values throw errors");
     }
 }

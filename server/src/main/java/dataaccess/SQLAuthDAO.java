@@ -5,6 +5,10 @@ import model.AuthData;
 public class SQLAuthDAO implements AuthDAO{
 
     public void createAuth(AuthData a) throws DataAccessException {
+        if (a == null | a.username() == null | a.authToken() == null) {
+            throw new DataAccessException("Error: items are null");
+        }
+        
         var statement = "INSERT INTO auth (authToken, username) VALUES (?, ?)";
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement(statement)){
@@ -19,6 +23,10 @@ public class SQLAuthDAO implements AuthDAO{
     }
 
     public Boolean checkAuth(String authToken) throws DataAccessException {
+        if (authToken == null) {
+            throw new DataAccessException("Error: authToken is null");
+        }
+        
         // User the question mark to avoid SQL injection
         var statment = "SELECT EXISTS(SELECT 1 FROM auth WHERE authToken = ?)";
         try (var conn = DatabaseManager.getConnection(); var preparedStatement = conn.prepareStatement(statment)){
@@ -37,6 +45,10 @@ public class SQLAuthDAO implements AuthDAO{
     }
 
     public Boolean checkUser(String username) throws DataAccessException {
+        if (username == null) {
+            throw new DataAccessException("Error: authToken is null");
+        }
+
         var statement = "SELECT EXISTS(SELECT 1 FROM auth WHERE username = ?)";
         try (var conn = DatabaseManager.getConnection(); var preparedStatement = conn.prepareStatement(statement)) {
             preparedStatement.setString(1, username);
@@ -53,6 +65,10 @@ public class SQLAuthDAO implements AuthDAO{
     }
 
     public String getUser(String authToken) throws DataAccessException {
+        if (authToken == null) {
+            throw new DataAccessException("Error: authToken is null");
+        }
+
         var statement = "SELECT username FROM auth WHERE authToken = ?";
         try (var conn = DatabaseManager.getConnection(); var preparedStatement = conn.prepareStatement(statement)) {
             preparedStatement.setString(1, authToken);

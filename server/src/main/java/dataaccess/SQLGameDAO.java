@@ -75,6 +75,11 @@ public class SQLGameDAO implements GameDAO {
     }
 
     public Boolean checkColor(Integer gameID, String playerColor) throws DataAccessException {
+        
+        if (!playerColor.equals("WHITE") && !playerColor.equals("BLACK")) {
+            throw new DataAccessException("Error: color must be BLACK or WHITE");
+        }
+        
         var statement = "";
         String column = null;
        
@@ -98,7 +103,7 @@ public class SQLGameDAO implements GameDAO {
        } catch (Exception e) {
             throw new DataAccessException(String.format("Error: Error checking the color: %s", e.getMessage()));
        }
-       return true;
+       return false;
     }
 
     public void updateGame(Integer gameID, String playerColor, String username) throws DataAccessException {
