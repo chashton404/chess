@@ -187,7 +187,8 @@ public class ChessPiece {
         return moves;
     }
 
-    private Collection<ChessMove> knightMoveIteration(ChessBoard board, ChessPiece piece, ChessPosition startPosition, int rowDirection, int colDirection) {
+    private Collection<ChessMove> knightMoveIteration(ChessBoard board, ChessPiece piece, ChessPosition startPosition, 
+                                                        int rowDirection, int colDirection) {
 
         Collection<ChessMove> moves = new ArrayList<>();
 

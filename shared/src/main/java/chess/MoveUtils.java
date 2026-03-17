@@ -44,7 +44,8 @@ public class MoveUtils {
 
         
 
-    private static Collection<ChessMove> diagonalIteration(ChessBoard board, ChessPosition startPosition, ChessPiece piece, int colDirection, int rowDirection, int currRow, int currCol) {
+    private static Collection<ChessMove> diagonalIteration(ChessBoard board, ChessPosition startPosition, ChessPiece piece, 
+                                                            int colDirection, int rowDirection, int currRow, int currCol) {
         Collection<ChessMove> moves = new ArrayList<>();
 
         /* The diagonal search label here allows us to break out of the loop when we find a piece of our own team */
