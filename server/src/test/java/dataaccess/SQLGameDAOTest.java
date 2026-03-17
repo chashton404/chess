@@ -1,35 +1,68 @@
 package dataaccess;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class SQLGameDAOTest {
+    private final GameDAO gameDAO = new SQLGameDAO();
+
+    @BeforeEach
+    void setup() throws DataAccessException {
+        gameDAO.clearGames();
+    }
+
     @Test
-    void testCheckColor() {
+    void positiveTestCheckColor() {
 
     }
 
     @Test
-    void testCheckGame() {
+    void negativeTestCheckColor() {
 
     }
 
     @Test
-    void testClearGames() {
+    void positiveTestCheckGame() {
 
     }
 
     @Test
-    void testCreateGame() {
+    void negativeTestCheckGame() {
 
     }
 
     @Test
-    void testListGames() {
+    void positiveTestClearGames() throws DataAccessException {
 
     }
 
     @Test
-    void testUpdateGame() {
+    void positiveTestCreateGame() {
+
+    }
+
+    @Test
+    void negativeTestCreateGame() {
+
+    }
+
+    @Test
+    void positiveTestListGames() {
+
+    }
+
+    @Test
+    void negativeTestListGames() {
+
+    }
+
+    @Test
+    void positiveTestUpdateGame() {
+
+    }
+
+    @Test
+    void negativeTestUpdateGame() {
 
     }
 }

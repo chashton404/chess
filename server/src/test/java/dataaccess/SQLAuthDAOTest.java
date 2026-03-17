@@ -1,35 +1,68 @@
 package dataaccess;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class SQLAuthDAOTest {
+    
+    
     @Test
-    void testCheckAuth() {
+    void positiveTestCheckAuth() {
 
     }
 
     @Test
-    void testCheckUser() {
+    void negativeTestCheckAuth() {
 
     }
 
     @Test
-    void testClearAuth() {
+    void positiveTestCheckUser() {
 
     }
 
     @Test
-    void testCreateAuth() {
+    void negativeTestCheckUser() {
 
     }
 
     @Test
-    void testDeleteAuth() {
+    void positiveTestClearAuth() {
 
     }
 
     @Test
-    void testGetUser() {
+    void negativeTestClearAuth() {
+
+    }
+
+    @Test
+    void positiveTestCreateAuth() {
+
+    }
+
+    @Test
+    void negativeTestCreateAuth() {
+
+    }
+
+    @Test
+    void positiveTestDeleteAuth() {
+
+    }
+
+    @Test
+    void negativeTestDeleteAuth() {
+
+    }
+
+    @Test
+    void positiveTestGetUser() {
+
+    }
+
+    @Test
+    void negativeTestGetUser() {
 
     }
 }
