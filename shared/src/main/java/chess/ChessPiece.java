@@ -89,7 +89,7 @@ public class ChessPiece {
         ChessPiece piece = board.getPiece(myPosition);
         if (piece.getPieceType() == PieceType.PAWN) {
             
-            Collection<ChessMove> pawnMoves = new ArrayList<>(pawnMovesFunction(board, myPosition, piece));
+            Collection<ChessMove> pawnMoves = new ArrayList<>(PawnMoveCalculator.getPawnMoves(board, myPosition, piece));
             moves.addAll(pawnMoves);
 
             return moves;
@@ -132,150 +132,33 @@ public class ChessPiece {
         }
     }
 
-    
-    // ---------------------------- PAWN MOVES ------------------------------------
 
-    private Collection<ChessMove> pawnMovesFunction(ChessBoard board, ChessPosition myPosition, ChessPiece piece) {
-        ChessPosition startPosition = new ChessPosition(myPosition.getRow(), myPosition.getColumn());
-        
-        List<ChessMove> moves = new ArrayList<>();
-        int direction;
+    /**
+     * Calculates all the positions a chess piece can move to
+     * Does not take into account moves that are illegal due to leaving the king in
+     * danger
+     * 
+     * We use a switch statement instead of doing a set of if's and elif's
+     * 
+     * @param board
+     * @param myPosition
+     * @return
+     */
+    // public Collection<ChessMove> pieceMovesSwitch(ChessBoard board, ChessPosition myPosition) {
+    //     List<ChessMove> moves = new ArrayList<>();
+    //     ChessPiece piece = board.getPiece(myPosition);
+    //     PieceType pieceType = piece.getPieceType();
 
-        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-            /* Implement the logic for if the pawn is white */
-            direction = 1;
-        } else {
-            /* Implement the logic for if the pawn is black */
-            direction = -1;
-        }
+    //     return switch(pieceType) {
+    //         case PAWN -> getPawnMoves(board, myPosition, piece);
+    //         case BISHOP -> getBishopMoves(board, myPosition, piece);
+    //         case ROOK ->  getRookMoves(board, myPosition, piece);
+    //         case KNIGHT -> getKnightMoves(board, myPosition, piece);
+    //         case KING -> getKingMoves(board, myPosition, piece);
+    //         case QUEEN -> getQueenMoves(board, myPosition, piece);
+    //     };
 
-        /* First we check directly in front of the pawn by doing the current row += direction */
-        int currRow = startPosition.getRow();
-        int currCol = startPosition.getColumn();
-        int startRow = startPosition.getRow();
-        int startCol = startPosition.getColumn();
-        currRow += direction;
-        ChessPosition inFront = new ChessPosition(currRow, myPosition.getColumn());
-
-        /* Now we check that position conditioned upon whether or not the position is in the board */
-        int inFrontStatus;
-        if (currRow > 0 && currRow < 9) {
-            inFrontStatus = checkSpotStatus(board, piece.getTeamColor(), inFront);
-        } else {
-            inFrontStatus = -1;
-        }
-
-        if (inFrontStatus == 0) {
-            /* Spot is empty, this is the only situation in which the pawn can move forward
-                we now see if it's the first position or the last position */
-            if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-                if (startRow == 2) {
-                    /* This is the start position for the white team.
-                    Add the move like normal
-                    then check the position ahead to see if the pawn is able to move forward again */
-                    moves.add(new ChessMove(startPosition, inFront, null));
-
-                    currRow += direction;
-                    ChessPosition farFront = new ChessPosition(currRow, myPosition.getColumn());
-
-                    int farFrontStatus = checkSpotStatus(board, piece.getTeamColor(), farFront);
-
-                    if (farFrontStatus == 0) {
-                        /* the spot in front of the pawn is available, add it to the moves */
-                        moves.add(new ChessMove(startPosition, farFront, null));
-                    }
-
-                } else if (startRow == 7) {
-                    /* It's the second to last position, the player is moving into a spot where they are able to promote their piece
-                    accept a promotion */
-                    moves.add(new ChessMove(startPosition, inFront, PieceType.QUEEN));
-                    moves.add(new ChessMove(startPosition, inFront, PieceType.BISHOP));
-                    moves.add(new ChessMove(startPosition, inFront, PieceType.ROOK));
-                    moves.add(new ChessMove(startPosition, inFront, PieceType.KNIGHT));
-
-                } else {
-                    /* it's not the first or the last position, just add the move like normal */
-                    /* but also check to make sure that the move is a valid move */
-                    moves.add(new ChessMove(startPosition, inFront, null));
-                }
-            } else {
-                if (startRow == 7) {
-                    /* This is the start position for the black team.
-                    Add the move like normal
-                    then check the position ahead to see if the pawn is able to move forward again */
-                    moves.add(new ChessMove(startPosition, inFront, null));
-
-                    currRow += direction;
-                    ChessPosition farFront = new ChessPosition(currRow, myPosition.getColumn());
-
-                    int farFrontStatus = checkSpotStatus(board, piece.getTeamColor(), farFront);
-
-                    if (farFrontStatus == 0) {
-                        /* the spot in front of the pawn is available, add it to the moves */
-                        moves.add(new ChessMove(startPosition, farFront, null));
-                    }
-                } else if (startRow == 2) {
-                    /* This is the last position for the black team, accept a promotion as well */
-                    moves.add(new ChessMove(startPosition, inFront, PieceType.QUEEN));
-                    moves.add(new ChessMove(startPosition, inFront, PieceType.BISHOP));
-                    moves.add(new ChessMove(startPosition, inFront, PieceType.ROOK));
-                    moves.add(new ChessMove(startPosition, inFront, PieceType.KNIGHT));
-                } else {
-                    /* This isn't the first or last postion, add the move as normal */
-                    moves.add(new ChessMove(startPosition, inFront, null));
-                }
-            }
-        }      
-        
-        /* Add the logic for the diagonal moves for the pawns */
-        /* Create the column movement directions that we will loop over */
-        List<Integer> colDirection = List.of(-1,1);
-
-        for (Integer colMove : colDirection){
-            /* Check the diagonal by moving forward 1 row and then incrementing by the column as well*/
-            currRow = startRow;
-            currCol = startCol;
-
-            currRow += direction;
-            currCol += colMove;
-            
-            ChessPosition diagonal = new ChessPosition(currRow, currCol);
-
-
-
-            int diagStatus;
-            if (0 < currRow && currRow < 9 && 0 < currCol && currCol < 9){
-                diagStatus = checkSpotStatus(board, piece.getTeamColor(), diagonal);
-            } else {
-                diagStatus = -1;
-            }
-            
-
-            if (diagStatus == 2) {
-                if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-                    if (startRow == 7) {
-                        moves.add(new ChessMove(startPosition, diagonal, PieceType.QUEEN));
-                        moves.add(new ChessMove(startPosition, diagonal, PieceType.BISHOP));
-                        moves.add(new ChessMove(startPosition, diagonal, PieceType.ROOK));
-                        moves.add(new ChessMove(startPosition, diagonal, PieceType.KNIGHT));
-                    } else {
-                        moves.add(new ChessMove(startPosition, diagonal, null));
-                    }
-                } else {
-                    if (startRow == 2) {
-                        moves.add(new ChessMove(startPosition, diagonal, PieceType.QUEEN));
-                        moves.add(new ChessMove(startPosition, diagonal, PieceType.BISHOP));
-                        moves.add(new ChessMove(startPosition, diagonal, PieceType.ROOK));
-                        moves.add(new ChessMove(startPosition, diagonal, PieceType.KNIGHT));
-                    } else {
-                        moves.add(new ChessMove(startPosition, diagonal, null));
-                    } 
-                }
-            }
-        }
-
-        return moves;
-    }
+    // }
 
 
     // ---------------------------- BISHOP MOVES ------------------------------------
@@ -327,7 +210,7 @@ public class ChessPiece {
 
                 int knightStatus;
                 if (0 < currRow && currRow < 9 && 0 < currCol && currCol < 9){
-                    knightStatus = checkSpotStatus(board, piece.getTeamColor(), newPosition);
+                    knightStatus = MoveUtils.checkSpotStatus(board, piece.getTeamColor(), newPosition);
                 } else {
                     knightStatus = -1;
                 }
@@ -351,7 +234,7 @@ public class ChessPiece {
 
                 int knightStatus;
                 if (0 < currRow && currRow < 9 && 0 < currCol && currCol < 9){
-                    knightStatus = checkSpotStatus(board, piece.getTeamColor(), newPosition);
+                    knightStatus = MoveUtils.checkSpotStatus(board, piece.getTeamColor(), newPosition);
                 } else {
                     knightStatus = -1;
                 }
@@ -390,7 +273,7 @@ public class ChessPiece {
 
                 int newPositionStatus;
                 if (0 < currRow && currRow < 9 && 0 < currCol && currCol < 9 ) {
-                    newPositionStatus = checkSpotStatus(board, piece.getTeamColor(), newPosition);
+                    newPositionStatus = MoveUtils.checkSpotStatus(board, piece.getTeamColor(), newPosition);
                 } else {
                     newPositionStatus = -1;
                 }
@@ -549,18 +432,5 @@ public class ChessPiece {
             currCol = startPosition.getColumn();
         }
         return pieceMoves;
-    }
-
-    private int checkSpotStatus(ChessBoard board, ChessGame.TeamColor teamColor, ChessPosition newPosition) {
-        ChessPiece newPiece = board.getPiece(newPosition);
-        if (newPiece != null) {
-            if (newPiece.getTeamColor() == teamColor) {
-                return 1;
-            } else {
-                return 2;
-            }
-        } else {
-            return 0;
-        }
     }
 }
