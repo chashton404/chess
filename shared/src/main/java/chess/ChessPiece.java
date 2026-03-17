@@ -137,7 +137,7 @@ public class ChessPiece {
     private Collection<ChessMove> bishopMovesFunction(ChessBoard board, ChessPosition myPosition, ChessPiece piece) {
         List<ChessMove> moves = new ArrayList<>();
         
-        List<ChessMove> diagonalMoves = new ArrayList<>(diagonalMovement(board, myPosition, piece));
+        List<ChessMove> diagonalMoves = new ArrayList<>(MoveUtils.diagonalMovement(board, myPosition, piece));
         moves.addAll(diagonalMoves);
 
         return moves;
@@ -170,54 +170,47 @@ public class ChessPiece {
         List<Integer> twos = List.of(-2,2);
         List<Integer> ones = List.of(-1,1);
 
+        // move two rows and one column
         for (int rowDirection : twos) {
             for (int colDirection : ones) {
-                int currRow = startPosition.getRow();
-                int currCol = startPosition.getColumn();
-
-                currRow += rowDirection;
-                currCol += colDirection;
-
-                ChessPosition newPosition = new ChessPosition(currRow, currCol);
-
-                int knightStatus;
-                if (0 < currRow && currRow < 9 && 0 < currCol && currCol < 9){
-                    knightStatus = MoveUtils.checkSpotStatus(board, piece.getTeamColor(), newPosition);
-                } else {
-                    knightStatus = -1;
-                }
-
-                if (knightStatus == 0 || knightStatus == 2) {
-                    moves.add(new ChessMove(startPosition, newPosition, null));
-
-                }    
+                moves.addAll(knightMoveIteration(board, piece, startPosition, rowDirection, colDirection));
             }
         }
 
+        //move two columns and one row
         for (int colDirection : twos) {
             for (int rowDirection : ones) {
-                int currRow = startPosition.getRow();
-                int currCol = startPosition.getColumn();
-
-                currRow += rowDirection;
-                currCol += colDirection;
-
-                ChessPosition newPosition = new ChessPosition(currRow, currCol);
-
-                int knightStatus;
-                if (0 < currRow && currRow < 9 && 0 < currCol && currCol < 9){
-                    knightStatus = MoveUtils.checkSpotStatus(board, piece.getTeamColor(), newPosition);
-                } else {
-                    knightStatus = -1;
-                }
-
-                if (knightStatus == 0 || knightStatus == 2) {
-                    moves.add(new ChessMove(startPosition, newPosition, null));
-
-                }    
+                moves.addAll(knightMoveIteration(board, piece, startPosition, rowDirection, colDirection));
             }
         }
 
+        return moves;
+    }
+
+    private Collection<ChessMove> knightMoveIteration(ChessBoard board, ChessPiece piece, ChessPosition startPosition, int rowDirection, int colDirection) {
+
+        Collection<ChessMove> moves = new ArrayList<>();
+
+        int currRow = startPosition.getRow();
+        int currCol = startPosition.getColumn();
+
+        currRow += rowDirection;
+        currCol += colDirection;
+
+        ChessPosition newPosition = new ChessPosition(currRow, currCol);
+
+        int knightStatus;
+        if (0 < currRow && currRow < 9 && 0 < currCol && currCol < 9){
+            knightStatus = MoveUtils.checkSpotStatus(board, piece.getTeamColor(), newPosition);
+        } else {
+            knightStatus = -1;
+        }
+
+        if (knightStatus == 0 || knightStatus == 2) {
+            moves.add(new ChessMove(startPosition, newPosition, null));
+
+        }    
+        
         return moves;
     }
 
@@ -268,7 +261,7 @@ public class ChessPiece {
         List<ChessMove> straightMoves = new ArrayList<>(straightMovement(board, myPosition, piece));
         moves.addAll(straightMoves);
 
-        List<ChessMove> diagonalMoves = new ArrayList<>(diagonalMovement(board, myPosition, piece));
+        List<ChessMove> diagonalMoves = new ArrayList<>(MoveUtils.diagonalMovement(board, myPosition, piece));
         moves.addAll(diagonalMoves);
             
         return moves;
@@ -276,57 +269,6 @@ public class ChessPiece {
 
 
     // ---------------------------- GENERAL USE -------------------------------------
-
-    private Collection<ChessMove> diagonalMovement(ChessBoard board, ChessPosition piecePosition, ChessPiece piece) {
-        /* Initalize our lists, these are the lists that we will append the moves to and wwe will iterate over the different directions */
-        List<Integer> direction = List.of(-1, 1);
-        List<ChessMove> pieceMoves = new ArrayList<>();
-
-        /* Save the current position as the start position that will be used when contstructing the chess move opbject */
-        ChessPosition startPosition = new ChessPosition(piecePosition.getRow(), piecePosition.getColumn());
-
-        /* We use a nested for loop to iterate over the four diagonal locations */
-        for (Integer colDirection : direction) {
-            for (Integer rowDirection : direction) {
-
-                int currRow = startPosition.getRow();
-                int currCol = startPosition.getColumn();
-
-                /* The diagonal search label here allows us to break out of the loop when we find a piece of our own team */
-                diagonalSearch:
-                while ( 0 < currRow && currRow < 9 && 0 < currCol && currRow < 9 ){
-                    /* Iterate in each of the directions */
-                    currRow += rowDirection;
-                    currCol += colDirection;
-
-                    if (currRow == 0 || currRow == 9) {
-                        break diagonalSearch;
-                    } else if (currCol == 0 || currCol == 9) {
-                        break diagonalSearch;
-                    }
-                    
-                    ChessMove move = new ChessMove(startPosition, new ChessPosition(currRow, currCol), null);
-
-                    /* Perform a check to verify that the the new position doesnt have the team of the same piece there */
-                    ChessPiece otherPiece = board.getPiece(new ChessPosition(currRow, currCol));
-
-                    if (otherPiece != null) {
-                        if (otherPiece.getTeamColor() != piece.getTeamColor()) {
-                            /* In the case of the opponent piece being in the path, add the move as a possible move and then break the loop */
-                            pieceMoves.add(move);
-                            break diagonalSearch; 
-                        } else {
-                            /* Otherwise, don't add the piece and break the loop */
-                            break diagonalSearch;
-                        }
-                    } else {
-                        pieceMoves.add(move);
-                    }
-                }
-            }
-        }
-        return pieceMoves;
-    }
 
     private Collection<ChessMove> straightMovement(ChessBoard board, ChessPosition position, ChessPiece piece) {
         /* Create the list of directions that we will use to move and the moves*/
