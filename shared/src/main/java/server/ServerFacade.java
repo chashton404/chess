@@ -10,6 +10,11 @@ import java.net.http.HttpResponse.BodyHandlers;
 
 import model.LoginRequest;
 import model.AuthData;
+import model.RegisterRequest;
+import model.CreateGameRequest;
+import model.CreateGameResult;
+import model.ListGamesResult;
+import model.JoinGameRequest;
 
 import exception.ResponseException;
 
@@ -31,43 +36,51 @@ public class ServerFacade {
 
 
     // register user
+    public AuthData registerUser(RegisterRequest req) throws ResponseException {
+        var request = buildRequest("POST", "/user", req, null);
+        var response = sendRequest(request);
+        return handleResponse(response, AuthData.class);
+    }
 
 
     // logout user
+    public void logoutUser(String authToken) throws ResponseException {
+        var request = buildRequest("DELETE", "/session", null, authToken);
+        var response = sendRequest(request);
+        handleResponse(response, null);
+    }
 
 
     // create game
+    //TODO: check this implementation, unsure about the return type and method arguments
+    public CreateGameResult createGame(CreateGameRequest req, String authToken) throws ResponseException {
+        var request = buildRequest("POST", "/game", req, authToken);
+        var response = sendRequest(request);
+        return handleResponse(response, CreateGameResult.class);
+    }
 
 
     // list game
+    public ListGamesResult listGames(String authToken) throws ResponseException {
+        var request = buildRequest("GET", "/game", null, authToken);
+        var response = sendRequest(request);
+        return handleResponse(response, ListGamesResult.class);
+    }
 
 
     // join game (as player)
+    public void joinGame(JoinGameRequest req, String authToken) throws ResponseException {
+        var request = buildRequest("PUT", "/game", req, authToken);
+        var response = sendRequest(request);
+        handleResponse(response, null);
+    }
 
-
-    // public Pet addPet(Pet pet) throws ResponseException {
-    //     var request = buildRequest("POST", "/pet", pet);
-    //     var response = sendRequest(request);
-    //     return handleResponse(response, Pet.class);
-    // }
-
-    // public void deletePet(int id) throws ResponseException {
-    //     var path = String.format("/pet/%s", id);
-    //     var request = buildRequest("DELETE", path, null);
-    //     var response = sendRequest(request);
-    //     handleResponse(response, null);
-    // }
-
-    // public void deleteAllPets() throws ResponseException {
-    //     var request = buildRequest("DELETE", "/pet", null);
-    //     sendRequest(request);
-    // }
-
-    // public PetList listPets() throws ResponseException {
-    //     var request = buildRequest("GET", "/pet", null);
-    //     var response = sendRequest(request);
-    //     return handleResponse(response, PetList.class);
-    // }
+    // clear database (for testing purposes)
+    public void clear() throws ResponseException {
+        var request = buildRequest("DELETE", "/db", null, null);
+        var response = sendRequest(request);
+        handleResponse(response, null);
+    }
 
     private HttpRequest buildRequest(String method, String path, Object body, String authToken) {
         var request = HttpRequest.newBuilder()
