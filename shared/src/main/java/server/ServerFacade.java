@@ -9,6 +9,9 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse.BodyHandlers;
 
 import model.LoginRequest;
+import model.AuthData;
+
+import exception.ResponseException;
 
 public class ServerFacade {
     // We create a server facade to separate the Http requests and responses from the user
@@ -20,10 +23,10 @@ public class ServerFacade {
     }
 
     // login user
-    public void loginUser(LoginRequest req) {
-        var request = buildRequest(method );
+    public AuthData loginUser(LoginRequest req) throws ResponseException {
+        var request = buildRequest("POST", "/session", req, null);
         var response = sendRequest(request);
-        return handleResponse(response, )
+        return handleResponse(response, AuthData.class);
     }
 
 
@@ -66,13 +69,18 @@ public class ServerFacade {
     //     return handleResponse(response, PetList.class);
     // }
 
-    private HttpRequest buildRequest(String method, String path, Object body) {
+    private HttpRequest buildRequest(String method, String path, Object body, String authToken) {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(serverURL + path))
                 .method(method, makeRequestBody(body));
         if (body != null) {
             request.setHeader("Content-Type", "application/json");
         }
+
+        if (authToken != null) {
+            request.setHeader("authorization", authToken);
+        }
+
         return request.build();
     }
 
@@ -84,12 +92,29 @@ public class ServerFacade {
         }
     }
 
-    private HttpResponse<String> sendRequest(HttpRequest request) {
+    private HttpResponse<String> sendRequest(HttpRequest request) throws ResponseException {
         try {
             return client.send(request, BodyHandlers.ofString());
         } catch (Exception ex) {
-            // TODO : figure out how this error part works
+            throw new ResponseException(500, ex.getMessage());
         }
+    }
+
+    private <T> T handleResponse(HttpResponse<String> response, Class<T> responseClass) throws ResponseException {
+        var status = response.statusCode();
+        if (!isSuccessful(status)) {
+            throw new ResponseException(status, "Error" + status + ": " + response.body()); 
+        }
+
+        if (responseClass != null) {
+            return new Gson().fromJson(response.body(), responseClass);
+        }
+
+        return null;
+    }
+
+    private boolean isSuccessful(int status) {
+        return status / 100 == 2;
     }
 
 }
