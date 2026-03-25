@@ -109,11 +109,14 @@ public class ServerFacadeTests {
     public void badCreateGame() throws Exception {
         
         AuthData auth = facade.registerUser(new RegisterRequest("donkey", "kong", "123"));
+        CreateGameResult result = facade.createGame(new CreateGameRequest("chase"), auth.authToken());
     }   
 
     // List Game Tests
     @Test
     public void goodListGames() {
+
+        
 
     }
 
