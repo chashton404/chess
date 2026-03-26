@@ -15,6 +15,8 @@ import model.ListGamesResult;
 import model.ListGameData;
 import model.JoinGameRequest;
 
+import chess.ChessBoard;
+
 public class SignedInREPL {
     private final ServerFacade server;
     private final ChessClient client;
@@ -80,23 +82,34 @@ public class SignedInREPL {
             Integer gameNum = Integer.parseInt(params[0]);
             String playerColor = params[1];
 
+            ListGamesResult gameData = server.listGames(client.getAuthToken());
+            var games = gameData.games();
+
+            if (games.isEmpty()) {
+                return "No games found, use `create <NAME>` to start one.";
+            }
+
+            this.localGameList = new ArrayList<>(games);
+
             // make sure that game actually exists
             if (gameNum < 1 || gameNum > localGameList.size()) {
                 throw new ResponseException(400, "You absolute bafoon, the game must exist to join it");
             }
 
             // get the gameID from the game number
+        
             int gameID = localGameList.get(gameNum - 1).gameID();
 
             server.joinGame(new JoinGameRequest(playerColor, gameID), client.getAuthToken());
-            return "Successfully Joined Game";
+            return DrawBoard.draw(new ChessBoard(), playerColor);
+
 
         }
         throw new ResponseException(400, "Expected <ID> [WHITE|BLACK]");
     }
 
     private String observeGame(String... params) throws ResponseException {
-        return "Successfully observing game";
+        return DrawBoard.draw(new ChessBoard(), "white");
     }   
 
     private String logoutUser() throws ResponseException {
