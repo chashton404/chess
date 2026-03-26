@@ -52,7 +52,6 @@ public class ServerFacade {
 
 
     // create game
-    //TODO: check this implementation, unsure about the return type and method arguments
     public CreateGameResult createGame(CreateGameRequest req, String authToken) throws ResponseException {
         var request = buildRequest("POST", "/game", req, authToken);
         var response = sendRequest(request);
