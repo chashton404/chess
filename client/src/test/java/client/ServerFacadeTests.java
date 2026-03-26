@@ -11,7 +11,10 @@ import model.AuthData;
 import model.LoginRequest;
 import model.RegisterRequest;
 import model.CreateGameResult;
-import model.CreateGameRequest;;
+import model.JoinGameRequest;
+import model.CreateGameRequest;
+import model.ListGamesResult;
+import model.ListGameData;
 
 
 public class ServerFacadeTests {
@@ -24,10 +27,11 @@ public class ServerFacadeTests {
         server = new Server();
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
+        facade = new ServerFacade("http://localhost:" + port);
     }
 
     @BeforeEach
-    public static void clear() throws Exception {
+    public void clear() throws Exception {
         facade.clear();
     }
 
@@ -109,31 +113,49 @@ public class ServerFacadeTests {
     public void badCreateGame() throws Exception {
         
         AuthData auth = facade.registerUser(new RegisterRequest("donkey", "kong", "123"));
-        CreateGameResult result = facade.createGame(new CreateGameRequest("chase"), auth.authToken());
+        
+        assertThrows(Exception.class, () -> facade.createGame(new CreateGameRequest(null), auth.authToken()));
+
+
     }   
 
     // List Game Tests
     @Test
-    public void goodListGames() {
+    public void goodListGames() throws Exception{
 
+        AuthData auth = facade.registerUser(new RegisterRequest("donkey", "kong", "123"));
+        facade.createGame(new CreateGameRequest("chase"), auth.authToken());
+
+        ListGamesResult games = facade.listGames(auth.authToken());
+        assertTrue(games.games().size() > 0, "Games list should be greater than 0" );
         
-
+        
     }
 
     @Test
     public void badListGames() {
-        
+        assertThrows(Exception.class, () -> facade.listGames(null));
     }
 
     // Join Game Tests
     @Test
-    public void goodJoinGame() {
+    public void goodJoinGame() throws Exception{
+
+        AuthData auth = facade.registerUser(new RegisterRequest("donkey", "kong", "123"));
+        CreateGameResult game = facade.createGame(new CreateGameRequest("chase"), auth.authToken());
+
+        facade.joinGame(new JoinGameRequest("WHITE", game.gameID()), auth.authToken());
+
+        ListGamesResult games = facade.listGames(auth.authToken());
+
+        ListGameData firstGame = games.games().iterator().next();
+        assertTrue(firstGame.whiteUsername().equals("donkey"),"Whie username should match input" );
 
     }
 
     @Test
     public void badJoinGame() {
-        
+        assertThrows(Exception.class, () -> facade.joinGame(null, null));
     }
 
 }
