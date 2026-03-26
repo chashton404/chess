@@ -149,7 +149,7 @@ public class ServerFacadeTests {
         ListGamesResult games = facade.listGames(auth.authToken());
 
         ListGameData firstGame = games.games().iterator().next();
-        assertTrue(firstGame.whiteUsername().equals("donkey"),"Whie username should match input" );
+        assertTrue(firstGame.whiteUsername().equals("donkey"),"White username should match input" );
 
     }
 
