@@ -100,10 +100,11 @@ public class SignedInREPL {
         
             int gameID = localGameList.get(gameNum - 1).gameID();
 
+            ChessBoard board = new ChessBoard();
+            board.resetBoard();
+
             server.joinGame(new JoinGameRequest(playerColor, gameID), client.getAuthToken());
-            return DrawBoard.draw(new ChessBoard(), playerColor);
-
-
+            return DrawBoard.draw(board, playerColor);
         }
         throw new ResponseException(400, "Expected <ID> [WHITE|BLACK]");
     }
