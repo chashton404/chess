@@ -87,12 +87,12 @@ public class SignedInREPL {
 
 
     public String help() {
-        return "create <NAME> - a game" +
-                "\nlist - games" +
-                "\njoin <ID> [WHITE|BLACK] - a game" + 
-                "\nobserve <ID> - a game" + 
-                "\nlogout - when you are done" +
-                "\nquit - playing chess" +
-                "\nhelp - with possible commands";
+        return "     create <NAME> - a game" +
+                "\n     list - games" +
+                "\n     join <ID> [WHITE|BLACK] - a game" + 
+                "\n     observe <ID> - a game" + 
+                "\n     logout - when you are done" +
+                "\n     quit - playing chess" +
+                "\n     help - with possible commands";
     }
 }
