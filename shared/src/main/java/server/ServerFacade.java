@@ -116,7 +116,8 @@ public class ServerFacade {
     private <T> T handleResponse(HttpResponse<String> response, Class<T> responseClass) throws ResponseException {
         var status = response.statusCode();
         if (!isSuccessful(status)) {
-            throw new ResponseException(status, "Error" + status + ": " + response.body()); 
+            String errorMessage = extractErrorMessage(response.body());
+            throw new ResponseException(status, "Error " + status + ": " + errorMessage); 
         }
 
         if (responseClass != null) {
@@ -128,6 +129,25 @@ public class ServerFacade {
 
     private boolean isSuccessful(int status) {
         return status / 100 == 2;
+    }
+
+    private String extractErrorMessage(String responseBody) {
+        try {
+            if (responseBody == null || responseBody.isBlank()) {
+                return "Unknown Error";
+            }
+
+            var jsonObject = new Gson().fromJson(responseBody, com.google.gson.JsonObject.class);
+
+            if (jsonObject.has("message")) {
+                String errorMessage = jsonObject.get("message").getAsString();
+                return errorMessage.replace("Error: ", "");
+            }
+
+            return responseBody;
+        } catch (Exception e) {
+            return responseBody;
+        }
     }
 
 }

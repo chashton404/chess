@@ -20,7 +20,7 @@ public class SignedInREPL {
         this.client = client;
     }
 
-    public String signedInReponses(String cmd, String[] params) {
+    public String signedInResponses(String cmd, String[] params) {
         try {
             return switch(cmd) {
                 case "create" -> createGame(params);
@@ -40,7 +40,7 @@ public class SignedInREPL {
             String gameName = params[0];
             CreateGameResult game = server.createGame(new CreateGameRequest(gameName), client.getAuthToken());
 
-            return String.format("Created game with id: %s", game.gameID());
+            return String.format("Game successfully created", game.gameID());
         }
         throw new ResponseException(400, "Expected: <NAME>");
     }
@@ -87,12 +87,12 @@ public class SignedInREPL {
 
 
     public String help() {
-        return "create NAME - a game" +
+        return "create <NAME> - a game" +
                 "\nlist - games" +
                 "\njoin <ID> [WHITE|BLACK] - a game" + 
                 "\nobserve <ID> - a game" + 
                 "\nlogout - when you are done" +
                 "\nquit - playing chess" +
-                "\nhelp - with paossible commands";
+                "\nhelp - with possible commands";
     }
 }

@@ -53,7 +53,7 @@ public class ChessClient {
             String line = scanner.nextLine();
 
             try {
-                result = eval(SET_TEXT_COLOR_BLUE + line);
+                result = eval(line);
                 System.out.print(result);
             } catch (Throwable e) {
                 var msg = e.toString();
@@ -64,19 +64,33 @@ public class ChessClient {
     }
 
     private void printPrompt() {
-        System.out.print("\n" + RESET_TEXT_COLOR + status + ">>> ");
+        System.out.print("\n" + RESET_TEXT_COLOR + status + " >>> ");
     }
 
     public String eval(String input) {
         try {
-            String[] tokens = input.toLowerCase().split(" ");
-            String cmd = (tokens.length > 0) ? tokens[0] : "help";
+            String[] tokens = input.trim().split("\\s+");
+            String cmd = (tokens.length > 0) ? tokens[0].toLowerCase() : "help";
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
+
+            if (cmd.isBlank() || cmd.equals("help")) {
+                return switch (state) {
+                    case State.SIGNEDOUT -> signedOutREPL.help();
+                    case State.SIGNEDIN -> signedInREPL.help();
+                };
+            }
+
+            if (cmd.equals("quit")) {
+                return "quit";
+            }
+
             return switch (state) {
                 case State.SIGNEDOUT -> signedOutREPL.signedOutReponses(cmd, params);
                 case State.SIGNEDIN -> signedInREPL.signedInResponses(cmd, params);
-            }
+            };
 
+        } catch (Exception ex) {
+            return ex.getMessage();
         }
     }
 }

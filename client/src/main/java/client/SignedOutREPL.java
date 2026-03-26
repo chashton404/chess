@@ -22,8 +22,8 @@ public class SignedOutREPL {
     public String signedOutReponses(String cmd, String[] params) {
         try {
             return switch(cmd) {
-                case "Login" -> loginUser(params);
-                case "Register" -> registerUser(params); 
+                case "login" -> loginUser(params);
+                case "register" -> registerUser(params); 
                 default -> help(); 
             };
         } catch (ResponseException ex) {
@@ -42,7 +42,7 @@ public class SignedOutREPL {
             client.setAuthToken(authData.authToken());
             client.setState(State.SIGNEDIN);
 
-            return String.format("Logged in as $s.", username);
+            return String.format("Logged in as %s.", username);
         }
         throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>");
     }
@@ -58,7 +58,7 @@ public class SignedOutREPL {
             client.setAuthToken(authData.authToken());
             client.setState(State.SIGNEDIN);
 
-            return String.format("Logged in as $s.", username);
+            return String.format("Logged in as %s.", username);
             
         }
         throw new ResponseException(400, "Expected; <USERNAME> <PASSWORD> <EMAIL>");
