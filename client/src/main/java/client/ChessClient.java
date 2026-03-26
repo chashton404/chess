@@ -39,7 +39,7 @@ public class ChessClient {
     }
 
     public void run() {
-        System.out.println("Welcome to 240 chess. Type Help to get started.");
+        System.out.println( "\n" + FIRE + SET_TEXT_COLOR_RED + " WELCOME TO THE DOPEST LITTEST CHESS SERVER " + FIRE);
         
         Scanner scanner = new Scanner(System.in);
         var result = "";

@@ -12,8 +12,6 @@ public class ClientMain {
             serverUrl = args[0];
         }
 
-        System.out.println("Welcome to the 240 Chess Client");
-
         try {
             new ChessClient(serverUrl).run();
         } catch (ResponseException e) {

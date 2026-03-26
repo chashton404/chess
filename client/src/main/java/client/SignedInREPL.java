@@ -81,7 +81,7 @@ public class SignedInREPL {
 
             // make sure that game actually exists
             if (gameNum < 1 || gameNum > localGameList.size()) {
-                throw new ResponseException(400, "You absolute bafoon, the game must exist to join it")
+                throw new ResponseException(400, "You absolute bafoon, the game must exist to join it");
             }
 
             // get the gameID from the game number
