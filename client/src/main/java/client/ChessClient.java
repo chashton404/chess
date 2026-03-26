@@ -64,7 +64,7 @@ public class ChessClient {
     }
 
     private void printPrompt() {
-        System.out.print("\n" + RESET_TEXT_COLOR + status + " >>> ");
+        System.out.print("\n" + RESET_TEXT_COLOR + status + " >>> " + SET_TEXT_COLOR_GREEN);
     }
 
     public String eval(String input) {

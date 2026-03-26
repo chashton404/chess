@@ -2,9 +2,10 @@ package client;
 
 import exception.ResponseException;
 
-import java.util.ArrayList;
+import static ui.EscapeSequences.SET_BG_COLOR_DARK_GREY;
+import static ui.EscapeSequences.SET_TEXT_COLOR_BLUE;
 
-import org.glassfish.grizzly.http.server.Response;
+import java.util.ArrayList;
 
 import server.ServerFacade;
 import model.CreateGameRequest;
@@ -107,12 +108,12 @@ public class SignedInREPL {
 
 
     public String help() {
-        return "     create <NAME> - a game" +
-                "\n     list - games" +
-                "\n     join <ID> [WHITE|BLACK] - a game" + 
-                "\n     observe <ID> - a game" + 
-                "\n     logout - when you are done" +
-                "\n     quit - playing chess" +
-                "\n     help - with possible commands";
+        return SET_TEXT_COLOR_BLUE + "     create <NAME>" + SET_BG_COLOR_DARK_GREY + " - a game" +
+                SET_TEXT_COLOR_BLUE + "\n     list -" + SET_BG_COLOR_DARK_GREY + " games" +
+                SET_TEXT_COLOR_BLUE + "\n     join <ID> [WHITE|BLACK]" + SET_BG_COLOR_DARK_GREY + " - a game" + 
+                SET_TEXT_COLOR_BLUE + "\n     observe <ID>" + SET_BG_COLOR_DARK_GREY + " - a game" + 
+                SET_TEXT_COLOR_BLUE + "\n     logout" + SET_BG_COLOR_DARK_GREY + " - when you are done" +
+                SET_TEXT_COLOR_BLUE + "\n     quit" + SET_BG_COLOR_DARK_GREY + " - playing chess" +
+                SET_TEXT_COLOR_BLUE + "\n     help" + SET_BG_COLOR_DARK_GREY + " - with possible commands";
     }
 }

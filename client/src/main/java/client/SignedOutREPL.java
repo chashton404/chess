@@ -1,5 +1,9 @@
 package client;
 
+import static ui.EscapeSequences.RESET_TEXT_COLOR;
+import static ui.EscapeSequences.SET_TEXT_COLOR_BLUE;
+import static ui.EscapeSequences.SET_TEXT_COLOR_DARK_GREY;
+
 import java.util.Arrays;
 
 import exception.ResponseException;
@@ -42,7 +46,7 @@ public class SignedOutREPL {
             client.setAuthToken(authData.authToken());
             client.setState(State.SIGNEDIN);
 
-            return String.format("Logged in as %s.", username);
+            return String.format(RESET_TEXT_COLOR + "Logged in as %s.", username);
         }
         throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>");
     }
@@ -65,9 +69,10 @@ public class SignedOutREPL {
     }
 
     public String help() {
-        return "     register <USERNAME> <PASSWORD> <EMAIL> - to create an account" +
-                "\n     login <USERNAME> <PASSWORD> - to play chess" + 
-                "\n     quit - playing chess" +
-                "\n     help - with possible commands";
+
+        return  SET_TEXT_COLOR_BLUE + "     register <USERNAME> <PASSWORD> <EMAIL>" + SET_TEXT_COLOR_DARK_GREY + " - to create an account" +
+                SET_TEXT_COLOR_BLUE + "\n     login <USERNAME> <PASSWORD>" + SET_TEXT_COLOR_DARK_GREY + "- to play chess" + 
+                SET_TEXT_COLOR_BLUE + "\n     quit " + SET_TEXT_COLOR_DARK_GREY + "- playing chess" +
+                SET_TEXT_COLOR_BLUE + "\n     help " + SET_TEXT_COLOR_DARK_GREY + "- with possible commands";
     }
 }
