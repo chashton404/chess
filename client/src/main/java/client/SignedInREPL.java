@@ -117,6 +117,12 @@ public class SignedInREPL {
 
     private String observeGame(String... params) throws ResponseException {
         if (params.length >= 1) {
+            try {
+                Integer.parseInt(params[0]);
+            } catch (NumberFormatException e) {
+                throw new ResponseException(400, "Expected <ID> [WHITE|BLACK]");
+            }
+
             Integer gameNum = Integer.parseInt(params[0]);
 
             ListGamesResult gameData = server.listGames(client.getAuthToken());
@@ -132,8 +138,11 @@ public class SignedInREPL {
             if (gameNum < 1 || gameNum > localGameList.size()) {
                 throw new ResponseException(400, "You absolute bafoon, the game must exist to join it");
             }
-    
-            return DrawBoard.draw(new ChessBoard(), "white");
+            
+            ChessBoard board = new ChessBoard();
+            board.resetBoard();
+
+            return DrawBoard.draw(board, "white");
         }
         throw new ResponseException(400, "Expected <ID>");
     }   
