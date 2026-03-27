@@ -62,7 +62,40 @@ public class DrawBoard {
     }
 
     private static String drawBlackBoard(ChessBoard board) {
-        return "Successfully drew black board";
+        StringBuilder chessBoard = new StringBuilder();
+        chessBoard.append('\n');
+
+        chessBoard.append(SET_BG_COLOR_DARK_GREY + RESET_TEXT_COLOR + "    h  g  f  e  d  c  b  a    " + RESET_BG_COLOR +  "\n");
+        for (int row = 1; row <= 8; row++) {
+            chessBoard.append(SET_BG_COLOR_DARK_GREY + ' ' + row + ' ');
+
+            for (int col = 8; col >= 1; col--) {
+                ChessPiece piece = board.getPiece(new ChessPosition(row, col));
+
+                if ((row + col) % 2 == 0) {
+                    chessBoard.append(SET_BG_COLOR_BLACK);
+                } else {
+                    chessBoard.append(SET_BG_COLOR_LIGHT_GREY);
+                }
+
+                if (piece == null){
+                    chessBoard.append("   ");
+                } else {
+                    chessBoard.append(" ");
+                    chessBoard.append(getPieceColor(piece));
+                    chessBoard.append(getPiece(piece));
+                    chessBoard.append(RESET_TEXT_COLOR);
+                    chessBoard.append(" ");
+                }
+            }
+
+            chessBoard.append(SET_BG_COLOR_DARK_GREY + RESET_TEXT_COLOR + ' ' + row + ' ' + RESET_BG_COLOR + '\n');
+        }
+
+        chessBoard.append(SET_BG_COLOR_DARK_GREY + RESET_TEXT_COLOR + "    h  g  f  e  d  c  b  a    " + RESET_BG_COLOR + "\n");
+        chessBoard.append(RESET_BG_COLOR);
+
+        return chessBoard.toString();
     }
 
     private static String getPieceColor(ChessPiece piece) {
