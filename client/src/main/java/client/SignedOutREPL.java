@@ -28,6 +28,7 @@ public class SignedOutREPL {
             return switch(cmd) {
                 case "login" -> loginUser(params);
                 case "register" -> registerUser(params); 
+                case "cleardonkey" -> clear();
                 default -> help(); 
             };
         } catch (ResponseException ex) {
@@ -66,6 +67,11 @@ public class SignedOutREPL {
             
         }
         throw new ResponseException(400, "Expected; <USERNAME> <PASSWORD> <EMAIL>");
+    }
+
+    public String clear() throws ResponseException {
+        server.clear();
+        return "Database cleared";
     }
 
     public String help() {

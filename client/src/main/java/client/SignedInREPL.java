@@ -79,6 +79,12 @@ public class SignedInREPL {
 
     private String joinGame(String... params) throws ResponseException {
         if (params.length >= 2) {
+            try {
+                Integer.parseInt(params[0]);
+            } catch (NumberFormatException e) {
+                throw new ResponseException(400, "Expected <ID> [WHITE|BLACK]");
+            }
+
             Integer gameNum = Integer.parseInt(params[0]);
             String playerColor = params[1];
 
@@ -110,7 +116,26 @@ public class SignedInREPL {
     }
 
     private String observeGame(String... params) throws ResponseException {
-        return DrawBoard.draw(new ChessBoard(), "white");
+        if (params.length >= 1) {
+            Integer gameNum = Integer.parseInt(params[0]);
+
+            ListGamesResult gameData = server.listGames(client.getAuthToken());
+            var games = gameData.games();
+    
+            if (games.isEmpty()) {
+                return "No games found, use `create <NAME>` to start one.";
+            }
+    
+            this.localGameList = new ArrayList<>(games);
+    
+            // make sure that game actually exists
+            if (gameNum < 1 || gameNum > localGameList.size()) {
+                throw new ResponseException(400, "You absolute bafoon, the game must exist to join it");
+            }
+    
+            return DrawBoard.draw(new ChessBoard(), "white");
+        }
+        throw new ResponseException(400, "Expected <ID>");
     }   
 
     private String logoutUser() throws ResponseException {
