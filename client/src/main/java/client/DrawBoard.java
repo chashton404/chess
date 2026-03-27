@@ -40,11 +40,7 @@ public class DrawBoard {
                 if (piece == null){
                     chessBoard.append("   ");
                 } else {
-                    chessBoard.append(" ");
-                    chessBoard.append(getPieceColor(piece));
-                    chessBoard.append(getPiece(piece));
-                    chessBoard.append(RESET_TEXT_COLOR);
-                    chessBoard.append(" ");
+                    chessBoard.append(addPieces(piece));
                 }
             }
 
@@ -77,11 +73,7 @@ public class DrawBoard {
                 if (piece == null){
                     chessBoard.append("   ");
                 } else {
-                    chessBoard.append(" ");
-                    chessBoard.append(getPieceColor(piece));
-                    chessBoard.append(getPiece(piece));
-                    chessBoard.append(RESET_TEXT_COLOR);
-                    chessBoard.append(" ");
+                    chessBoard.append(addPieces(piece));
                 }
             }
 
@@ -108,6 +100,18 @@ public class DrawBoard {
             case BISHOP -> 'B';
             case PAWN -> 'P';
         };
+    }
+
+    private static String addPieces(ChessPiece piece) {
+        StringBuilder pieceText = new StringBuilder();
+        
+        pieceText.append(getPieceColor(piece));
+        pieceText.append(getPiece(piece));
+        pieceText.append(RESET_TEXT_COLOR);
+        pieceText.append(" ");
+        pieceText.append(" ");
+
+        return pieceText.toString();
     }
 
 }
