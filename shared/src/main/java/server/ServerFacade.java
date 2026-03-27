@@ -114,9 +114,16 @@ public class ServerFacade {
 
     private <T> T handleResponse(HttpResponse<String> response, Class<T> responseClass) throws ResponseException {
         var status = response.statusCode();
-        if (!isSuccessful(status)) {
+        int errorCode = 500;
+        if (status >= 400 && status <= 499) {
+            errorCode = 400;
+        }
+        if (status >= 500 && status <=599) {
+            errorCode = 500;
+        }
+         if (!isSuccessful(status)) {
             String errorMessage = extractErrorMessage(response.body());
-            throw new ResponseException(status, "Error " + status + ": " + errorMessage); 
+            throw new ResponseException(status, "Error " + errorCode + ": " + errorMessage); 
         }
 
         if (responseClass != null) {
