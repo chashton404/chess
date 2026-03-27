@@ -36,9 +36,9 @@ public class DrawBoard {
                 ChessPiece piece = board.getPiece(new ChessPosition(row, col));
 
                 if ((row + col) % 2 == 0) {
-                    chessBoard.append(SET_BG_COLOR_LIGHT_GREY);
-                } else {
                     chessBoard.append(SET_BG_COLOR_BLACK);
+                } else {
+                    chessBoard.append(SET_BG_COLOR_LIGHT_GREY);
                 }
 
                 if (piece == null){
