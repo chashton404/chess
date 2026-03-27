@@ -38,7 +38,7 @@ public class DrawBoard {
                 if ((row + col) % 2 == 0) {
                     chessBoard.append(SET_BG_COLOR_BLACK);
                 } else {
-                    chessBoard.append(SET_BG_COLOR_LIGHT_GREY);
+                    chessBoard.append(SET_BG_COLOR_WHITE);
                 }
 
                 if (piece == null){
