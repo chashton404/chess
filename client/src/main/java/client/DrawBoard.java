@@ -1,9 +1,5 @@
 package client;
 
-import javax.swing.plaf.basic.BasicSplitPaneUI.KeyboardDownRightHandler;
-
-import org.glassfish.grizzly.http.server.accesslog.QueueingAppender;
-
 import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessPiece;
