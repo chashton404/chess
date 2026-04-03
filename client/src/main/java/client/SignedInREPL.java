@@ -27,6 +27,7 @@ public class SignedInREPL {
         this.client = client;
     }
 
+    // note that here cmd is the first word and params are all the words following them
     public String signedInResponses(String cmd, String[] params) {
         try {
             return switch(cmd) {
@@ -42,6 +43,7 @@ public class SignedInREPL {
         } 
     }
 
+    // Matches pattern 'create <name>'
     private String createGame(String... params) throws ResponseException {
         if (params.length > 0) {
             String gameName = params[0];
@@ -52,6 +54,7 @@ public class SignedInREPL {
         throw new ResponseException(400, "Expected: <NAME>");
     }
 
+    // Matches pattern 'list'
     private String listGames() throws ResponseException {
         ListGamesResult gameData = server.listGames(client.getAuthToken());
         var games = gameData.games();
@@ -77,6 +80,7 @@ public class SignedInREPL {
         return gamesList.toString();
     }
 
+    // Matches pattern 'join <gameNum> [BLACK|WHITE]'
     private String joinGame(String... params) throws ResponseException {
         if (params.length >= 2) {
             try {
@@ -115,6 +119,7 @@ public class SignedInREPL {
         throw new ResponseException(400, "Expected <ID> [WHITE|BLACK]");
     }
 
+    // Matches pattern 'observe <gameNum>'
     private String observeGame(String... params) throws ResponseException {
         if (params.length >= 1) {
             try {
@@ -147,6 +152,7 @@ public class SignedInREPL {
         throw new ResponseException(400, "Expected <ID>");
     }   
 
+    // Matches pattern 'logout'
     private String logoutUser() throws ResponseException {
         server.logoutUser(client.getAuthToken());
         client.setState(State.SIGNEDOUT);
@@ -154,7 +160,7 @@ public class SignedInREPL {
         return "Logout Successful";
     }
 
-
+    // Matches pattern 'help'
     public String help() {
         return SET_TEXT_COLOR_BLUE + "     create <NAME>" + SET_BG_COLOR_DARK_GREY + " - a game" +
                 SET_TEXT_COLOR_BLUE + "\n     list -" + SET_BG_COLOR_DARK_GREY + " games" +

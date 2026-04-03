@@ -23,6 +23,7 @@ public class SignedOutREPL {
         this.server = server;
     }
     
+    // Note that here cmd is the first word, and params are the words following them
     public String signedOutReponses(String cmd, String[] params) {
         try {
             return switch(cmd) {
@@ -37,6 +38,7 @@ public class SignedOutREPL {
         
     }
 
+    // Matches pattern 'login <username> <password>'
     public String loginUser(String... params) throws ResponseException {
         if (params.length >= 2) {
             String username = params[0];
@@ -52,6 +54,7 @@ public class SignedOutREPL {
         throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>");
     }
 
+    // Matches pattern 'register <username> <password> <email>'
     public String registerUser(String... params) throws ResponseException {
         if (params.length >= 3) {
             String username = params[0];
@@ -69,11 +72,14 @@ public class SignedOutREPL {
         throw new ResponseException(400, "Expected; <USERNAME> <PASSWORD> <EMAIL>");
     }
 
+    // This is not one of the listed commands in help, it's just my personal command to reset the database
+    // Matches pattern 'cleardonkey'
     public String clear() throws ResponseException {
         server.clear();
         return "Database cleared";
     }
 
+    // Matches pattern 'help'
     public String help() {
 
         return  SET_TEXT_COLOR_BLUE + "     register <USERNAME> <PASSWORD> <EMAIL>" + SET_TEXT_COLOR_DARK_GREY + " - to create an account" +
