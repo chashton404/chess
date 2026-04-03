@@ -20,10 +20,11 @@ public class ChessClient {
     private State state = State.SIGNEDOUT;
     private String status = "[LOGGED_OUT]";
 
-    // Sub-REPLS
+    // Sub-REPLS (Read-Eval-Print-Loop)
     private final SignedOutREPL signedOutREPL;
     private final SignedInREPL signedInREPL;
 
+    // Initialize the ChessClient
     public ChessClient(String serverUrl) throws ResponseException {
         this.server = new ServerFacade(serverUrl);
         this.signedOutREPL = new SignedOutREPL(this, server);
@@ -38,20 +39,30 @@ public class ChessClient {
         return authToken;
     }
 
+    // The beginning of the REPL
     public void run() {
         System.out.println( "\n" + FIRE + SET_TEXT_COLOR_RED + " WELCOME TO THE DOPEST LITTEST CHESS SERVER " + FIRE);
         
+        // We initialize a scanner as that helps us to read input from different sources
         Scanner scanner = new Scanner(System.in);
         var result = "";
         while (!result.equals("quit")) {
             if (state == State.SIGNEDIN) {
                 status = "[LOGGED IN]";
+            } else if (state == State.SIGNEDOUT) {
+                status = "[LOGGED OUT]";
+            } else if (state == State.INGAME) {
+                status = "[GAMEPLAY]";
             } else {
                 status = "[LOGGED OUT]";
             }
+
+            // Prompt for input
             printPrompt();
+            // The scanner object allows us to read the whole line that we get from the user
             String line = scanner.nextLine();
 
+            // Then work through our different REPLs and output what is returned
             try {
                 result = eval(line);
                 System.out.print(result);
@@ -63,6 +74,7 @@ public class ChessClient {
         System.out.println();
     }
 
+    // This is simply the function that prints to prompt the user for input
     private void printPrompt() {
         System.out.print("\n" + RESET_TEXT_COLOR + status + " >>> " + SET_TEXT_COLOR_GREEN);
     }
@@ -77,6 +89,7 @@ public class ChessClient {
                 return switch (state) {
                     case State.SIGNEDOUT -> signedOutREPL.help();
                     case State.SIGNEDIN -> signedInREPL.help();
+                        // case State.INGAME -> inGameREPLE.help();
                 };
             }
 
@@ -87,6 +100,7 @@ public class ChessClient {
             return switch (state) {
                 case State.SIGNEDOUT -> signedOutREPL.signedOutReponses(cmd, params);
                 case State.SIGNEDIN -> signedInREPL.signedInResponses(cmd, params);
+                // case State.INGAME -> inGameREPL.inGameResponses(cmd, params;)
             };
 
         } catch (Exception ex) {
