@@ -18,7 +18,6 @@ public class ConnectionManager {
         connections.remove(session);
     }
 
-    //TODO: figure out what the notification does here and if I need to build it out
     public void broadcast(Session excludeSession, ServerMessage serverMessage) throws IOException {
         String msg = serverMessage.toString();
         for (Session c: connections.values()) {
