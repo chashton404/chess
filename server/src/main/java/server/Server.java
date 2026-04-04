@@ -20,17 +20,25 @@ import dataaccess.SQLGameDAO;
 import dataaccess.SQLUserDAO;
 import dataaccess.DatabaseManager;
 
+//import what is needed for the websocket
+import websocket.WebSocketHandler;
+
+
 public class Server {
+    // Initialize the DAOS
     private UserDAO userDAO;
     private AuthDAO authDAO;
     private GameDAO gameDAO;
+
+    // Initialize the Web Socket Handler
+    private final WebSocketHandler webSocketHandler;
     
     // Initialize Javalin
     private final Javalin javalin;
     
 
     public Server() {
-        boolean useSQL = true; 
+        boolean useSQL = true;
 
         // Initialize the DAOs
         if (useSQL) {
@@ -59,6 +67,9 @@ public class Server {
         UserHandler userHandler = new UserHandler(userService);
         GameHandler gameHandler = new GameHandler(gameService);
 
+        // Initialize the Web Socket
+        this.webSocketHandler = new WebSocketHandler();
+
         javalin = Javalin.create(config -> {config.staticFiles.add("web"); config.jsonMapper(new GsonJsonMapper());})
             .delete("/db", clearHandler::clear)
             .post("/user", userHandler::registerUser)
@@ -66,7 +77,13 @@ public class Server {
             .delete("/session", userHandler::logout)
             .post("/game", gameHandler::createGame)
             .get("/game", gameHandler::listGames)
-            .put("/game", gameHandler::joinGame);
+            .put("/game", gameHandler::joinGame)
+            .ws("/ws", ws -> {
+                ws.onConnect(webSocketHandler::handleConnect);
+                ws.onMessage(webSocketHandler::handleMessage);
+                ws.onClose(webSocketHandler::handleClose);
+            });
+
     }
 
     public int run(int desiredPort) {
