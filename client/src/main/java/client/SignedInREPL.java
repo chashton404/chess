@@ -2,12 +2,11 @@ package client;
 
 import exception.ResponseException;
 
-import static ui.EscapeSequences.SET_BG_COLOR_DARK_GREY;
+import static ui.EscapeSequences.SET_TEXT_COLOR_BLACK;
 import static ui.EscapeSequences.SET_TEXT_COLOR_BLUE;
 
 import java.util.ArrayList;
 
-import server.ServerFacade;
 import model.CreateGameRequest;
 import model.CreateGameResult;
 import model.JoinGameRequest;
@@ -114,6 +113,7 @@ public class SignedInREPL {
             board.resetBoard();
 
             server.joinGame(new JoinGameRequest(playerColor, gameID), client.getAuthToken());
+            client.setState(State.INGAME);
             return DrawBoard.draw(board, playerColor);
         }
         throw new ResponseException(400, "Expected <ID> [WHITE|BLACK]");
@@ -162,12 +162,12 @@ public class SignedInREPL {
 
     // Matches pattern 'help'
     public String help() {
-        return SET_TEXT_COLOR_BLUE + "     create <NAME>" + SET_BG_COLOR_DARK_GREY + " - a game" +
-                SET_TEXT_COLOR_BLUE + "\n     list -" + SET_BG_COLOR_DARK_GREY + " games" +
-                SET_TEXT_COLOR_BLUE + "\n     join <ID> [WHITE|BLACK]" + SET_BG_COLOR_DARK_GREY + " - a game" + 
-                SET_TEXT_COLOR_BLUE + "\n     observe <ID>" + SET_BG_COLOR_DARK_GREY + " - a game" + 
-                SET_TEXT_COLOR_BLUE + "\n     logout" + SET_BG_COLOR_DARK_GREY + " - when you are done" +
-                SET_TEXT_COLOR_BLUE + "\n     quit" + SET_BG_COLOR_DARK_GREY + " - playing chess" +
-                SET_TEXT_COLOR_BLUE + "\n     help" + SET_BG_COLOR_DARK_GREY + " - with possible commands";
+        return SET_TEXT_COLOR_BLUE + "     create <NAME>" + SET_TEXT_COLOR_BLACK + " - a game" +
+                SET_TEXT_COLOR_BLUE + "\n     list -" + SET_TEXT_COLOR_BLACK + " games" +
+                SET_TEXT_COLOR_BLUE + "\n     join <ID> [WHITE|BLACK]" + SET_TEXT_COLOR_BLACK + " - a game" + 
+                SET_TEXT_COLOR_BLUE + "\n     observe <ID>" + SET_TEXT_COLOR_BLACK + " - a game" + 
+                SET_TEXT_COLOR_BLUE + "\n     logout" + SET_TEXT_COLOR_BLACK + " - when you are done" +
+                SET_TEXT_COLOR_BLUE + "\n     quit" + SET_TEXT_COLOR_BLACK + " - playing chess" +
+                SET_TEXT_COLOR_BLUE + "\n     help" + SET_TEXT_COLOR_BLACK + " - with possible commands";
     }
 }
