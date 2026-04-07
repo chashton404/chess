@@ -8,8 +8,6 @@ import java.util.Arrays;
 
 import exception.ResponseException;
 import ui.EscapeSequences.*;
-import server.ServerFacade;
-
 import model.AuthData;
 import model.LoginRequest;
 import model.RegisterRequest;
