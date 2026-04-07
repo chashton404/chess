@@ -37,6 +37,7 @@ public class InGameREPL {
     }
 
     private String redrawBoard() {
+        // TODO: accept the player color to determine which way the board should be drawn
         ChessBoard board = new ChessBoard();
         board.resetBoard();
 
@@ -44,15 +45,18 @@ public class InGameREPL {
     }
 
     private String leaveGame() {
+        // TODO: allow remove the player from the game on the server side
         client.setState(State.SIGNEDIN);
         return "Left game";
     }
 
     private String move(String... params) {
+        // TODO: filter to the appropriate number of params and make sure they are valid
         return "moved successfully";
     }
 
     private String resign() {
+        // TODO: make it so that the other player has won the game, update it on the server side
         pendingResignation = true;
         return "Are you sure? Type 'yes' to confirm";
     }
@@ -66,6 +70,7 @@ public class InGameREPL {
     }
 
     private String highlightMoves() {
+        // TODO: Get the valid moves, and change the background color on them
         return "Successfully Highlighted moves";
     }
 
