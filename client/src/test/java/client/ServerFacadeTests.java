@@ -5,8 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.*;
 import server.Server;
-import server.ServerFacade;
-
 import model.AuthData;
 import model.LoginRequest;
 import model.RegisterRequest;
