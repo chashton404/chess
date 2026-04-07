@@ -1,5 +1,86 @@
 package client;
 
-public class inGameREPL {
+import exception.ResponseException;
+
+import static ui.EscapeSequences.SET_TEXT_COLOR_BLACK;
+import static ui.EscapeSequences.SET_TEXT_COLOR_BLUE;
+
+import chess.ChessBoard;
+
+public class InGameREPL {
     
+    private final ServerFacade server;
+    private final ChessClient client;
+
+    private Boolean pendingResignation = false;
+
+    public InGameREPL(ChessClient client, ServerFacade server) {
+        this.server = server;
+        this.client = client;
+    }
+    
+
+    public String inGameResponses(String cmd, String[] params) throws ResponseException{
+        try {
+            return switch(cmd) {
+                case "redraw" -> redrawBoard();
+                case "leave" -> leaveGame();
+                case "move" -> move(params);
+                case "resign" -> resign();
+                case "highlight" -> highlightMoves();
+                case "yes" -> confirmResignation();
+                default -> help();
+            };
+        } catch (ResponseException ex) {
+            return ex.getMessage();
+        }
+    }
+
+    private String redrawBoard() {
+        ChessBoard board = new ChessBoard();
+        board.resetBoard();
+
+        return DrawBoard.draw(board, "WHITE");
+    }
+
+    private String leaveGame() {
+        client.setState(State.SIGNEDIN);
+        return "Left game";
+    }
+
+    private String move(String... params) {
+        return "moved successfully";
+    }
+
+    private String resign() {
+        pendingResignation = true;
+        return "Are you sure? Type 'yes' to confirm";
+    }
+
+    private String confirmResignation() throws ResponseException{
+        if (pendingResignation == true) {
+            return "successfully resigned";
+        } else {
+            throw new ResponseException(400, "BIG BIG TROUBLE");
+        }
+    }
+
+    private String highlightMoves() {
+        return "Successfully Highlighted moves";
+    }
+
+    public String help() {
+        return  SET_TEXT_COLOR_BLUE + "     redraw" + SET_TEXT_COLOR_BLACK + " - the chess board" +
+                SET_TEXT_COLOR_BLUE + "\n     leave" + SET_TEXT_COLOR_BLACK + " - the game" +
+                SET_TEXT_COLOR_BLUE + "\n     move <START> <END>" + SET_TEXT_COLOR_BLACK + " - to move your piece" +
+                SET_TEXT_COLOR_BLUE + "\n     resign" + SET_TEXT_COLOR_BLACK + " - voluntarily lose the game" +
+                SET_TEXT_COLOR_BLUE + "\n     highlight <START>" + SET_TEXT_COLOR_BLACK + " - view the valid moves for a piece";
+    }
+
+
+
+
+
+
+
 }
