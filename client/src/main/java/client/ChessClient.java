@@ -1,7 +1,6 @@
 package client;
 
 import exception.ResponseException;
-import server.ServerFacade;
 
 import java.util.Scanner;
 import java.util.Arrays;
@@ -23,12 +22,14 @@ public class ChessClient {
     // Sub-REPLS (Read-Eval-Print-Loop)
     private final SignedOutREPL signedOutREPL;
     private final SignedInREPL signedInREPL;
+    private final InGameREPL inGameREPL;
 
     // Initialize the ChessClient
     public ChessClient(String serverUrl) throws ResponseException {
         this.server = new ServerFacade(serverUrl);
         this.signedOutREPL = new SignedOutREPL(this, server);
         this.signedInREPL = new SignedInREPL(this, server);
+        this.inGameREPL = new InGameREPL(this, server);
     }
 
     // Important Setters and Getters
@@ -89,18 +90,18 @@ public class ChessClient {
                 return switch (state) {
                     case State.SIGNEDOUT -> signedOutREPL.help();
                     case State.SIGNEDIN -> signedInREPL.help();
-                        // case State.INGAME -> inGameREPLE.help();
+                    case State.INGAME -> inGameREPL.help();
                 };
             }
 
-            if (cmd.equals("quit")) {
+            if (cmd.equals("quit") && state == State.SIGNEDOUT) {
                 return "quit";
             }
 
             return switch (state) {
                 case State.SIGNEDOUT -> signedOutREPL.signedOutReponses(cmd, params);
                 case State.SIGNEDIN -> signedInREPL.signedInResponses(cmd, params);
-                // case State.INGAME -> inGameREPL.inGameResponses(cmd, params;)
+                case State.INGAME -> inGameREPL.inGameResponses(cmd, params);
             };
 
         } catch (Exception ex) {
