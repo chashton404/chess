@@ -10,14 +10,14 @@ import static ui.EscapeSequences.*;
 
 public class DrawBoard {
 
-    public static String drawBoard(ChessGame game) {
-        return draw(game.getBoard(), game.getTeamTurn());
+    public static String drawBoard(ChessGame game, String playerColor) {
+        return draw(game.getBoard(), playerColor);
     }
     
-    private static String draw(ChessBoard board, TeamColor playerColor) {
+    private static String draw(ChessBoard board, String playerColor) {
         return switch(playerColor) {
-            case WHITE -> drawWhiteBoard(board);
-            case BLACK -> drawBlackBoard(board);
+            case "WHITE" -> drawWhiteBoard(board);
+            case "BLACK" -> drawBlackBoard(board);
             default -> drawWhiteBoard(board);
         };
     }

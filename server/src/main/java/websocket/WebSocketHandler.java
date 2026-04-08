@@ -64,7 +64,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             connections.add(session);
 
             // Send LOAD_GAME to the root client
-            LoadGameMessage loadGameMessage = new LoadGameMessage(connection.game());
+            LoadGameMessage loadGameMessage = new LoadGameMessage(connection.game(), connection.playerColor());
             connections.notifyRoot(session, loadGameMessage);
 
             // Notify everyone else that the root client has joined the game

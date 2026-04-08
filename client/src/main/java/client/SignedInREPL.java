@@ -160,7 +160,7 @@ public class SignedInREPL implements NotificationHandler {
             
             ChessGame game = new ChessGame();
 
-            return DrawBoard.drawBoard(game);
+            return DrawBoard.drawBoard(game, "WHITE");
         }
         throw new ResponseException(400, "Expected <ID>");
     }   
@@ -190,7 +190,7 @@ public class SignedInREPL implements NotificationHandler {
             case LOAD_GAME -> {
                 LoadGameMessage loadGameMessage = (LoadGameMessage) message;
                 System.out.println("Entered the load game message case");
-                System.out.println(DrawBoard.drawBoard(loadGameMessage.getGame()));
+                System.out.println(DrawBoard.drawBoard(loadGameMessage.getGame(), loadGameMessage.getPlayerColor()));
             }
             case ERROR -> {
                 ErrorMessage errorMessage = (ErrorMessage) message;

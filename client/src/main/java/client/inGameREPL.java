@@ -45,7 +45,7 @@ public class InGameREPL implements NotificationHandler {
 
     private String redrawBoard() {
         ChessGame game = new ChessGame();
-        return DrawBoard.drawBoard(game);
+        return DrawBoard.drawBoard(game, "WHITE");
     }
 
     private String leaveGame() {
@@ -91,7 +91,7 @@ public class InGameREPL implements NotificationHandler {
         switch (message.getServerMessageType()) {
             case LOAD_GAME -> {
                 LoadGameMessage loadGameMessage = (LoadGameMessage) message;
-                System.out.println(DrawBoard.drawBoard(loadGameMessage.getGame()));
+                System.out.println(DrawBoard.drawBoard(loadGameMessage.getGame(), loadGameMessage.getPlayerColor()));
             }
             case ERROR -> {
                 ErrorMessage errorMessage = (ErrorMessage) message;
