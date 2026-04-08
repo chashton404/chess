@@ -1,6 +1,7 @@
 package client;
 
 import exception.ResponseException;
+import passoff.websocket.WebsocketTestingEnvironment;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
@@ -11,6 +12,7 @@ import static ui.EscapeSequences.SET_TEXT_COLOR_BLUE;
 
 import chess.ChessMove;
 import chess.ChessPiece;
+import chess.ChessPosition;
 import client.websocket.NotificationHandler;
 import client.websocket.WebSocketFacade;
 
@@ -75,10 +77,21 @@ public class InGameREPL implements NotificationHandler {
             // Now we need to convert the letters into a chessmove and pass that into the websocket call
 
             if (end.length() == 2) {
+                // In this case that we don't need to handle a promotion, just leave it null
+                ChessMove newMove = new ChessMove(lettersToPosition(start), lettersToPosition(end), null);
+
+                // Call on the websocket
+                WebSocketFacade ws = client.getWebSocket();
+                ws.move(client.getAuthToken(), client.getLocalGameID(), newMove);
+
                 return String.format("Move from %s to %s", start, end);
+
             } else {
+                // In this case we do need to handle a promotion so we include that
                 ChessPiece.PieceType promotionPiece;
                 String promotionString;
+
+                // Create the promotion piece based on the third character
                 switch(end.charAt(2)) {
                     case 'q' -> {promotionPiece = ChessPiece.PieceType.QUEEN; promotionString = "queen";}
                     case 'n' -> {promotionPiece = ChessPiece.PieceType.KNIGHT; promotionString = "knight";}
@@ -86,9 +99,18 @@ public class InGameREPL implements NotificationHandler {
                     case 'b' -> {promotionPiece = ChessPiece.PieceType.BISHOP; promotionString = "bishop";}
                     default -> throw new ResponseException(400, "Invalid promotion must be 'q'-queen 'n'-knight 'r'-rook 'b'-bishop");
                 }
+
+                // Create the move
+                ChessMove newMove = new ChessMove(lettersToPosition(start), lettersToPosition(end), promotionPiece);
+
+                // Call on the websocket
+                WebSocketFacade ws = client.getWebSocket();
+                ws.move(client.getAuthToken(), client.getLocalGameID(), newMove);
+
                 return String.format("Move from %s to %s with promotion to %s", start, end.substring(0,2), promotionString);
             }
         }
+
         throw new ResponseException(400, "Expected: <[START_LETTER][START_NUM]> <[END_LETTER][END_NUM][PROM_LETTER]> Ex: h4 h5");
     }
 
@@ -99,6 +121,14 @@ public class InGameREPL implements NotificationHandler {
     
     private Boolean isValidEnd(String param) {
         return param != null && param.matches("^[a-h][1-8][nqbr]?$");
+    }
+
+    // We use ASCII subraction to convert from letter to number
+    private ChessPosition lettersToPosition(String param) {
+        int row = param.charAt(1);
+        int col = param.charAt(0) - 'a' + 1;
+
+        return new ChessPosition(row, col);
     }
 
     private String resign() {
