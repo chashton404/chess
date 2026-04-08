@@ -3,6 +3,10 @@ package client;
 import exception.ResponseException;
 
 import java.util.Scanner;
+
+import client.websocket.NotificationHandler;
+import client.websocket.WebSocketFacade;
+
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,12 +14,17 @@ import java.util.List;
 import static ui.EscapeSequences.*;
 
 import model.GameData;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
+import websocket.messages.ServerMessage;
 
-public class ChessClient {
+public class ChessClient implements NotificationHandler{
 
     // Useful Variables
     private String authToken = null;
     private ServerFacade server;
+    private final String serverUrl;
     private State state = State.SIGNEDOUT;
     private static String status = "[LOGGED_OUT]";
 
@@ -24,20 +33,42 @@ public class ChessClient {
     private final SignedInREPL signedInREPL;
     private final InGameREPL inGameREPL;
 
+    // Create the WebSocketFacade, and assign it as null for now
+    private WebSocketFacade ws = null;
+
     // Initialize the ChessClient
     public ChessClient(String serverUrl) throws ResponseException {
+        //We use the serverUrl to create the ws connection
+        this.serverUrl = serverUrl;
+
+        // Initialize the server
         this.server = new ServerFacade(serverUrl);
+
+        // Initialize each of the REPLS
         this.signedOutREPL = new SignedOutREPL(this, server);
         this.signedInREPL = new SignedInREPL(this, server);
         this.inGameREPL = new InGameREPL(this, server);
     }
 
     // Important Setters and Getters
-    public void setAuthToken(String token) { this.authToken = token; }
-    public void setState(State s) {this.state = s;}
+    public void setAuthToken(String token) { 
+        this.authToken = token;
+    }
+
+    public void setState(State s) {
+        this.state = s;
+    }
 
     public String getAuthToken() {
         return authToken;
+    }
+
+    public String getServerUrl() {
+        return serverUrl;
+    }
+
+    public WebSocketFacade getWebSocket() {
+        return ws;
     }
 
     // The beginning of the REPL
@@ -80,6 +111,7 @@ public class ChessClient {
         System.out.print("\n" + RESET_TEXT_COLOR + status + " >>> " + SET_TEXT_COLOR_GREEN);
     }
 
+    // This is how we decide which REPL is being used currently
     public String eval(String input) {
         try {
             String[] tokens = input.trim().split("\\s+");
@@ -108,4 +140,37 @@ public class ChessClient {
             return ex.getMessage();
         }
     }
+
+    // -------- MORE WEBSOCKET STUFF -------------------------------------
+    // Command to Open the websocket
+    public WebSocketFacade initializeWebSocket() throws ResponseException {
+        if (ws == null) {
+            ws = new WebSocketFacade(serverUrl, this);
+        }
+        return ws;
+    }
+
+
+    // Overrides for the Notification Handler
+    @Override
+    public void notify(ServerMessage message) {
+        switch (message.getServerMessageType()) {
+            case LOAD_GAME -> {
+                LoadGameMessage loadGameMessage = (LoadGameMessage) message;
+                DrawBoard.drawBoard(loadGameMessage.getGame());
+            }
+            case ERROR -> {
+                ErrorMessage errorMessage = (ErrorMessage) message;
+                System.out.println("Error: " + errorMessage.getErrorMessage());
+
+            }
+            case NOTIFICATION -> {
+                NotificationMessage notificationMessage = (NotificationMessage) message;
+                System.out.println(notificationMessage.getMessage());
+            }
+        }
+        // Print the "[GAMEPLAY] >>>"" part again
+        ChessClient.printPrompt();
+    }
+
 }

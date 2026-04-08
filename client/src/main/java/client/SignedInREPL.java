@@ -11,13 +11,19 @@ import model.CreateGameRequest;
 import model.CreateGameResult;
 import model.JoinGameRequest;
 import model.ListGamesResult;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
+import websocket.messages.ServerMessage;
 import model.ListGameData;
 import model.JoinGameRequest;
 
 import chess.ChessBoard;
 import chess.ChessGame;
+import client.websocket.NotificationHandler;
+import client.websocket.WebSocketFacade;
 
-public class SignedInREPL {
+public class SignedInREPL implements NotificationHandler {
     private final ServerFacade server;
     private final ChessClient client;
     private ArrayList<ListGameData> localGameList;
@@ -107,15 +113,22 @@ public class SignedInREPL {
             }
 
             // get the gameID from the game number
-        
             int gameID = localGameList.get(gameNum - 1).gameID();
 
+            // Create a new game for now
             ChessGame game = new ChessGame();
 
+            // Communicate with the server to join the game
             server.joinGame(new JoinGameRequest(playerColor, gameID), client.getAuthToken());
-            client.setState(State.INGAME);
 
-            return DrawBoard.drawBoard(game);
+            // Initialize the WebSocket Facade
+            client.initializeWebSocket();
+
+            WebSocketFacade ws = client.getWebSocket();
+            ws.connect(client.getAuthToken(), gameID);
+
+            client.setState(State.INGAME);
+            return "Great, you joined the game. Now let's just hope the board shows up...";
         }
         throw new ResponseException(400, "Expected <ID> [WHITE|BLACK]");
     }
@@ -145,10 +158,9 @@ public class SignedInREPL {
                 throw new ResponseException(400, "You absolute bafoon, the game must exist to join it");
             }
             
-            ChessBoard board = new ChessBoard();
-            board.resetBoard();
+            ChessGame game = new ChessGame();
 
-            return DrawBoard.draw(board, "white");
+            return DrawBoard.drawBoard(game);
         }
         throw new ResponseException(400, "Expected <ID>");
     }   
@@ -170,5 +182,26 @@ public class SignedInREPL {
                 SET_TEXT_COLOR_BLUE + "\n     logout" + SET_TEXT_COLOR_BLACK + " - when you are done" +
                 SET_TEXT_COLOR_BLUE + "\n     quit" + SET_TEXT_COLOR_BLACK + " - playing chess" +
                 SET_TEXT_COLOR_BLUE + "\n     help" + SET_TEXT_COLOR_BLACK + " - with possible commands";
+    }
+
+    @Override
+    public void notify(ServerMessage message) {
+        switch (message.getServerMessageType()) {
+            case LOAD_GAME -> {
+                LoadGameMessage loadGameMessage = (LoadGameMessage) message;
+                DrawBoard.drawBoard(loadGameMessage.getGame());
+            }
+            case ERROR -> {
+                ErrorMessage errorMessage = (ErrorMessage) message;
+                System.out.println("Error: " + errorMessage.getErrorMessage());
+
+            }
+            case NOTIFICATION -> {
+                NotificationMessage notificationMessage = (NotificationMessage) message;
+                System.out.println(notificationMessage.getMessage());
+            }
+        }
+        // Print the "[GAMEPLAY] >>>"" part again
+        ChessClient.printPrompt();
     }
 }
