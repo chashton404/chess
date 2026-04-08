@@ -44,7 +44,6 @@ public class InGameREPL implements NotificationHandler {
     }
 
     private String redrawBoard() {
-        // TODO: accept the player color to determine which way the board should be drawn
         ChessGame game = new ChessGame();
         return DrawBoard.drawBoard(game);
     }

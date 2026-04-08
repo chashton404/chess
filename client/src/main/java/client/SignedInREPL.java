@@ -114,7 +114,7 @@ public class SignedInREPL {
 
             server.joinGame(new JoinGameRequest(playerColor, gameID), client.getAuthToken());
             client.setState(State.INGAME);
-            // TODO: fix this so that it now uses draw board and a game
+
             return DrawBoard.drawBoard(game);
         }
         throw new ResponseException(400, "Expected <ID> [WHITE|BLACK]");
