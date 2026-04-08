@@ -41,7 +41,7 @@ public class WebSocketCommunicator extends Endpoint {
         }
     }
 
-    // The thing the endpoing requires but we don't have to do anything with
+    // The thing the endpoint requires but we don't have to do anything with
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
