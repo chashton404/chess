@@ -28,5 +28,10 @@ public class ConnectionManager {
             }
         }
     }
+
+    public void errorMsg(Session session, ServerMessage serverMessage) throws IOException {
+        String msg = serverMessage.toString();
+        session.getRemote().sendString(msg);
+    }
     
 }
