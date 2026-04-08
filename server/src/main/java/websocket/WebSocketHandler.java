@@ -9,6 +9,11 @@ import io.javalin.websocket.WsConnectHandler;
 import io.javalin.websocket.WsMessageContext;
 import io.javalin.websocket.WsMessageHandler;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
+import model.ConnectionResult;
+import service.GameService;
 
 import org.eclipse.jetty.websocket.api.Session;
 
@@ -19,6 +24,11 @@ import java.io.IOException;
 public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsCloseHandler {
 
     private final ConnectionManager connections = new ConnectionManager();
+    private final GameService gameService;
+
+    public WebSocketHandler(GameService gameService) {
+        this.gameService = gameService;
+    }
 
     @Override
     public void handleConnect(WsConnectContext ctx) {
@@ -43,9 +53,35 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     private void connect(UserGameCommand command, Session session) throws IOException {
         // Add this session
-        connections.add(session);
+        
 
-        // TODO implement this method
+        // Send LOAD_GAME back to the client
+        // Verify the authToken, and the gameID
+        String authToken = command.getAuthToken();
+        Integer gameID = command.getGameID();
+
+        try {
+            // attempt to get the Connection Result
+            ConnectionResult connection = gameService.connectGame(authToken, gameID);
+
+            // Create the connection
+            connections.add(session);
+
+            // Send LOAD_GAME to the root client
+            LoadGameMessage loadGameMessage = new LoadGameMessage(connection.game());
+            connections.notifyRoot(session, loadGameMessage);
+
+            // Notify everyone else that the root client has joined the game
+            String message = String.format("%s has joined the game as %s", connection.username(), connection.playerColor());
+            NotificationMessage notificationMessage = new NotificationMessage(message);
+            connections.notifyOthers(session, notificationMessage);
+
+        } catch (Exception e) {
+            ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
+            connections.notifyRoot(session, errorMessage);
+        }
+
+        // Send a notification to every other client that the user connected
     }
 
     @Override

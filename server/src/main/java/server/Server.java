@@ -68,7 +68,7 @@ public class Server {
         GameHandler gameHandler = new GameHandler(gameService);
 
         // Initialize the Web Socket
-        this.webSocketHandler = new WebSocketHandler();
+        this.webSocketHandler = new WebSocketHandler(gameService);
 
         javalin = Javalin.create(config -> {config.staticFiles.add("web"); config.jsonMapper(new GsonJsonMapper());})
             .delete("/db", clearHandler::clear)
