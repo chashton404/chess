@@ -17,7 +17,7 @@ public class ChessClient {
     private String authToken = null;
     private ServerFacade server;
     private State state = State.SIGNEDOUT;
-    private String status = "[LOGGED_OUT]";
+    private static String status = "[LOGGED_OUT]";
 
     // Sub-REPLS (Read-Eval-Print-Loop)
     private final SignedOutREPL signedOutREPL;
@@ -76,7 +76,7 @@ public class ChessClient {
     }
 
     // This is simply the function that prints to prompt the user for input
-    private void printPrompt() {
+    public static void printPrompt() {
         System.out.print("\n" + RESET_TEXT_COLOR + status + " >>> " + SET_TEXT_COLOR_GREEN);
     }
 
