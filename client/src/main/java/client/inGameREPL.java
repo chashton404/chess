@@ -58,13 +58,32 @@ public class InGameREPL implements NotificationHandler {
         return "Left game";
     }
 
-    private String move(String... params) {
-        // TODO: filter to the appropriate number of params and make sure they are valid
-        if (client.getState() == State.OBSERVER) {
-            return "Observers cannot make moves";
+    private String move(String... params) throws ResponseException {
+        if (client.getState() == State.INGAME) {
+            if (params.length == 2) {
+                String start = params[0];
+                String end = params[1];
+
+                // Verify that they are each valid moves
+                if (!isValidMove(start) || !isValidMove(end)) {
+                    throw new ResponseException(400, "Correct number of parameters, but improperly formatted. Must be a-h followed by 1-8.");
+                }
+                
+                // Now we need to convert the letters into a chessmove and pass that into the websocket call
+                
+                
+                
+                return String.format("Move from %s to %s", start, end);
+            } 
+            throw new ResponseException(400, "Expected: <[START_LETTER][START_NUM]> <[END_LETTER][END_NUM]> Ex: h4 h5");
         } else {
-            return "moved successfully";
+            return "Observers cannot make moves";
         }
+    }
+
+    // We use some regex to verify that each of the parameters are valid moves
+    private Boolean isValidMove(String param) {
+        return param != null && param.matches("^[a-h][1-8]$");
     }
 
     private String resign() {
@@ -95,7 +114,7 @@ public class InGameREPL implements NotificationHandler {
     public String help() {
         return  SET_TEXT_COLOR_BLUE + "     redraw" + SET_TEXT_COLOR_BLACK + " - the chess board" +
                 SET_TEXT_COLOR_BLUE + "\n     leave" + SET_TEXT_COLOR_BLACK + " - the game" +
-                SET_TEXT_COLOR_BLUE + "\n     move <START> <END>" + SET_TEXT_COLOR_BLACK + " - to move your piece" +
+                SET_TEXT_COLOR_BLUE + "\n     move <[START_LETTER][START_NUM]> <[END_LETTER][END_NUM]>" + SET_TEXT_COLOR_BLACK + " - to move your piece" +
                 SET_TEXT_COLOR_BLUE + "\n     resign" + SET_TEXT_COLOR_BLACK + " - voluntarily lose the game" +
                 SET_TEXT_COLOR_BLUE + "\n     highlight <START>" + SET_TEXT_COLOR_BLACK + " - view the valid moves for a piece";
     }
