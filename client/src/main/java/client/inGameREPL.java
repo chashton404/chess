@@ -1,13 +1,16 @@
 package client;
 
 import exception.ResponseException;
+import websocket.messages.ServerMessage;
 
 import static ui.EscapeSequences.SET_TEXT_COLOR_BLACK;
 import static ui.EscapeSequences.SET_TEXT_COLOR_BLUE;
 
 import chess.ChessBoard;
 
-public class InGameREPL {
+import client.websocket.NotificationHandler;
+
+public class InGameREPL implements NotificationHandler {
     
     private final ServerFacade server;
     private final ChessClient client;
@@ -80,6 +83,15 @@ public class InGameREPL {
                 SET_TEXT_COLOR_BLUE + "\n     move <START> <END>" + SET_TEXT_COLOR_BLACK + " - to move your piece" +
                 SET_TEXT_COLOR_BLUE + "\n     resign" + SET_TEXT_COLOR_BLACK + " - voluntarily lose the game" +
                 SET_TEXT_COLOR_BLUE + "\n     highlight <START>" + SET_TEXT_COLOR_BLACK + " - view the valid moves for a piece";
+    }
+
+    @Override
+    public void notify(ServerMessage message) {
+        switch (message.getServerMessageType()) {
+            case LOAD_GAME -> 
+            case ERROR ->
+            case NOTIFICATION ->
+        }
     }
 
 
