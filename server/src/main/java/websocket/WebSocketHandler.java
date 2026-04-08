@@ -1,6 +1,8 @@
 package websocket;
 
 import com.google.gson.Gson;
+
+import chess.ChessMove;
 import exception.ResponseException;
 import io.javalin.websocket.WsCloseContext;
 import io.javalin.websocket.WsCloseHandler;
@@ -8,6 +10,7 @@ import io.javalin.websocket.WsConnectContext;
 import io.javalin.websocket.WsConnectHandler;
 import io.javalin.websocket.WsMessageContext;
 import io.javalin.websocket.WsMessageHandler;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
@@ -110,6 +113,29 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
             connections.notifyRoot(session, errorMessage);
         }
+    }
+
+    private void makeMove(MakeMoveCommand command, Session session) throws IOException {
+
+        String authToken = command.getAuthToken();
+        Integer gameID = command.getGameID();
+        ChessMove move = command.getMove();
+
+        // Verify that the move is valid (that it is in the list of valid moves for the starting position)
+        
+
+        // Update the game so that piece is moved
+
+        // send LOAD_GAME to all every client
+
+
+        // Notify others of move
+
+
+        // Notify if in check, checkmate
+
+
+        
     }
 
     @Override
