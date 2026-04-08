@@ -102,11 +102,12 @@ public class DrawBoard {
     private static String addPieces(ChessPiece piece) {
         StringBuilder pieceText = new StringBuilder();
         
+        pieceText.append(" ");
         pieceText.append(getPieceColor(piece));
         pieceText.append(getPiece(piece));
         pieceText.append(RESET_TEXT_COLOR);
         pieceText.append(" ");
-        pieceText.append(" ");
+    
 
         return pieceText.toString();
     }
