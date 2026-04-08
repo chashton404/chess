@@ -41,6 +41,13 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         }
     }
 
+    private void connect(UserGameCommand command, Session session) throws IOException {
+        // Add this session
+        connections.add(session);
+
+        // TODO implement this method
+    }
+
     @Override
     public void handleClose(WsCloseContext ctx) {
         System.out.println("Websocket Closed");
