@@ -2,17 +2,22 @@ package client;
 
 import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessGame.TeamColor;
 import chess.ChessPiece;
 import chess.ChessPosition;
 
 import static ui.EscapeSequences.*;
 
 public class DrawBoard {
+
+    public static String drawBoard(ChessGame game) {
+        return draw(game.getBoard(), game.getTeamTurn());
+    }
     
-    public static String draw(ChessBoard board, String playerColor) {
+    private static String draw(ChessBoard board, TeamColor playerColor) {
         return switch(playerColor) {
-            case("WHITE") -> drawWhiteBoard(board);
-            case("BLACK") -> drawBlackBoard(board);
+            case WHITE -> drawWhiteBoard(board);
+            case BLACK -> drawBlackBoard(board);
             default -> drawWhiteBoard(board);
         };
     }
