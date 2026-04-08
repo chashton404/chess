@@ -11,13 +11,13 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class WebSocketCommunicator extends Endpoint {
+public class WebSocketFacade extends Endpoint {
 
     Session session;
     NotificationHandler notificationHandler;
 
     // This is the silent "listener"
-    public WebSocketCommunicator(String url, NotificationHandler notificationHandler) throws ResponseException {
+    public WebSocketFacade(String url, NotificationHandler notificationHandler) throws ResponseException {
         try {
             // Crete the url
             url = url.replace("http", "ws");
