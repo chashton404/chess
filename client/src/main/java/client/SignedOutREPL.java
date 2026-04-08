@@ -67,7 +67,7 @@ public class SignedOutREPL {
             return String.format("Logged in as %s.", username);
             
         }
-        throw new ResponseException(400, "Expected; <USERNAME> <PASSWORD> <EMAIL>");
+        throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD> <EMAIL>");
     }
 
     // This is not one of the listed commands in help, it's just my personal command to reset the database
