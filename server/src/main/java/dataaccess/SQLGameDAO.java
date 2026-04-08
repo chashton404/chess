@@ -7,6 +7,7 @@ import java.util.Collection;
 import com.google.gson.Gson;
 
 import model.ListGameData;
+import model.GameData;
 import chess.ChessGame;
 
 public class SQLGameDAO implements GameDAO {
@@ -121,6 +122,39 @@ public class SQLGameDAO implements GameDAO {
         } catch (Exception e) {
             throw new DataAccessException(String.format("Error: Error updating game: %s", e.getMessage()));
         }
+    }
+
+    public GameData getGame(Integer gameID) throws DataAccessException {
+        var statement = "SELECT gameID, whiteUsername, blackUsername, gameName, game FROM game WHERE gameID = ?";
+
+        try (var conn = DatabaseManager.getConnection(); var preparedStatement = conn.prepareStatement(statement)) {
+            preparedStatement.setInt(1, gameID);
+
+            try (var resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    // Get the respective variables for the new GameData
+                    int id = resultSet.getInt("gameID");
+                    String whiteUsername = resultSet.getString("whiteUsername");
+                    String blackUsername = resultSet.getString("blackUsername");
+                    String gameName = resultSet.getString("gameName");
+                    String gameJson = resultSet.getString("game");
+
+                    // Convert the Json back into a ChessGame object
+                    ChessGame chessGame = new Gson().fromJson(gameJson, ChessGame.class);
+
+                    // Create the GameData and return it
+                    GameData game = new GameData(id, whiteUsername, blackUsername, gameName, chessGame);
+                    return game;
+                }
+            }
+        } catch (Exception e) {
+            throw new DataAccessException(String.format("Error: Unable to fetch game: %s", e.getMessage()));
+        }
+
+        // return null if we don't find anything
+        return null;
+
+
     }
 
     public void clearGames() throws DataAccessException {
