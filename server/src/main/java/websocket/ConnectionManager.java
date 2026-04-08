@@ -18,7 +18,8 @@ public class ConnectionManager {
         connections.remove(session);
     }
 
-    public void broadcast(Session excludeSession, ServerMessage serverMessage) throws IOException {
+    // Command to broadcast to everyone but the root client
+    public void notifyOthers(Session excludeSession, ServerMessage serverMessage) throws IOException {
         String msg = serverMessage.toString();
         for (Session c: connections.values()) {
             if (c.isOpen()) {
@@ -29,9 +30,20 @@ public class ConnectionManager {
         }
     }
 
-    public void errorMsg(Session session, ServerMessage serverMessage) throws IOException {
+    // Command to broadcast to only the root client
+    public void notifyRoot(Session session, ServerMessage serverMessage) throws IOException {
         String msg = serverMessage.toString();
         session.getRemote().sendString(msg);
     }
+
+    // Command to broadcast to everyone
+    public void notifyAll(ServerMessage serverMessage) throws IOException {
+        String msg = serverMessage.toString();
+        for (Session c: connections.values()) {
+            c.getRemote().sendString(msg);
+        }
+    }
+ 
+
     
 }
