@@ -33,7 +33,7 @@ public class WebSocketCommunicator extends Endpoint {
                 public void onMessage(String message) {
                     // When we receive a message these are the things that should be done
                     ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
-                    // notificationHandler.notify(serverMessage);
+                    notificationHandler.notify(serverMessage);
                 }
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {
