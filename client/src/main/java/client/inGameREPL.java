@@ -9,9 +9,8 @@ import websocket.messages.ServerMessage;
 import static ui.EscapeSequences.SET_TEXT_COLOR_BLACK;
 import static ui.EscapeSequences.SET_TEXT_COLOR_BLUE;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-
+import chess.ChessMove;
+import chess.ChessPiece;
 import client.websocket.NotificationHandler;
 import client.websocket.WebSocketFacade;
 
@@ -59,31 +58,47 @@ public class InGameREPL implements NotificationHandler {
     }
 
     private String move(String... params) throws ResponseException {
-        if (client.getState() == State.INGAME) {
-            if (params.length == 2) {
-                String start = params[0];
-                String end = params[1];
-
-                // Verify that they are each valid moves
-                if (!isValidMove(start) || !isValidMove(end)) {
-                    throw new ResponseException(400, "Correct number of parameters, but improperly formatted. Must be a-h followed by 1-8.");
-                }
-                
-                // Now we need to convert the letters into a chessmove and pass that into the websocket call
-                
-                
-                
-                return String.format("Move from %s to %s", start, end);
-            } 
-            throw new ResponseException(400, "Expected: <[START_LETTER][START_NUM]> <[END_LETTER][END_NUM]> Ex: h4 h5");
-        } else {
+        if (client.getState() != State.INGAME) {
             return "Observers cannot make moves";
         }
+        
+
+        if (params.length == 2) {
+            String start = params[0].toLowerCase();
+            String end = params[1].toLowerCase();
+
+            // Verify that they are each valid moves okay so the problem with this is we don't know if they are promoting their piece or not
+            if (!isValidStart(start) || !isValidEnd(end)) {
+                throw new ResponseException(400, "Expected: <[START_LETTER][START_NUM]> <[END_LETTER][END_NUM][PROM_LETTER]> Ex: h4 h5 or a7 a8q");
+            }
+            
+            // Now we need to convert the letters into a chessmove and pass that into the websocket call
+
+            if (end.length() == 2) {
+                return String.format("Move from %s to %s", start, end);
+            } else {
+                ChessPiece.PieceType promotionPiece;
+                String promotionString;
+                switch(end.charAt(2)) {
+                    case 'q' -> {promotionPiece = ChessPiece.PieceType.QUEEN; promotionString = "queen";}
+                    case 'n' -> {promotionPiece = ChessPiece.PieceType.KNIGHT; promotionString = "knight";}
+                    case 'r' -> {promotionPiece = ChessPiece.PieceType.ROOK; promotionString = "rook";}
+                    case 'b' -> {promotionPiece = ChessPiece.PieceType.BISHOP; promotionString = "bishop";}
+                    default -> throw new ResponseException(400, "Invalid promotion must be 'q'-queen 'n'-knight 'r'-rook 'b'-bishop");
+                }
+                return String.format("Move from %s to %s with promotion to %s", start, end.substring(0,2), promotionString);
+            }
+        }
+        throw new ResponseException(400, "Expected: <[START_LETTER][START_NUM]> <[END_LETTER][END_NUM][PROM_LETTER]> Ex: h4 h5");
     }
 
     // We use some regex to verify that each of the parameters are valid moves
-    private Boolean isValidMove(String param) {
+    private Boolean isValidStart(String param) {
         return param != null && param.matches("^[a-h][1-8]$");
+    }
+    
+    private Boolean isValidEnd(String param) {
+        return param != null && param.matches("^[a-h][1-8][nqbr]?$");
     }
 
     private String resign() {
