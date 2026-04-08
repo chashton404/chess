@@ -1,6 +1,9 @@
 package client;
 
 import exception.ResponseException;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import static ui.EscapeSequences.SET_TEXT_COLOR_BLACK;
@@ -88,10 +91,22 @@ public class InGameREPL implements NotificationHandler {
     @Override
     public void notify(ServerMessage message) {
         switch (message.getServerMessageType()) {
-            case LOAD_GAME -> 
-            case ERROR ->
-            case NOTIFICATION ->
+            case LOAD_GAME -> {
+                LoadGameMessage loadGameMessage = (LoadGameMessage) message;
+                DrawBoard.drawBoard(loadGameMessage.getGame());
+            }
+            case ERROR -> {
+                ErrorMessage errorMessage = (ErrorMessage) message;
+                System.out.println("Error: " + errorMessage.getErrorMessage());
+
+            }
+            case NOTIFICATION -> {
+                NotificationMessage notificationMessage = (NotificationMessage) message;
+                System.out.println(notificationMessage.getMessage());
+            }
         }
+        // Print the "[GAMEPLAY] >>>"" part again
+        ChessClient.printPrompt();
     }
 
 
