@@ -13,6 +13,7 @@ import chess.ChessBoard;
 import chess.ChessGame;
 
 import client.websocket.NotificationHandler;
+import client.websocket.WebSocketFacade;
 
 public class InGameREPL implements NotificationHandler {
     
@@ -47,8 +48,12 @@ public class InGameREPL implements NotificationHandler {
         return DrawBoard.drawBoard(client.getLocalGame(), client.getLocalColor());
     }
 
-    private String leaveGame() {
-        // TODO: allow remove the player from the game on the server side
+    private String leaveGame() throws ResponseException {
+        
+        WebSocketFacade ws = client.getWebSocket();
+        // How to get the gameID?
+        ws.leave(client.getAuthToken(), client.getLocalGameID());
+
         client.setState(State.SIGNEDIN);
         return "Left game";
     }

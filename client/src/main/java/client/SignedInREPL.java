@@ -123,6 +123,7 @@ public class SignedInREPL implements NotificationHandler {
 
             WebSocketFacade ws = client.getWebSocket();
             ws.connect(client.getAuthToken(), gameID);
+            client.updateGameID(gameID);
 
             client.setState(State.INGAME);
             return "Great, you joined the game. Now let's just hope the board shows up...";
@@ -163,6 +164,7 @@ public class SignedInREPL implements NotificationHandler {
 
             WebSocketFacade ws = client.getWebSocket();
             ws.connect(client.getAuthToken(), gameID);
+            client.updateGameID(gameID);
 
             client.setState(State.OBSERVER);
             return "Great, you are observing from a distance. Now let's just hope the board shows up...";

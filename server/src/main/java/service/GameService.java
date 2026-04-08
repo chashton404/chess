@@ -68,6 +68,65 @@ public class GameService {
     public void joinGame(String authToken, JoinGameRequest req) 
         throws BadRequestException, UnauthorizedException, AlreadyTakenException, DataAccessException {
         
+        validateGameReq(authToken, req);
+
+        // Verify that the color spot is empty
+        if (!gameDAO.checkColor(req.gameID(), req.playerColor())) {
+            throw new AlreadyTakenException("Error: already taken");
+        }
+
+        // get the username for the given authKey
+        String username = authDAO.getUser(authToken);
+        gameDAO.updateGame(req.gameID(), req.playerColor(), username);
+
+    }
+
+    public String leaveGame(String authToken, Integer gameID)
+        throws BadRequestException, UnauthorizedException, AlreadyTakenException, DataAccessException {
+        
+        // Make sure that the fields aren't left null
+        if (authToken == null || gameID == null) {
+            throw new BadRequestException("Error: bad request");
+        }
+
+        // Check that the authToken is valid
+        if (!authDAO.checkAuth(authToken)) {
+            throw new UnauthorizedException("Error: unauthorized");
+        }
+
+        // Check the game exists
+        if (!gameDAO.checkGame(gameID)){
+            throw new BadRequestException("Error: bad request");
+        }
+
+        // Get the username and the playerColor
+        String username = authDAO.getUser(authToken);
+
+        // Determine the userColor
+        GameData gameData = gameDAO.getGame(gameID);
+        String whiteUsername = gameData.whiteUsername();
+        String blackUsername = gameData.blackUsername();
+        String userColor;
+
+        if (username.equals(whiteUsername)) {
+            userColor = "WHITE";
+        } else if (username.equals(blackUsername)){
+            userColor = "BLACK";
+        } else {
+            userColor = null;
+        }
+
+        if (userColor != null) {
+            gameDAO.updateGame(gameID, userColor, null);
+        }
+
+        return username;
+    }
+
+    // This method is used for join game to validate the request
+    private void validateGameReq(String authToken, JoinGameRequest req) 
+        throws BadRequestException, UnauthorizedException, AlreadyTakenException, DataAccessException {
+        
         //Check to validate the request
         if (req == null || req.gameID() == null || req.playerColor() == null || authToken == null) {
             throw new BadRequestException("Error: bad request");
@@ -86,15 +145,6 @@ public class GameService {
         if (!gameDAO.checkGame(req.gameID())){
             throw new BadRequestException("Error: bad request");
         }
-
-        // Verify that the color spot is empty
-        if (!gameDAO.checkColor(req.gameID(), req.playerColor())) {
-            throw new AlreadyTakenException("Error: already taken");
-        }
-
-        // get the username for the given authKey
-        String username = authDAO.getUser(authToken);
-        gameDAO.updateGame(req.gameID(), req.playerColor(), username);
 
     }
 
@@ -141,4 +191,6 @@ public class GameService {
         return new ConnectionResult(username, userColor, chessGame);
 
     }
+
+
 }

@@ -78,6 +78,14 @@ public class WebSocketFacade extends Endpoint {
     // Method for MAKE_MOVE command
 
     // Method for LEAVE command
+    public void leave(String authToken, int gameID) throws ResponseException {
+        try {
+            var command = new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID);
+            this.session.getBasicRemote().sendText(new Gson().toJson(command));
+        } catch (IOException ex) {
+            throw new ResponseException(500, ex.getMessage());
+        }
+    }
 
     // Method for RESIGN command
 

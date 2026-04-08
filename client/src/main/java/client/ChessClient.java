@@ -30,6 +30,7 @@ public class ChessClient implements NotificationHandler{
     private static String status = "[LOGGED_OUT]";
     private ChessGame currentGame;
     private String currentColor;
+    private Integer currentGameID;
 
     // Sub-REPLS (Read-Eval-Print-Loop)
     private final SignedOutREPL signedOutREPL;
@@ -83,12 +84,20 @@ public class ChessClient implements NotificationHandler{
         this.currentColor = playerColor;
     }
 
+    public void updateGameID(Integer gameID) {
+        this.currentGameID = gameID;
+    }
+
     public ChessGame getLocalGame() {
         return currentGame;
     }
 
     public String getLocalColor() {
         return currentColor;
+    }
+
+    public Integer getLocalGameID() {
+        return currentGameID;
     }
 
     // The beginning of the REPL
@@ -105,6 +114,8 @@ public class ChessClient implements NotificationHandler{
                 status = "[LOGGED OUT]";
             } else if (state == State.INGAME) {
                 status = "[GAMEPLAY]";
+            } else if (state == State.OBSERVER) {
+                status = "[OBSERVING]";
             } else {
                 status = "[LOGGED OUT]";
             }

@@ -43,7 +43,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             switch (command.getCommandType()) {
                 case CONNECT -> connect(command, ctx.session);
                 case MAKE_MOVE -> System.out.println("move made");
-                case LEAVE -> System.out.println("left game");
+                case LEAVE -> leave(command, ctx.session);
                 case RESIGN -> System.out.println("resigned");
             }
         } catch (Exception ex) {
@@ -81,6 +81,30 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 NotificationMessage notificationMessage = new NotificationMessage(message);
                 connections.notifyOthers(session, notificationMessage);
             }
+
+        } catch (Exception e) {
+            ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
+            connections.notifyRoot(session, errorMessage);
+        }
+    }
+
+    private void leave(UserGameCommand command, Session session) throws IOException {
+        
+        String authToken = command.getAuthToken();
+        Integer gameID = command.getGameID();
+
+        try {
+            // Attempt to leave the game
+            String username = gameService.leaveGame(authToken, gameID);
+
+            // Update the connection after having left the game
+            connections.remove(session);
+
+            // Notify the others that the player has left
+            String message = String.format("%s has left the game", username);
+            NotificationMessage notificationMessage = new NotificationMessage(message);
+            connections.notifyOthers(session, notificationMessage);
+
 
         } catch (Exception e) {
             ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
