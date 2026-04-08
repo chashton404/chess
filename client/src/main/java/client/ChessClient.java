@@ -4,6 +4,7 @@ import exception.ResponseException;
 
 import java.util.Scanner;
 
+import chess.ChessGame;
 import client.websocket.NotificationHandler;
 import client.websocket.WebSocketFacade;
 
@@ -27,6 +28,8 @@ public class ChessClient implements NotificationHandler{
     private final String serverUrl;
     private State state = State.SIGNEDOUT;
     private static String status = "[LOGGED_OUT]";
+    private ChessGame currentGame;
+    private String currentColor;
 
     // Sub-REPLS (Read-Eval-Print-Loop)
     private final SignedOutREPL signedOutREPL;
@@ -59,6 +62,10 @@ public class ChessClient implements NotificationHandler{
         this.state = s;
     }
 
+    public State getState() {
+        return state;
+    }
+
     public String getAuthToken() {
         return authToken;
     }
@@ -69,6 +76,19 @@ public class ChessClient implements NotificationHandler{
 
     public WebSocketFacade getWebSocket() {
         return ws;
+    }
+
+    public void updateGame(ChessGame game, String playerColor) {
+        this.currentGame = game;
+        this.currentColor = playerColor;
+    }
+
+    public ChessGame getLocalGame() {
+        return currentGame;
+    }
+
+    public String getLocalColor() {
+        return currentColor;
     }
 
     // The beginning of the REPL
@@ -123,6 +143,7 @@ public class ChessClient implements NotificationHandler{
                     case State.SIGNEDOUT -> signedOutREPL.help();
                     case State.SIGNEDIN -> signedInREPL.help();
                     case State.INGAME -> inGameREPL.help();
+                    case State.OBSERVER -> inGameREPL.help();
                 };
             }
 
@@ -134,6 +155,7 @@ public class ChessClient implements NotificationHandler{
                 case State.SIGNEDOUT -> signedOutREPL.signedOutReponses(cmd, params);
                 case State.SIGNEDIN -> signedInREPL.signedInResponses(cmd, params);
                 case State.INGAME -> inGameREPL.inGameResponses(cmd, params);
+                case State.OBSERVER -> inGameREPL.inGameResponses(cmd, params);
             };
 
         } catch (Exception ex) {
@@ -157,6 +179,7 @@ public class ChessClient implements NotificationHandler{
         switch (message.getServerMessageType()) {
             case LOAD_GAME -> {
                 LoadGameMessage loadGameMessage = (LoadGameMessage) message;
+                updateGame(loadGameMessage.getGame(), loadGameMessage.getPlayerColor());
                 System.out.println(DrawBoard.drawBoard(loadGameMessage.getGame(), loadGameMessage.getPlayerColor()));
             }
             case ERROR -> {

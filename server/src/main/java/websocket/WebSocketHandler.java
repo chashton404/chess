@@ -60,17 +60,27 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             // attempt to get the Connection Result
             ConnectionResult connection = gameService.connectGame(authToken, gameID);
 
-            // Create the connection
+            // Create the connection - for both players and observers
             connections.add(session);
 
-            // Send LOAD_GAME to the root client
-            LoadGameMessage loadGameMessage = new LoadGameMessage(connection.game(), connection.playerColor());
-            connections.notifyRoot(session, loadGameMessage);
+            // Send LOAD_GAME to the root client - this also works for observers
+            if (connection.playerColor() != null) {
+                // In the case of the root client being a player
+                LoadGameMessage loadGameMessage = new LoadGameMessage(connection.game(), connection.playerColor());
+                connections.notifyRoot(session, loadGameMessage);
 
-            // Notify everyone else that the root client has joined the game
-            String message = String.format("%s has joined the game as %s", connection.username(), connection.playerColor());
-            NotificationMessage notificationMessage = new NotificationMessage(message);
-            connections.notifyOthers(session, notificationMessage);
+                String message = String.format("%s has joined the game as %s", connection.username(), connection.playerColor());
+                NotificationMessage notificationMessage = new NotificationMessage(message);
+                connections.notifyOthers(session, notificationMessage);
+            } else {
+                // In the case of the root client being an observer
+                LoadGameMessage loadGameMessage = new LoadGameMessage(connection.game(), "WHITE");
+                connections.notifyRoot(session, loadGameMessage);
+
+                String message = String.format("%s has joined the game as an observer", connection.username());
+                NotificationMessage notificationMessage = new NotificationMessage(message);
+                connections.notifyOthers(session, notificationMessage);
+            }
 
         } catch (Exception e) {
             ErrorMessage errorMessage = new ErrorMessage(e.getMessage());

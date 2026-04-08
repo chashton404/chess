@@ -44,8 +44,7 @@ public class InGameREPL implements NotificationHandler {
     }
 
     private String redrawBoard() {
-        ChessGame game = new ChessGame();
-        return DrawBoard.drawBoard(game, "WHITE");
+        return DrawBoard.drawBoard(client.getLocalGame(), client.getLocalColor());
     }
 
     private String leaveGame() {
@@ -56,13 +55,23 @@ public class InGameREPL implements NotificationHandler {
 
     private String move(String... params) {
         // TODO: filter to the appropriate number of params and make sure they are valid
-        return "moved successfully";
+        if (client.getState() == State.OBSERVER) {
+            return "Observers cannot make moves";
+        } else {
+            return "moved successfully";
+        }
     }
 
     private String resign() {
         // TODO: make it so that the other player has won the game, update it on the server side
-        pendingResignation = true;
-        return "Are you sure? Type 'yes' to confirm";
+        System.out.println(client.getState());
+        if (client.getState() == State.OBSERVER) {
+            return "Observers cannot resign";
+        } else {
+            pendingResignation = true;
+            return "Are you sure? Type 'yes' to confirm";
+        }
+
     }
 
     private String confirmResignation() throws ResponseException{

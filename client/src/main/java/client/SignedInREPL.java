@@ -115,9 +115,6 @@ public class SignedInREPL implements NotificationHandler {
             // get the gameID from the game number
             int gameID = localGameList.get(gameNum - 1).gameID();
 
-            // Create a new game for now
-            ChessGame game = new ChessGame();
-
             // Communicate with the server to join the game
             server.joinGame(new JoinGameRequest(playerColor, gameID), client.getAuthToken());
 
@@ -157,10 +154,18 @@ public class SignedInREPL implements NotificationHandler {
             if (gameNum < 1 || gameNum > localGameList.size()) {
                 throw new ResponseException(400, "You absolute bafoon, the game must exist to join it");
             }
-            
-            ChessGame game = new ChessGame();
 
-            return DrawBoard.drawBoard(game, "WHITE");
+            // get the gameID from the game number
+            int gameID = localGameList.get(gameNum - 1).gameID();
+            
+            // Initialize the WebSocket Facade
+            client.initializeWebSocket();
+
+            WebSocketFacade ws = client.getWebSocket();
+            ws.connect(client.getAuthToken(), gameID);
+
+            client.setState(State.OBSERVER);
+            return "Great, you are observing from a distance. Now let's just hope the board shows up...";
         }
         throw new ResponseException(400, "Expected <ID>");
     }   
