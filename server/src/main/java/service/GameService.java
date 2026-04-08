@@ -122,7 +122,7 @@ public class GameService {
         String username = authDAO.getUser(authToken);
 
         // Determine the userColor
-        GameData gameData = gameDAO.getGame(gameID)
+        GameData gameData = gameDAO.getGame(gameID);
         String whiteUsername = gameData.whiteUsername();
         String blackUsername = gameData.blackUsername();
         String userColor;
