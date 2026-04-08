@@ -52,7 +52,8 @@ public class SQLUserDAO implements UserDAO {
         }
         return false;
     }
-
+    
+    // give a username, returns the userdata for that username
     public UserData getUser(String username) throws DataAccessException {
         var statement = "SELECT username, password, email FROM user WHERE username = ?";
         try (var conn = DatabaseManager.getConnection(); var preparedStatement = conn.prepareStatement(statement)) {
