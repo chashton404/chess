@@ -2,6 +2,9 @@ package client.websocket;
 
 import com.google.gson.Gson;
 import exception.ResponseException;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 import websocket.commands.UserGameCommand;
 
@@ -32,8 +35,23 @@ public class WebSocketFacade extends Endpoint {
                 @Override
                 public void onMessage(String message) {
                     // When we receive a message these are the things that should be done
+
                     ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
-                    notificationHandler.notify(serverMessage);
+                    
+                    switch (serverMessage.getServerMessageType()) {
+                        case LOAD_GAME -> {
+                            LoadGameMessage loadGameMessage = new Gson().fromJson(message, LoadGameMessage.class);
+                            notificationHandler.notify(loadGameMessage);
+                        }
+                        case NOTIFICATION -> {
+                            NotificationMessage notificationMessage = new Gson().fromJson(message, NotificationMessage.class);
+                            notificationHandler.notify(notificationMessage);                            
+                        }
+                        case ERROR -> {
+                            ErrorMessage errorMessage = new Gson().fromJson(message, ErrorMessage.class);
+                            notificationHandler.notify(errorMessage);
+                        }
+                    }
                 }
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {

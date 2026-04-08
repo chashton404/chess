@@ -157,7 +157,7 @@ public class ChessClient implements NotificationHandler{
         switch (message.getServerMessageType()) {
             case LOAD_GAME -> {
                 LoadGameMessage loadGameMessage = (LoadGameMessage) message;
-                DrawBoard.drawBoard(loadGameMessage.getGame());
+                System.out.println(DrawBoard.drawBoard(loadGameMessage.getGame()));
             }
             case ERROR -> {
                 ErrorMessage errorMessage = (ErrorMessage) message;

@@ -41,7 +41,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         try {
             UserGameCommand command = new Gson().fromJson(ctx.message(), UserGameCommand.class);
             switch (command.getCommandType()) {
-                case CONNECT -> System.out.println("connected");
+                case CONNECT -> connect(command, ctx.session);
                 case MAKE_MOVE -> System.out.println("move made");
                 case LEAVE -> System.out.println("left game");
                 case RESIGN -> System.out.println("resigned");
@@ -52,10 +52,6 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
     private void connect(UserGameCommand command, Session session) throws IOException {
-        // Add this session
-        
-
-        // Send LOAD_GAME back to the client
         // Verify the authToken, and the gameID
         String authToken = command.getAuthToken();
         Integer gameID = command.getGameID();
@@ -80,8 +76,6 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
             connections.notifyRoot(session, errorMessage);
         }
-
-        // Send a notification to every other client that the user connected
     }
 
     @Override
