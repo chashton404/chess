@@ -2,6 +2,8 @@ package websocket.messages;
 
 import java.util.Objects;
 
+import com.google.gson.Gson;
+
 /**
  * Represents a Message the server can send through a WebSocket
  * <p>
@@ -23,6 +25,10 @@ public class ServerMessage {
 
     public ServerMessageType getServerMessageType() {
         return this.serverMessageType;
+    }
+
+    public String toString() {
+        return new Gson().toJson(this);
     }
 
     @Override
