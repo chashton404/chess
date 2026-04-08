@@ -10,6 +10,7 @@ import static ui.EscapeSequences.SET_TEXT_COLOR_BLACK;
 import static ui.EscapeSequences.SET_TEXT_COLOR_BLUE;
 
 import chess.ChessBoard;
+import chess.ChessGame;
 
 import client.websocket.NotificationHandler;
 
@@ -44,10 +45,8 @@ public class InGameREPL implements NotificationHandler {
 
     private String redrawBoard() {
         // TODO: accept the player color to determine which way the board should be drawn
-        ChessBoard board = new ChessBoard();
-        board.resetBoard();
-
-        return DrawBoard.draw(board, "WHITE");
+        ChessGame game = new ChessGame();
+        return DrawBoard.drawBoard(game);
     }
 
     private String leaveGame() {

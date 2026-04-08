@@ -15,6 +15,7 @@ import model.ListGameData;
 import model.JoinGameRequest;
 
 import chess.ChessBoard;
+import chess.ChessGame;
 
 public class SignedInREPL {
     private final ServerFacade server;
@@ -109,13 +110,12 @@ public class SignedInREPL {
         
             int gameID = localGameList.get(gameNum - 1).gameID();
 
-            ChessBoard board = new ChessBoard();
-            board.resetBoard();
+            ChessGame game = new ChessGame();
 
             server.joinGame(new JoinGameRequest(playerColor, gameID), client.getAuthToken());
             client.setState(State.INGAME);
             // TODO: fix this so that it now uses draw board and a game
-            return DrawBoard.draw(board, playerColor);
+            return DrawBoard.drawBoard(game);
         }
         throw new ResponseException(400, "Expected <ID> [WHITE|BLACK]");
     }
