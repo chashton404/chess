@@ -46,7 +46,8 @@ public class DrawBoard {
                 chessBoard.append(piece == null ? "   " : addPieces(piece));
             }
 
-            chessBoard.append(SET_BG_COLOR_DARK_GREY).append(RESET_TEXT_COLOR).append(' ').append(row).append(' ').append(RESET_BG_COLOR).append('\n');
+            chessBoard.append(SET_BG_COLOR_DARK_GREY).append(RESET_TEXT_COLOR).append(' ').append(row).append(' ')
+            chessBoard.append(RESET_BG_COLOR).append('\n');
 
         }
 
