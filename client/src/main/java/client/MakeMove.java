@@ -25,7 +25,7 @@ public class MakeMove {
 
             if (end.length() == 2) {
                 // In this case that we don't need to handle a promotion, just leave it null
-                ChessMove newMove = new ChessMove(lettersToPosition(start), lettersToPosition(end), null);
+                ChessMove newMove = new ChessMove(LettersToPosition.convert(start), LettersToPosition.convert(end), null);
 
                 // Call on the websocket
                 WebSocketFacade ws = client.getWebSocket();
@@ -48,7 +48,7 @@ public class MakeMove {
                 }
 
                 // Create the move
-                ChessMove newMove = new ChessMove(lettersToPosition(start), lettersToPosition(end), promotionPiece);
+                ChessMove newMove = new ChessMove(LettersToPosition.convert(start), LettersToPosition.convert(end), promotionPiece);
 
                 // Call on the websocket
                 WebSocketFacade ws = client.getWebSocket();
@@ -69,13 +69,4 @@ public class MakeMove {
     private static Boolean isValidEnd(String param) {
         return param != null && param.matches("^[a-h][1-8][nqbr]?$");
     }
-
-    // We use ASCII subraction to convert from letter to number
-    private static ChessPosition lettersToPosition(String param) {
-        int row = param.charAt(1) - '0';
-        int col = param.charAt(0) - 'a' + 1;
-
-        return new ChessPosition(row, col);
-    }
-
 }

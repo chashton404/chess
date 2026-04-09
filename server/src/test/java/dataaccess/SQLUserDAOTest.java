@@ -6,8 +6,6 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.time.DateTimeException;
-
 import model.UserData;
 
 public class SQLUserDAOTest {

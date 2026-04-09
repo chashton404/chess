@@ -10,6 +10,9 @@ import websocket.messages.ServerMessage;
 import static ui.EscapeSequences.SET_TEXT_COLOR_BLACK;
 import static ui.EscapeSequences.SET_TEXT_COLOR_BLUE;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import chess.ChessMove;
 import chess.ChessPiece;
 import chess.ChessPosition;
@@ -37,7 +40,7 @@ public class InGameREPL implements NotificationHandler {
                 case "leave" -> leaveGame();
                 case "move" -> MakeMove.move(client, params);
                 case "resign" -> resign();
-                case "highlight" -> highlightMoves();
+                case "highlight" -> highlightMoves(params);
                 case "yes" -> confirmResignation();
                 default -> help();
             };
@@ -47,7 +50,7 @@ public class InGameREPL implements NotificationHandler {
     }
 
     private String redrawBoard() {
-        return DrawBoard.drawBoard(client.getLocalGame(), client.getLocalColor());
+        return DrawBoard.drawBoard(client.getLocalGame(), client.getLocalColor(), null, null);
     }
 
     private String leaveGame() throws ResponseException {
@@ -81,9 +84,28 @@ public class InGameREPL implements NotificationHandler {
         }
     }
 
-    private String highlightMoves() {
-        // TODO: Get the valid moves, and change the background color on them
-        return "Successfully Highlighted moves";
+    private String highlightMoves(String... params) throws ResponseException {
+        if (params.length !=1 || !params[0].matches("^[a-h][1-8]")) {
+            throw new ResponseException(400, "Expected: highlight <START>");
+        }
+
+        ChessPosition startPosition = LettersToPosition.convert(params[0].toLowerCase());
+
+        var game = client.getLocalGame();
+        ChessPiece piece = game.getBoard().getPiece(startPosition);
+
+        if (piece == null) {
+            throw new ResponseException(400, String.format("Okay that's silly there isn't even a piece at %s", params[0]));
+        }
+
+        Collection<ChessMove> validMoves = game.validMoves(startPosition);
+        Collection<ChessPosition> endPositions = new ArrayList<>();
+
+        for (ChessMove move: validMoves) {
+            endPositions.add(move.getEndPosition());
+        }
+
+        return DrawBoard.drawBoard(game, client.getLocalColor(), startPosition, endPositions);
     }
 
     public String help() {

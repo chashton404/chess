@@ -11,8 +11,6 @@ import dataaccess.DataAccessException;
 import dataaccess.UnauthorizedException;
 import chess.ChessGame;
 import chess.ChessMove;
-import chess.ChessPiece;
-import exception.ResponseException;
 import io.javalin.websocket.WsCloseContext;
 import io.javalin.websocket.WsCloseHandler;
 import io.javalin.websocket.WsConnectContext;

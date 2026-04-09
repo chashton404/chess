@@ -6,23 +6,22 @@ import chess.ChessGame.TeamColor;
 import chess.ChessPiece;
 import chess.ChessPosition;
 
+import java.util.Collection;
+
 import static ui.EscapeSequences.*;
 
 public class DrawBoard {
 
-    public static String drawBoard(ChessGame game, String playerColor) {
-        return draw(game.getBoard(), playerColor);
-    }
-    
-    private static String draw(ChessBoard board, String playerColor) {
+    public static String drawBoard(ChessGame game, String playerColor, ChessPosition startPosition, Collection<ChessPosition> endPositions) {
         return switch(playerColor) {
-            case "WHITE" -> drawWhiteBoard(board);
-            case "BLACK" -> drawBlackBoard(board);
-            default -> drawWhiteBoard(board);
+            case "WHITE" -> drawWhiteBoard(game.getBoard(), startPosition, endPositions);
+            case "BLACK" -> drawBlackBoard(game.getBoard(), startPosition, endPositions);
+            default -> drawWhiteBoard(game.getBoard(), startPosition, endPositions);
         };
+
     }
 
-    private static String drawWhiteBoard(ChessBoard board) {
+    private static String drawWhiteBoard(ChessBoard board, ChessPosition startPosition, Collection<ChessPosition> endPositions) {
         StringBuilder chessBoard = new StringBuilder();
         chessBoard.append('\n');
 
@@ -31,13 +30,10 @@ public class DrawBoard {
             chessBoard.append(SET_BG_COLOR_DARK_GREY + ' ' + row + ' ');
 
             for (int col = 1; col <= 8; col++) {
+
                 ChessPiece piece = board.getPiece(new ChessPosition(row, col));
 
-                if ((row + col) % 2 == 0) {
-                    chessBoard.append(SET_BG_COLOR_BLACK);
-                } else {
-                    chessBoard.append(SET_BG_COLOR_WHITE);
-                }
+                chessBoard.append(backGroundColor(row, col, new ChessPosition(row, col), startPosition, endPositions));
 
                 if (piece == null){
                     chessBoard.append("   ");
@@ -55,7 +51,7 @@ public class DrawBoard {
         return chessBoard.toString();
     }
 
-    private static String drawBlackBoard(ChessBoard board) {
+    private static String drawBlackBoard(ChessBoard board, ChessPosition startPosition, Collection<ChessPosition> endPositions) {
         StringBuilder chessBoard = new StringBuilder();
         chessBoard.append('\n');
 
@@ -66,11 +62,7 @@ public class DrawBoard {
             for (int col = 8; col >= 1; col--) {
                 ChessPiece piece = board.getPiece(new ChessPosition(row, col));
 
-                if ((row + col) % 2 == 0) {
-                    chessBoard.append(SET_BG_COLOR_BLACK);
-                } else {
-                    chessBoard.append(SET_BG_COLOR_WHITE);
-                }
+                chessBoard.append(backGroundColor(row, col, new ChessPosition(row, col), startPosition, endPositions));
 
                 if (piece == null){
                     chessBoard.append("   ");
@@ -87,6 +79,17 @@ public class DrawBoard {
 
         return chessBoard.toString();
     }
+
+    private static String backGroundColor(int row, int col, ChessPosition curr, 
+                                          ChessPosition start, Collection<ChessPosition> endPositions) {
+        if (start != null && start.equals(curr)) {
+            return SET_BG_COLOR_YELLOW;
+        }
+        if (endPositions != null && endPositions.contains(curr)) {
+            return SET_BG_COLOR_GREEN;
+        }
+        return ((row + col) % 2 == 0) ? SET_BG_COLOR_BLACK : SET_BG_COLOR_WHITE;
+    }   
 
     private static String getPieceColor(ChessPiece piece) {
         boolean whiteTeam = piece.getTeamColor() == ChessGame.TeamColor.WHITE;

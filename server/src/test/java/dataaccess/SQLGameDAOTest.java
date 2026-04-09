@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Collection;
-import java.util.List;
 
 import model.ListGameData;
 import model.UserData;

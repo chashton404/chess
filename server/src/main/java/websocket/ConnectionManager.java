@@ -7,10 +7,7 @@ import chess.ChessGame;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.management.Notification;
-
 import websocket.messages.LoadGameMessage;
-import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 public class ConnectionManager {
