@@ -31,8 +31,10 @@ public class DrawBoard {
 
             for (int col = 1; col <= 8; col++) {
 
+                // This is where we are going to make the WHITE chessboard
                 ChessPiece piece = board.getPiece(new ChessPosition(row, col));
 
+                // Append change the background on the WHITE chessboard with this method
                 chessBoard.append(backGroundColor(row, col, new ChessPosition(row, col), startPosition, endPositions));
 
                 if (piece == null){
@@ -60,8 +62,11 @@ public class DrawBoard {
             chessBoard.append(SET_BG_COLOR_DARK_GREY + ' ' + row + ' ');
 
             for (int col = 8; col >= 1; col--) {
+
+                // This is where we are going to make the WHITE chessboard
                 ChessPiece piece = board.getPiece(new ChessPosition(row, col));
 
+                // Append change the background on the WHITE chessboard with this method
                 chessBoard.append(backGroundColor(row, col, new ChessPosition(row, col), startPosition, endPositions));
 
                 if (piece == null){
@@ -89,7 +94,9 @@ public class DrawBoard {
             return SET_BG_COLOR_GREEN;
         }
         return ((row + col) % 2 == 0) ? SET_BG_COLOR_BLACK : SET_BG_COLOR_WHITE;
-    }   
+    } 
+    
+    private static String assembleInterior()
 
     private static String getPieceColor(ChessPiece piece) {
         boolean whiteTeam = piece.getTeamColor() == ChessGame.TeamColor.WHITE;
