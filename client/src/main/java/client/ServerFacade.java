@@ -108,7 +108,7 @@ public class ServerFacade {
         try {
             return client.send(request, BodyHandlers.ofString());
         } catch (Exception ex) {
-            throw new ResponseException(500, ex.getMessage());
+            throw new ResponseException(500, ex.getMessage() != null ? ex.getMessage() : ex.toString());
         }
     }
 

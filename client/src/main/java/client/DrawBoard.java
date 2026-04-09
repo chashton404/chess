@@ -14,75 +14,47 @@ public class DrawBoard {
 
     public static String drawBoard(ChessGame game, String playerColor, ChessPosition startPosition, Collection<ChessPosition> endPositions) {
         return switch(playerColor) {
-            case "WHITE" -> drawWhiteBoard(game.getBoard(), startPosition, endPositions);
-            case "BLACK" -> drawBlackBoard(game.getBoard(), startPosition, endPositions);
-            default -> drawWhiteBoard(game.getBoard(), startPosition, endPositions);
+            case "WHITE" -> draw(game.getBoard(), true, startPosition, endPositions);
+            case "BLACK" -> draw(game.getBoard(), false, startPosition, endPositions);
+            default -> draw(game.getBoard(), true, startPosition, endPositions);
         };
 
     }
 
-    private static String drawWhiteBoard(ChessBoard board, ChessPosition startPosition, Collection<ChessPosition> endPositions) {
+    private static String draw(ChessBoard board, Boolean whitePerspective, ChessPosition startPosition, Collection<ChessPosition> endPositions) {
         StringBuilder chessBoard = new StringBuilder();
         chessBoard.append('\n');
 
-        chessBoard.append(SET_BG_COLOR_DARK_GREY + RESET_TEXT_COLOR + "    a  b  c  d  e  f  g  h    " + RESET_BG_COLOR +  "\n");
-        for (int row = 8; row >= 1; row--) {
+        String columns = whitePerspective ? "    a  b  c  d  e  f  g  h    " : "    h  g  f  e  d  c  b  a    ";
+
+        chessBoard.append(SET_BG_COLOR_DARK_GREY + RESET_TEXT_COLOR + columns + RESET_BG_COLOR + "\n");
+        
+        int row = whitePerspective ? 8 : 1;
+        int rowStep = whitePerspective ? -1 : 1;
+
+        for (int r = 0; r < 8; r++, row += rowStep) {
             chessBoard.append(SET_BG_COLOR_DARK_GREY + ' ' + row + ' ');
 
-            for (int col = 1; col <= 8; col++) {
+            int col = whitePerspective ? 8 : 1;
+            int colStep = whitePerspective ? -1 : 1;
 
-                // This is where we are going to make the WHITE chessboard
-                ChessPiece piece = board.getPiece(new ChessPosition(row, col));
+            for (int c = 0; c < 8; c++, col += colStep) {
+                ChessPosition newPos = new ChessPosition(row, col);
+                ChessPiece piece = board.getPiece(newPos);
 
-                // Append change the background on the WHITE chessboard with this method
-                chessBoard.append(backGroundColor(row, col, new ChessPosition(row, col), startPosition, endPositions));
-
-                if (piece == null){
-                    chessBoard.append("   ");
-                } else {
-                    chessBoard.append(addPieces(piece));
-                }
+                chessBoard.append(backGroundColor(row, col, newPos, startPosition, endPositions));
+                chessBoard.append(piece == null ? "   " : addPieces(piece));
             }
 
-            chessBoard.append(SET_BG_COLOR_DARK_GREY + RESET_TEXT_COLOR + ' ' + row + ' ' + RESET_BG_COLOR + '\n');
+            chessBoard.append(SET_BG_COLOR_DARK_GREY).append(RESET_TEXT_COLOR).append(' ').append(row).append(' ').append(RESET_BG_COLOR).append('\n');
+
         }
 
-        chessBoard.append(SET_BG_COLOR_DARK_GREY + RESET_TEXT_COLOR + "    a  b  c  d  e  f  g  h    " + RESET_BG_COLOR + "\n");
+        chessBoard.append(SET_BG_COLOR_DARK_GREY + RESET_TEXT_COLOR + columns + RESET_BG_COLOR + "\n");
         chessBoard.append(RESET_BG_COLOR);
 
         return chessBoard.toString();
-    }
 
-    private static String drawBlackBoard(ChessBoard board, ChessPosition startPosition, Collection<ChessPosition> endPositions) {
-        StringBuilder chessBoard = new StringBuilder();
-        chessBoard.append('\n');
-
-        chessBoard.append(SET_BG_COLOR_DARK_GREY + RESET_TEXT_COLOR + "    h  g  f  e  d  c  b  a    " + RESET_BG_COLOR +  "\n");
-        for (int row = 1; row <= 8; row++) {
-            chessBoard.append(SET_BG_COLOR_DARK_GREY + ' ' + row + ' ');
-
-            for (int col = 8; col >= 1; col--) {
-
-                // This is where we are going to make the WHITE chessboard
-                ChessPiece piece = board.getPiece(new ChessPosition(row, col));
-
-                // Append change the background on the WHITE chessboard with this method
-                chessBoard.append(backGroundColor(row, col, new ChessPosition(row, col), startPosition, endPositions));
-
-                if (piece == null){
-                    chessBoard.append("   ");
-                } else {
-                    chessBoard.append(addPieces(piece));
-                }
-            }
-
-            chessBoard.append(SET_BG_COLOR_DARK_GREY + RESET_TEXT_COLOR + ' ' + row + ' ' + RESET_BG_COLOR + '\n');
-        }
-
-        chessBoard.append(SET_BG_COLOR_DARK_GREY + RESET_TEXT_COLOR + "    h  g  f  e  d  c  b  a    " + RESET_BG_COLOR + "\n");
-        chessBoard.append(RESET_BG_COLOR);
-
-        return chessBoard.toString();
     }
 
     private static String backGroundColor(int row, int col, ChessPosition curr, 

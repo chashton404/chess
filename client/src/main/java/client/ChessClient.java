@@ -107,7 +107,7 @@ public class ChessClient implements NotificationHandler{
         // We initialize a scanner as that helps us to read input from different sources
         Scanner scanner = new Scanner(System.in);
         var result = "";
-        while (!result.equals("quit")) {
+        while (!"quit".equals(result)) {
             if (state == State.SIGNEDIN) {
                 status = "[LOGGED IN]";
             } else if (state == State.SIGNEDOUT) {
