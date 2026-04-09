@@ -1,6 +1,9 @@
 package service;
 
 import dataaccess.GameDAO;
+
+import java.lang.reflect.UndeclaredThrowableException;
+
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.InvalidMoveException;
@@ -186,19 +189,34 @@ public class GameService {
         return gameData;
     }
 
-        // Add a service method to make the move
-        public ChessGame makeMove(String authToken, Integer gameID, ChessMove move) throws UnauthorizedException, 
+    // Add a service method to make the move
+    public ChessGame makeMove(String authToken, Integer gameID, ChessMove move) throws UnauthorizedException, 
         BadRequestException, InvalidMoveException, UnauthorizedException, DataAccessException {
-            validateAuthAndID(authToken, gameID);
-            
-            GameData gameData = gameDAO.getGame(gameID);
-            ChessGame game = gameData.game();
+        validateAuthAndID(authToken, gameID);
+        
+        GameData gameData = gameDAO.getGame(gameID);
+        ChessGame game = gameData.game();
 
-            game.makeMove(move);
-            gameDAO.updateGame(gameID, game);
+        game.makeMove(move);
+        gameDAO.updateGame(gameID, game);
 
-            return game;
-        }
+        return game;
+    }
+
+    public String resignGame(String authToken, Integer gameID) throws UnauthorizedException,
+        BadRequestException, InvalidMoveException, UnauthorizedException, DataAccessException {
+        validateAuthAndID(authToken, gameID);
+
+        String username = authDAO.getUser(authToken);
+
+        GameData gameData = gameDAO.getGame(gameID);
+        ChessGame game = gameData.game();
+
+        game.resign();
+        gameDAO.updateGame(gameID, game);
+
+        return username;
+    }
 
     public void validateAuthAndID(String authToken, Integer gameID) throws UnauthorizedException, 
         BadRequestException, UnauthorizedException, DataAccessException {
@@ -221,6 +239,5 @@ public class GameService {
             throw new BadRequestException("Error: bad request");
         }
     }
-
 
 }

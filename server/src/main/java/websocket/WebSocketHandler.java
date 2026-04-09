@@ -57,7 +57,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 case CONNECT -> connect(command, ctx.session);
                 case MAKE_MOVE -> makeMove(new Gson().fromJson(ctx.message(), MakeMoveCommand.class), ctx.session);
                 case LEAVE -> leave(command, ctx.session);
-                case RESIGN -> System.out.println("resigned");
+                case RESIGN -> resign(command, ctx.session);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -192,10 +192,23 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 case BLACK -> "BLACK";
             };
 
+            String whiteUsername = gameData.whiteUsername();
+            String blackUsername = gameData.blackUsername();
+
             if (game.isInCheckmate(game.getTeamTurn())) {
-                connections.notifyGame(gameID, new NotificationMessage(currentTeamTurn + " is in Checkmate!"));
+                // Make it return the username of the team that is in Checkmate
+                if (currentTeamTurn.equals("WHITE")) {
+                    connections.notifyGame(gameID, new NotificationMessage(whiteUsername + " is in Checkmate!"));
+                } else if (currentTeamTurn.equals("BLACK")) {
+                    connections.notifyGame(gameID, new NotificationMessage(blackUsername + "is in Checkmate!"));
+                }
             } else if (game.isInCheck(game.getTeamTurn())) {
-                connections.notifyGame(gameID, new NotificationMessage(currentTeamTurn + " is in Check!"));
+                // Make it return the username of the team that is in Check
+                if (currentTeamTurn.equals("WHITE")) {
+                    connections.notifyGame(gameID, new NotificationMessage(whiteUsername + " is in Check!"));
+                } else if (currentTeamTurn.equals("BLACK")) {
+                    connections.notifyGame(gameID, new NotificationMessage(blackUsername + "is in Check!"));
+                }
             } else if (game.isInStalemate(game.getTeamTurn())) {
                 connections.notifyGame(gameID, new NotificationMessage("Both teams are in stalemate!"));
             }
@@ -239,6 +252,27 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
         return startPosition + " to " + endPosition;
     }
+
+    private void resign(UserGameCommand command, Session session) throws IOException {
+        
+        String authToken = command.getAuthToken();
+        Integer gameID = command.getGameID();
+
+
+        try {
+            String username = gameService.resignGame(authToken, gameID);
+
+            String message = username  + " has resigned. Game is now over";
+            NotificationMessage notificationMessage = new NotificationMessage(message);
+    
+            connections.notifyGame(gameID, notificationMessage);
+        } catch(Exception ex) {
+            ErrorMessage errorMessage = new ErrorMessage(ex.getMessage());
+            connections.notifyRoot(session, errorMessage);
+        }
+
+    }
+
 
     @Override
     public void handleClose(WsCloseContext ctx) {

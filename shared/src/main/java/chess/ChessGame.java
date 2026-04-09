@@ -481,4 +481,11 @@ public class ChessGame {
         }
         return kingsCopy;
     }
+
+    /**
+     * Function to change the status of the game
+     */
+    public void resign() {
+        this.gameOver = true;
+    }
 }

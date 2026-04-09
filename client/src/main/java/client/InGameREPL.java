@@ -72,7 +72,11 @@ public class InGameREPL {
 
     private String confirmResignation() throws ResponseException{
         if (pendingResignation == true) {
-            return "successfully resigned";
+            WebSocketFacade ws = client.getWebSocket();
+            ws.resign(client.getAuthToken(), client.getLocalGameID());
+
+            return "you resigned.";
+
         } else {
             throw new ResponseException(400, "BIG BIG TROUBLE");
         }
