@@ -17,4 +17,8 @@ public record GameData(int gameID, String whiteUsername, String blackUsername, S
         return new GameData(this.gameID, this.whiteUsername, username, this.gameName, this.game);
     }
 
+    public GameData updateGame(ChessGame game) {
+        return new GameData(this.gameID, this.whiteUsername, this.blackUsername, this.gameName, game);
+    }
+
 }

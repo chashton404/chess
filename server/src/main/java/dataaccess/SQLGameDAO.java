@@ -111,7 +111,7 @@ public class SQLGameDAO implements GameDAO {
        return false;
     }
 
-    public void updateGame(Integer gameID, String playerColor, String username) throws DataAccessException {
+    public void updateGameStatus(Integer gameID, String playerColor, String username) throws DataAccessException {
         String column = playerColor.equals("WHITE") ? "whiteUsername" : "blackUsername";
         var statement = "UPDATE game SET " + column + " = ? WHERE gameID = ?";
         try (var conn = DatabaseManager.getConnection(); var preparedStatement = conn.prepareStatement(statement)) {

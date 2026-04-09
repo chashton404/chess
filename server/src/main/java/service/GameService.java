@@ -77,7 +77,7 @@ public class GameService {
 
         // get the username for the given authKey
         String username = authDAO.getUser(authToken);
-        gameDAO.updateGame(req.gameID(), req.playerColor(), username);
+        gameDAO.updateGameStatus(req.gameID(), req.playerColor(), username);
 
     }
 
@@ -117,7 +117,7 @@ public class GameService {
         }
 
         if (userColor != null) {
-            gameDAO.updateGame(gameID, userColor, null);
+            gameDAO.updateGameStatus(gameID, userColor, null);
         }
 
         return username;
@@ -149,24 +149,8 @@ public class GameService {
     }
 
     public ConnectionResult connectGame(String authToken, Integer gameID) throws UnauthorizedException, BadRequestException, DataAccessException {
-        // Check that neither the authToken nor the gameID is null
-        if (authToken == null) {
-            throw new UnauthorizedException("Error: unauthorized");
-        }
-
-        if (gameID == null) {
-            throw new BadRequestException("Error: Game doesn't exist");
-        }
-
-        // Check that the authToken is valid
-        if (!authDAO.checkAuth(authToken)) {
-            throw new UnauthorizedException("Error: unauthorized");
-        }
-
-        // Check the game exists
-        if (!gameDAO.checkGame(gameID)){
-            throw new BadRequestException("Error: bad request");
-        }
+        
+        validateAuthAndID(authToken, gameID);
 
         // Get the username and the playerColor
         String username = authDAO.getUser(authToken);
@@ -192,5 +176,33 @@ public class GameService {
 
     }
 
+    public GameData getGameData(String authToken, Integer gameID) throws UnauthorizedException, DataAccessException, BadRequestException {
+        validateAuthAndID(authToken, gameID);
 
+        GameData gameData = gameDAO.getGame(gameID);
+
+        return gameData;
+    }
+
+    public void validateAuthAndID(String authToken, Integer gameID) throws UnauthorizedException, 
+        BadRequestException, UnauthorizedException, DataAccessException {
+        // Check that neither the authToken nor the gameID is null
+        if (authToken == null) {
+            throw new UnauthorizedException("Error: unauthorized");
+        }
+
+        if (gameID == null) {
+            throw new BadRequestException("Error: Game doesn't exist");
+        }
+
+        // Check that the authToken is valid
+        if (!authDAO.checkAuth(authToken)) {
+            throw new UnauthorizedException("Error: unauthorized");
+        }
+
+        // Check the game exists
+        if (!gameDAO.checkGame(gameID)){
+            throw new BadRequestException("Error: bad request");
+        }
+    }
 }

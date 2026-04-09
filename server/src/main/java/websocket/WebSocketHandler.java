@@ -1,8 +1,17 @@
 package websocket;
 
+
+
 import com.google.gson.Gson;
 
+import chess.ChessPosition;
+import chess.InvalidMoveException;
+import dataaccess.BadRequestException;
+import dataaccess.DataAccessException;
+import dataaccess.UnauthorizedException;
+import chess.ChessGame;
 import chess.ChessMove;
+import chess.ChessPiece;
 import exception.ResponseException;
 import io.javalin.websocket.WsCloseContext;
 import io.javalin.websocket.WsCloseHandler;
@@ -16,11 +25,14 @@ import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import model.ConnectionResult;
+import model.GameData;
+import service.AuthService;
 import service.GameService;
 
 import org.eclipse.jetty.websocket.api.Session;
 
 import java.io.IOException;
+import java.util.Collection;
 
 // Import the commands for client to server communication
 
@@ -28,9 +40,11 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     private final ConnectionManager connections = new ConnectionManager();
     private final GameService gameService;
+    private final AuthService authService;
 
-    public WebSocketHandler(GameService gameService) {
+    public WebSocketHandler(GameService gameService, AuthService authService) {
         this.gameService = gameService;
+        this.authService = authService;
     }
 
     @Override
@@ -45,7 +59,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             UserGameCommand command = new Gson().fromJson(ctx.message(), UserGameCommand.class);
             switch (command.getCommandType()) {
                 case CONNECT -> connect(command, ctx.session);
-                case MAKE_MOVE -> System.out.println("move made");
+                case MAKE_MOVE -> makeMove(new Gson().fromJson(ctx.message(), MakeMoveCommand.class), ctx.session);
                 case LEAVE -> leave(command, ctx.session);
                 case RESIGN -> System.out.println("resigned");
             }
@@ -115,27 +129,73 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         }
     }
 
-    private void makeMove(MakeMoveCommand command, Session session) throws IOException {
+    private void makeMove(MakeMoveCommand command, Session session) throws IOException, InvalidMoveException, 
+        DataAccessException, BadRequestException, UnauthorizedException {
 
         String authToken = command.getAuthToken();
         Integer gameID = command.getGameID();
-        ChessMove move = command.getMove();
+        ChessMove newMove = command.getMove();
+
+        GameData gameData = gameService.getGameData(authToken, gameID);
+        ChessGame game = gameData.game();
+
+        String username = authService.getUsername(authToken);
 
         // Verify that the move is valid (that it is in the list of valid moves for the starting position)
-        
+        ChessPosition startPosition = newMove.getStartPosition();
+        Collection<ChessMove> validMoves = game.validMoves(startPosition);
 
-        // Update the game so that piece is moved
+        if (validMoves.contains(newMove)) {
+            // Update the game by making the move
+            game.makeMove(newMove);
+            gameData.updateGame(game);
 
-        // send LOAD_GAME to all every client
+            // send LOAD_GAME to every client
+            // TODO: change this so it draws the right color
+            LoadGameMessage loadGameMessage = new LoadGameMessage(game, "WHITE");
+            connections.notifyAll(loadGameMessage);
 
+            // Notify others of move
+            String message = buildMoveString(username, newMove);
+            NotificationMessage notificationMessage = new NotificationMessage(message);
+            connections.notifyOthers(session, notificationMessage);
 
-        // Notify others of move
+            // Notify other of check and checkmate
 
+        }
 
-        // Notify if in check, checkmate
+    }
 
+    private String buildMoveString(String username, ChessMove move) {
+        StringBuilder message = new StringBuilder();
 
-        
+        message.append(username).append( " moved ");
+        message.append(moveToLetters(move));
+
+        if (move.getPromotionPiece() != null) {
+            message.append(" promoting to ");
+            String pieceType = switch(move.getPromotionPiece()) {
+                case QUEEN -> "queen";
+                case KNIGHT -> "knight";
+                case ROOK -> "rook";
+                case BISHOP -> "bishop";
+                default -> "unknown";
+            };
+            message.append(pieceType);
+        }
+        return message.toString();
+    }
+
+    private String moveToLetters(ChessMove move) {
+        char startCol = (char) ('a' + move.getStartPosition().getColumn() - 1);
+        int startRow = move.getStartPosition().getRow();
+        String startPosition = "" + startCol + startRow;
+
+        char endCol = (char) ('a' + move.getEndPosition().getColumn() - 1);
+        int endRow = move.getEndPosition().getRow();
+        String endPosition = "" + endCol + endRow;
+
+        return startPosition + " to " + endPosition;
     }
 
     @Override

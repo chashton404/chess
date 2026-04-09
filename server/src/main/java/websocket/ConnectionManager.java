@@ -40,7 +40,10 @@ public class ConnectionManager {
     public void notifyAll(ServerMessage serverMessage) throws IOException {
         String msg = serverMessage.toString();
         for (Session c: connections.values()) {
-            c.getRemote().sendString(msg);
+            if (c.isOpen()) {
+                c.getRemote().sendString(msg);
+            }
+            
         }
     }
  

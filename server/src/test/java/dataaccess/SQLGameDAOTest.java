@@ -33,7 +33,7 @@ public class SQLGameDAOTest {
     void negativeTestCheckColor() throws DataAccessException {
         int id = gameDAO.createGame("newGame");
         userDAO.createUser(new UserData("username", "password", "email@example.com"));
-        gameDAO.updateGame(id, "WHITE", "username");
+        gameDAO.updateGameStatus(id, "WHITE", "username");
         assertFalse(gameDAO.checkColor(id, "WHITE"), "DAO should return false if the color is unavailable");
 
 
@@ -91,7 +91,7 @@ public class SQLGameDAOTest {
     void positiveTestUpdateGame() throws DataAccessException{
         int id = gameDAO.createGame("newGame");
         userDAO.createUser(new UserData("username", "password", "email@example.com"));
-        gameDAO.updateGame(id, "BLACK", "username");
+        gameDAO.updateGameStatus(id, "BLACK", "username");
         assertFalse(gameDAO.checkColor(id, "BLACK"), "DAO should return false if the color is unavailable");
 
     }
