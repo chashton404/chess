@@ -169,12 +169,17 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             connections.notifyGameExceptRoot(gameID, session, notificationMessage);
 
             // Notify other of check and checkmate
+            String currentTeamTurn = switch(game.getTeamTurn()) {
+                case WHITE -> "WHITE";
+                case BLACK -> "BLACK";
+            };
+
             if (game.isInCheckmate(game.getTeamTurn())) {
-                connections.notifyInMate(gameID, game, "checkmate");
+                connections.notifyGame(gameID, new NotificationMessage(currentTeamTurn + " is in Checkmate!"));
             } else if (game.isInCheck(game.getTeamTurn())) {
-                connections.notifyInMate(gameID, game, "check");
+                connections.notifyGame(gameID, new NotificationMessage(currentTeamTurn + " is in Check!"));
             } else if (game.isInStalemate(game.getTeamTurn())) {
-                connections.notifyInMate(gameID, game, "stalemate");
+                connections.notifyGame(gameID, new NotificationMessage("Both teams are in stalemate!"));
             }
 
         } catch (Exception ex) {
