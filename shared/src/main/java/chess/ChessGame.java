@@ -18,6 +18,7 @@ public class ChessGame {
     /* These are the variables we will use throughout */
     private TeamColor teamTurn;
     private ChessBoard board;
+    private Boolean gameOver;
 
     /* This is the dictionary that we will use to store each teams pieces */
     private Map<ChessGame.TeamColor, Collection<ChessPosition>> teamPieces;
@@ -26,6 +27,7 @@ public class ChessGame {
     public ChessGame() {
         this.teamTurn = TeamColor.WHITE;
         this.board = new ChessBoard();
+        this.gameOver = false;
 
         /* Create the new dictionary for the teamPieces */
         this.teamPieces = new HashMap<>();
@@ -113,6 +115,10 @@ public class ChessGame {
     public void setTeamTurn(TeamColor team) {
         /* change the team color */
         this.teamTurn = team;
+
+        if(isInCheckmate(this.teamTurn) || isInStalemate(this.teamTurn)) {
+            this.gameOver = true;
+        }
     }
 
     /**
@@ -211,6 +217,11 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        // Throw an error if the game is over
+        if (gameOver) {
+            throw new InvalidMoveException("Game is Over");
+        }
+
         /* Raise an error if it's not the right team's turn */
         if (this.board.getPiece(move.getStartPosition()) == null) {
             throw new InvalidMoveException("Not your team's turn");
