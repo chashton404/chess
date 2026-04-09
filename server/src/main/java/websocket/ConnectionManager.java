@@ -24,35 +24,10 @@ public class ConnectionManager {
         connections.remove(session);
     }
 
-    // Command to broadcast to everyone but the root client
-    public void notifyOthers(Session excludeSession, ServerMessage serverMessage) throws IOException {
-        String msg = serverMessage.toString();
-        for (Connection connection: connections.values()) {
-            Session session = connection.session();
-            if (session.isOpen()) {
-                if (!session.equals(excludeSession)) {
-                    session.getRemote().sendString(msg);
-                }
-            }
-        }
-    }
-
     // Command to broadcast to only the root client
     public void notifyRoot(Session session, ServerMessage serverMessage) throws IOException {
         String msg = serverMessage.toString();
         session.getRemote().sendString(msg);
-    }
-
-    // Command to broadcast to everyone
-    public void notifyAll(ServerMessage serverMessage) throws IOException {
-        String msg = serverMessage.toString();
-        for (Connection connection: connections.values()) {
-            Session session = connection.session();
-            if (session.isOpen()) {
-                session.getRemote().sendString(msg);
-            }
-            
-        }
     }
 
     // Command to broadcast to a specific game
@@ -66,7 +41,7 @@ public class ConnectionManager {
         }
     }
 
-    // Command to broadcast to everyon in a specific game except the root client
+    // Command to broadcast to everyone in a specific game except the root client
     public void notifyGameExceptRoot(int gameID, Session excludeSession, ServerMessage serverMessage) throws IOException {
         String msg = serverMessage.toString();
         for (Connection connection : connections.values()) {
@@ -87,21 +62,6 @@ public class ConnectionManager {
                 String playerColor = connection.playerColor() == null ? "WHITE" : connection.playerColor();
                 LoadGameMessage loadGameMessage = new LoadGameMessage(game, playerColor);
                 session.getRemote().sendString(loadGameMessage.toString());
-            }
-        }
-    }
-
-    // Command for notifying the user they are in checkmate
-    public void notifyInMate(int gameID, ChessGame game, String status) throws IOException {
-        for (Connection connection : connections.values()) {
-            Session session = connection.session();
-            String currentTeamTurn = switch(game.getTeamTurn()) {
-                case WHITE -> "WHITE";
-                case BLACK -> "BLACK";
-            };
-            if (connection.gameID() == gameID && connection.playerColor().equals(currentTeamTurn) && session.isOpen()) {
-                NotificationMessage notificationMessage = new NotificationMessage(String.format("%s is in %s", connection.username(), status));
-                session.getRemote().sendString(notificationMessage.toString());
             }
         }
     }
