@@ -94,9 +94,7 @@ public class DrawBoard {
             return SET_BG_COLOR_GREEN;
         }
         return ((row + col) % 2 == 0) ? SET_BG_COLOR_BLACK : SET_BG_COLOR_WHITE;
-    } 
-    
-    private static String assembleInterior()
+    }
 
     private static String getPieceColor(ChessPiece piece) {
         boolean whiteTeam = piece.getTeamColor() == ChessGame.TeamColor.WHITE;
