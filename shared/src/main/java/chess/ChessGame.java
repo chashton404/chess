@@ -488,4 +488,8 @@ public class ChessGame {
     public void resign() {
         this.gameOver = true;
     }
+
+    public Boolean isGameOver() {
+        return this.gameOver;
+    }
 }

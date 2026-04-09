@@ -4,6 +4,8 @@ import dataaccess.GameDAO;
 
 import java.lang.reflect.UndeclaredThrowableException;
 
+import javax.swing.event.UndoableEditEvent;
+
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.InvalidMoveException;
@@ -211,6 +213,14 @@ public class GameService {
 
         GameData gameData = gameDAO.getGame(gameID);
         ChessGame game = gameData.game();
+
+        if (!(username.equals(gameData.whiteUsername()) || username.equals(gameData.blackUsername()))) {
+            throw new UnauthorizedException("Error: Observers cannot resign");
+        }
+
+        if (game.isGameOver()) {
+            throw new UnauthorizedException("Error: Game is already over");
+        }
 
         game.resign();
         gameDAO.updateGame(gameID, game);
