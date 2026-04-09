@@ -132,20 +132,26 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     private void makeMove(MakeMoveCommand command, Session session) throws IOException, InvalidMoveException, 
         DataAccessException, BadRequestException, UnauthorizedException {
 
-        String authToken = command.getAuthToken();
-        Integer gameID = command.getGameID();
-        ChessMove newMove = command.getMove();
+        try {
 
-        GameData gameData = gameService.getGameData(authToken, gameID);
-        ChessGame game = gameData.game();
+            String authToken = command.getAuthToken();
+            Integer gameID = command.getGameID();
+            ChessMove newMove = command.getMove();
+    
+            GameData gameData = gameService.getGameData(authToken, gameID);
+            ChessGame game = gameData.game();
+    
+            String username = authService.getUsername(authToken);
+    
+            // Verify that the move is valid (that it is in the list of valid moves for the starting position)
+            ChessPosition startPosition = newMove.getStartPosition();
+            Collection<ChessMove> validMoves = game.validMoves(startPosition);
 
-        String username = authService.getUsername(authToken);
-
-        // Verify that the move is valid (that it is in the list of valid moves for the starting position)
-        ChessPosition startPosition = newMove.getStartPosition();
-        Collection<ChessMove> validMoves = game.validMoves(startPosition);
-
-        if (validMoves.contains(newMove)) {
+            // Throw an error if the move is invalid
+            if (validMoves == null || !validMoves.contains(newMove)) {
+                throw new InvalidMoveException("Invalid Move");
+            }
+    
             // Update the game by making the move
             game.makeMove(newMove);
             gameData.updateGame(game);
@@ -162,7 +168,13 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
             // Notify other of check and checkmate
 
+
+        } catch (Exception ex) {
+            ErrorMessage errorMessage = new ErrorMessage(ex.getMessage());
+            connections.notifyRoot(session, errorMessage);
         }
+
+
 
     }
 
