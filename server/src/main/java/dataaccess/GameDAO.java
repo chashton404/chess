@@ -2,6 +2,7 @@ package dataaccess;
 
 import java.util.Collection;
 
+import chess.ChessGame;
 import model.GameData;
 import model.ListGameData;
 
@@ -15,6 +16,8 @@ public interface GameDAO {
     Boolean checkColor(Integer gameID, String playerColor) throws DataAccessException;
 
     GameData getGame(Integer gameID) throws DataAccessException;
+
+    void updateGame(Integer gameID, ChessGame game) throws DataAccessException;
 
     void updateGameStatus(Integer gameID, String playerColor, String username) throws DataAccessException;
 

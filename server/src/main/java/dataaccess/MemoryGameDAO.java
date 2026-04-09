@@ -77,6 +77,11 @@ public class MemoryGameDAO implements GameDAO {
         return game;
     }
 
+    public void updateGame(Integer gameID, ChessGame game) {
+        GameData updatedGame = games.get(gameID).updateGame(game);
+        games.put(gameID, updatedGame);
+    }
+
     public void updateGameStatus(Integer gameID, String playerColor, String username) throws DataAccessException {
         if (playerColor.equals("WHITE")) {
             GameData updatedGame = games.get(gameID).updateWhite(username);

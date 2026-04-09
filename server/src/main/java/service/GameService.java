@@ -2,6 +2,8 @@ package service;
 
 import dataaccess.GameDAO;
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import dataaccess.AlreadyTakenException;
 import dataaccess.AuthDAO;
 import dataaccess.UnauthorizedException;
@@ -184,6 +186,20 @@ public class GameService {
         return gameData;
     }
 
+        // Add a service method to make the move
+        public ChessGame makeMove(String authToken, Integer gameID, ChessMove move) throws UnauthorizedException, 
+        BadRequestException, InvalidMoveException, UnauthorizedException, DataAccessException {
+            validateAuthAndID(authToken, gameID);
+            
+            GameData gameData = gameDAO.getGame(gameID);
+            ChessGame game = gameData.game();
+
+            game.makeMove(move);
+            gameDAO.updateGame(gameID, game);
+
+            return game;
+        }
+
     public void validateAuthAndID(String authToken, Integer gameID) throws UnauthorizedException, 
         BadRequestException, UnauthorizedException, DataAccessException {
         // Check that neither the authToken nor the gameID is null
@@ -205,4 +221,6 @@ public class GameService {
             throw new BadRequestException("Error: bad request");
         }
     }
+
+
 }

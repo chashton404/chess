@@ -68,17 +68,19 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         }
     }
 
-    private void connect(UserGameCommand command, Session session) throws IOException {
+    private void connect(UserGameCommand command, Session session) throws IOException, DataAccessException {
         // Verify the authToken, and the gameID
         String authToken = command.getAuthToken();
         Integer gameID = command.getGameID();
+
+        String username = authService.getUsername(authToken);
 
         try {
             // attempt to get the Connection Result
             ConnectionResult connection = gameService.connectGame(authToken, gameID);
 
             // Create the connection - for both players and observers
-            connections.add(session);
+            connections.add(new Connection(session, gameID, username, connection.playerColor()));
 
             // Send LOAD_GAME to the root client - this also works for observers
             if (connection.playerColor() != null) {
@@ -88,7 +90,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
                 String message = String.format("%s has joined the game as %s", connection.username(), connection.playerColor());
                 NotificationMessage notificationMessage = new NotificationMessage(message);
-                connections.notifyOthers(session, notificationMessage);
+                connections.notifyGameExceptRoot(gameID, session, notificationMessage);
             } else {
                 // In the case of the root client being an observer
                 LoadGameMessage loadGameMessage = new LoadGameMessage(connection.game(), "WHITE");
@@ -96,7 +98,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
                 String message = String.format("%s has joined the game as an observer", connection.username());
                 NotificationMessage notificationMessage = new NotificationMessage(message);
-                connections.notifyOthers(session, notificationMessage);
+                connections.notifyGameExceptRoot(gameID, session, notificationMessage);
             }
 
         } catch (Exception e) {
@@ -120,7 +122,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             // Notify the others that the player has left
             String message = String.format("%s has left the game", username);
             NotificationMessage notificationMessage = new NotificationMessage(message);
-            connections.notifyOthers(session, notificationMessage);
+            connections.notifyGameExceptRoot(gameID, session, notificationMessage);
 
 
         } catch (Exception e) {
@@ -153,8 +155,10 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             }
     
             // Update the game by making the move
-            game.makeMove(newMove);
-            gameData.updateGame(game);
+            gameService.makeMove(authToken, gameID, newMove);
+
+            // Get the game again
+            game = gameService.getGameData(authToken, gameID).game();
 
             // send LOAD_GAME to every client
             // TODO: change this so it draws the right color
@@ -164,7 +168,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             // Notify others of move
             String message = buildMoveString(username, newMove);
             NotificationMessage notificationMessage = new NotificationMessage(message);
-            connections.notifyOthers(session, notificationMessage);
+            connections.notifyGameExceptRoot(gameID, session, notificationMessage);
 
             // Notify other of check and checkmate
 
@@ -173,8 +177,6 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             ErrorMessage errorMessage = new ErrorMessage(ex.getMessage());
             connections.notifyRoot(session, errorMessage);
         }
-
-
 
     }
 

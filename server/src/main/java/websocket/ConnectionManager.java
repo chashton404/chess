@@ -8,10 +8,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import websocket.messages.ServerMessage;
 
 public class ConnectionManager {
-    public final ConcurrentHashMap<Session, Session> connections = new ConcurrentHashMap<>();
+    public final ConcurrentHashMap<Session, Connection> connections = new ConcurrentHashMap<>();
 
-    public void add(Session session) {
-        connections.put(session, session);
+    public void add(Connection connection) {
+        connections.put(connection.session(), connection);
     }
 
     public void remove(Session session) {
@@ -21,10 +21,11 @@ public class ConnectionManager {
     // Command to broadcast to everyone but the root client
     public void notifyOthers(Session excludeSession, ServerMessage serverMessage) throws IOException {
         String msg = serverMessage.toString();
-        for (Session c: connections.values()) {
-            if (c.isOpen()) {
-                if (!c.equals(excludeSession)) {
-                    c.getRemote().sendString(msg);
+        for (Connection connection: connections.values()) {
+            Session session = connection.session();
+            if (session.isOpen()) {
+                if (!session.equals(excludeSession)) {
+                    session.getRemote().sendString(msg);
                 }
             }
         }
@@ -39,12 +40,36 @@ public class ConnectionManager {
     // Command to broadcast to everyone
     public void notifyAll(ServerMessage serverMessage) throws IOException {
         String msg = serverMessage.toString();
-        for (Session c: connections.values()) {
-            if (c.isOpen()) {
-                c.getRemote().sendString(msg);
+        for (Connection connection: connections.values()) {
+            Session session = connection.session()
+            if (session.isOpen()) {
+                session.getRemote().sendString(msg);
             }
             
         }
+    }
+
+    // Command to broadcast to a specific game
+    public void notifyGame(int gameID, ServerMessage serverMessage) throws IOException {
+        String msg = serverMessage.toString();
+        for (Connection connection: connections.values()) {
+            Session session = connection.session();
+            if (connection.gameID() == gameID && session.isOpen()) {
+                session.getRemote().sendString(msg);
+            }
+        }
+    }
+
+    // Command to broadcast to everyon in a specific game except the root client
+    public void notifyGameExceptRoot(int gameID, Session excludeSession, ServerMessage serverMessage) throws IOException {
+        String msg = serverMessage.toString();
+        for (Connection connection : connections.values()) {
+            Session session = connection.session();
+            if (connection.gameID() == gameID && session.isOpen() && session != excludeSession) {
+                session.getRemote().sendString(msg);
+            }
+        }
+
     }
  
 

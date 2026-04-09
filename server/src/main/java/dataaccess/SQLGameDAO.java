@@ -111,6 +111,20 @@ public class SQLGameDAO implements GameDAO {
        return false;
     }
 
+    public void updateGame(Integer gameID, ChessGame game) throws DataAccessException {
+        var statement = "UPDATE game SET game = ? WHERE gameID = ?";
+        var gameJson = new Gson().toJson(game);
+
+        try (var conn = DatabaseManager.getConnection(); var preparedStatement = conn.prepareStatement(statement)) {
+            preparedStatement.setString(1, gameJson);
+            preparedStatement.setInt(2, gameID);
+            
+            preparedStatement.executeUpdate();
+        } catch (Exception e) {
+            throw new DataAccessException(String.format("Error updating game: %s", e.getMessage()));
+        }
+    }
+
     public void updateGameStatus(Integer gameID, String playerColor, String username) throws DataAccessException {
         String column = playerColor.equals("WHITE") ? "whiteUsername" : "blackUsername";
         var statement = "UPDATE game SET " + column + " = ? WHERE gameID = ?";
