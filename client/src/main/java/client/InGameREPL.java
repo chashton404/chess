@@ -1,11 +1,6 @@
 package client;
 
 import exception.ResponseException;
-import passoff.websocket.WebsocketTestingEnvironment;
-import websocket.messages.ErrorMessage;
-import websocket.messages.LoadGameMessage;
-import websocket.messages.NotificationMessage;
-import websocket.messages.ServerMessage;
 
 import static ui.EscapeSequences.SET_TEXT_COLOR_BLACK;
 import static ui.EscapeSequences.SET_TEXT_COLOR_BLUE;
@@ -16,10 +11,9 @@ import java.util.Collection;
 import chess.ChessMove;
 import chess.ChessPiece;
 import chess.ChessPosition;
-import client.websocket.NotificationHandler;
 import client.websocket.WebSocketFacade;
 
-public class InGameREPL implements NotificationHandler {
+public class InGameREPL {
     
     // Initialize the necessary things
     private final ServerFacade server;

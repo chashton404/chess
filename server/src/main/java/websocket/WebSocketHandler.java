@@ -1,7 +1,5 @@
 package websocket;
 
-
-
 import com.google.gson.Gson;
 
 import chess.ChessPosition;
@@ -151,6 +149,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             if (validMoves == null || !validMoves.contains(newMove)) {
                 throw new InvalidMoveException("Invalid Move");
             }
+
+            // Throw and error if the game is already over
     
             // Update the game by making the move
             gameService.makeMove(authToken, gameID, newMove);

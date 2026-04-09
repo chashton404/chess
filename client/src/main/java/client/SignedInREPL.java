@@ -11,19 +11,12 @@ import model.CreateGameRequest;
 import model.CreateGameResult;
 import model.JoinGameRequest;
 import model.ListGamesResult;
-import websocket.messages.ErrorMessage;
-import websocket.messages.LoadGameMessage;
-import websocket.messages.NotificationMessage;
-import websocket.messages.ServerMessage;
-import model.ListGameData;
-import model.JoinGameRequest;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import client.websocket.NotificationHandler;
+import model.ListGameData;
+
 import client.websocket.WebSocketFacade;
 
-public class SignedInREPL implements NotificationHandler {
+public class SignedInREPL {
     private final ServerFacade server;
     private final ChessClient client;
     private ArrayList<ListGameData> localGameList;
