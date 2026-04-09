@@ -66,7 +66,6 @@ public class DrawBoard {
                 // This is where we are going to make the WHITE chessboard
                 ChessPiece piece = board.getPiece(new ChessPosition(row, col));
 
-                String veryImportantvar = "oh hey";
                 // Append change the background on the WHITE chessboard with this method
                 chessBoard.append(backGroundColor(row, col, new ChessPosition(row, col), startPosition, endPositions));
 
