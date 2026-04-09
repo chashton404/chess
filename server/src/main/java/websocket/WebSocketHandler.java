@@ -161,9 +161,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             game = gameService.getGameData(authToken, gameID).game();
 
             // send LOAD_GAME to every client
-            // TODO: change this so it draws the right color
-            LoadGameMessage loadGameMessage = new LoadGameMessage(game, "WHITE");
-            connections.notifyAll(loadGameMessage);
+            connections.notifyGameBoardChange(gameID, game);
 
             // Notify others of move
             String message = buildMoveString(username, newMove);
@@ -171,7 +169,13 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             connections.notifyGameExceptRoot(gameID, session, notificationMessage);
 
             // Notify other of check and checkmate
-
+            if (game.isInCheckmate(game.getTeamTurn())) {
+                connections.notifyInMate(gameID, game, "checkmate");
+            } else if (game.isInCheck(game.getTeamTurn())) {
+                connections.notifyInMate(gameID, game, "check");
+            } else if (game.isInStalemate(game.getTeamTurn())) {
+                connections.notifyInMate(gameID, game, "stalemate");
+            }
 
         } catch (Exception ex) {
             ErrorMessage errorMessage = new ErrorMessage(ex.getMessage());
