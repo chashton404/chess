@@ -18,6 +18,7 @@ import client.websocket.WebSocketFacade;
 
 public class InGameREPL implements NotificationHandler {
     
+    // Initialize the necessary things
     private final ServerFacade server;
     private final ChessClient client;
 

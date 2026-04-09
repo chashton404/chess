@@ -205,6 +205,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
     private String moveToLetters(ChessMove move) {
+        // This function converts moves to letters
         char startCol = (char) ('a' + move.getStartPosition().getColumn() - 1);
         int startRow = move.getStartPosition().getRow();
         String startPosition = "" + startCol + startRow;
