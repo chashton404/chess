@@ -59,14 +59,14 @@ public class InGameREPL {
 
     
     private String resign() {
-        // TODO: make it so that the other player has won the game, update it on the server side
-        System.out.println(client.getState());
+
         if (client.getState() == State.OBSERVER) {
             return "Observers cannot resign";
-        } else {
-            pendingResignation = true;
-            return "Are you sure? Type 'yes' to confirm";
-        }
+        } 
+
+        pendingResignation = true;
+        return "Are you sure? Type 'yes' to confirm";
+
 
     }
 
@@ -105,7 +105,8 @@ public class InGameREPL {
     public String help() {
         return  SET_TEXT_COLOR_BLUE + "     redraw" + SET_TEXT_COLOR_BLACK + " - the chess board" +
                 SET_TEXT_COLOR_BLUE + "\n     leave" + SET_TEXT_COLOR_BLACK + " - the game" +
-                SET_TEXT_COLOR_BLUE + "\n     move <[START_LETTER][START_NUM]> <[END_LETTER][END_NUM]>" + SET_TEXT_COLOR_BLACK + " - to move your piece" +
+                SET_TEXT_COLOR_BLUE + "\n     move <[START_LETTER][START_NUM]> <[END_LETTER][END_NUM]>" + SET_TEXT_COLOR_BLACK
+                                               + " - to move your piece" +
                 SET_TEXT_COLOR_BLUE + "\n     resign" + SET_TEXT_COLOR_BLACK + " - voluntarily lose the game" +
                 SET_TEXT_COLOR_BLUE + "\n     highlight <START>" + SET_TEXT_COLOR_BLACK + " - view the valid moves for a piece";
     }
