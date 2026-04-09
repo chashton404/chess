@@ -116,31 +116,4 @@ public class InGameREPL implements NotificationHandler {
                 SET_TEXT_COLOR_BLUE + "\n     highlight <START>" + SET_TEXT_COLOR_BLACK + " - view the valid moves for a piece";
     }
 
-    @Override
-    public void notify(ServerMessage message) {
-        switch (message.getServerMessageType()) {
-            case LOAD_GAME -> {
-                LoadGameMessage loadGameMessage = (LoadGameMessage) message;
-                System.out.println(DrawBoard.drawBoard(loadGameMessage.getGame(), loadGameMessage.getPlayerColor()));
-            }
-            case ERROR -> {
-                ErrorMessage errorMessage = (ErrorMessage) message;
-                System.out.println("Error: " + errorMessage.getErrorMessage());
-
-            }
-            case NOTIFICATION -> {
-                NotificationMessage notificationMessage = (NotificationMessage) message;
-                System.out.println(notificationMessage.getMessage());
-            }
-        }
-        // Print the "[GAMEPLAY] >>>"" part again
-        ChessClient.printPrompt();
-    }
-
-
-
-
-
-
-
 }
