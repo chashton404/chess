@@ -150,7 +150,27 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 throw new InvalidMoveException("Invalid Move");
             }
 
-            // Throw and error if the game is already over
+            // Throw an error if the observer is trying to make a move
+            String playerColor;
+            if (username.equals(gameData.whiteUsername())) {
+                playerColor = "WHITE";
+            } else if (username.equals(gameData.blackUsername())) {
+                playerColor = "BLACK";
+            } else {
+                throw new InvalidMoveException("Error: Observers cannot make moves");
+            }
+
+            // Throw and error if the piece isn't yours
+            String pieceColor = switch (game.getBoard().getPiece(startPosition).getTeamColor()) {
+                case WHITE -> "WHITE";
+                case BLACK -> "BLACK";
+                default -> throw new InvalidMoveException("Error: Invalid Move");
+            };
+
+            if (!pieceColor.equals(playerColor)) {
+                throw new InvalidMoveException("Error: must move your own pieces");
+            }
+
     
             // Update the game by making the move
             gameService.makeMove(authToken, gameID, newMove);
