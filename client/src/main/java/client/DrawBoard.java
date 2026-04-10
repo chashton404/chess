@@ -25,7 +25,7 @@ public class DrawBoard {
         StringBuilder chessBoard = new StringBuilder();
         chessBoard.append('\n');
 
-        String columns = whitePerspective ? "    a  b  c  d  e  f  g  h    " : "    h  g  f  e  d  c  b  a    ";
+        String columns = whitePerspective ? "    a  b  c  d  e  f  g  h    "  :    "    h  g  f  e  d  c  b  a    ";
 
         chessBoard.append(SET_BG_COLOR_DARK_GREY + RESET_TEXT_COLOR + columns + RESET_BG_COLOR + "\n");
         
@@ -35,8 +35,8 @@ public class DrawBoard {
         for (int r = 0; r < 8; r++, row += rowStep) {
             chessBoard.append(SET_BG_COLOR_DARK_GREY + ' ' + row + ' ');
 
-            int col = whitePerspective ? 8 : 1;
-            int colStep = whitePerspective ? -1 : 1;
+            int col = whitePerspective ? 1 : 8;
+            int colStep = whitePerspective ? 1 : -1;
 
             for (int c = 0; c < 8; c++, col += colStep) {
                 ChessPosition newPos = new ChessPosition(row, col);
