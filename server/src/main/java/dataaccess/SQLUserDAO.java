@@ -72,10 +72,24 @@ public class SQLUserDAO implements UserDAO {
 
 
     public void clearUsers() throws DataAccessException {
-        var statement = "DELETE FROM user";
+        var clearGamesStatement = "UPDATE game SET whiteUsername = NULL, blackUsername = NULL";
+        var clearAuthStatement = "DELETE FROM auth";
+        var clearUsersStatement = "DELETE FROM user";
         try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement(statement)) {
-                preparedStatement.executeUpdate();
+            conn.setAutoCommit(false);
+
+            try (var clearGames = conn.prepareStatement(clearGamesStatement);
+                 var clearAuth = conn.prepareStatement(clearAuthStatement);
+                 var clearUsers = conn.prepareStatement(clearUsersStatement)) {
+                clearGames.executeUpdate();
+                clearAuth.executeUpdate();
+                clearUsers.executeUpdate();
+                conn.commit();
+            } catch (Exception e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(true);
             }
         } catch (Exception e) {
             throw new DataAccessException(String.format("Error: Unable to clear user table: %s", e.getMessage()));

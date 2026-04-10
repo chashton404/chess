@@ -15,3 +15,6 @@ server/**/db.properties
 
 ### Personal Notes ###
 notes
+
+### front end ###
+frontend/node_modules/
